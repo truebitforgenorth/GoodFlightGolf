@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>GoodFlight Labs — Lessons, Tips & Practice</title>
+  <link rel="icon" href="photos/GFGlogo.png" type="image/x-icon" />
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Your main site CSS -->
+  <link rel="stylesheet" href="main2.css" />
+</head>
+
+<body class="gfg-labs-page">
+  <!-- Back to top button -->
+  <button type="button" id="btn-back-to-top" aria-label="Back to top">
+    <p>Back to Top</p>
+  </button>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>⛳</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home 🏠</a></li>
+          <li class="nav-item"><a class="nav-link" href="main3cal.html">MyFlight 🎯</a></li>
+          <li class="nav-item"><a class="nav-link" href="NewsArticles/main4news.html">News 🧾</a></li>
+          <li class="nav-item"><a class="nav-link" href="games/greenflightgames.html">GoodFlight<span
+                style="color:#fad02e;">Games</span>💸</a></li>
+
+          <li class="nav-item">
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / Signup
+            </a>
+          </li>
+          <li class="nav-item d-flex align-items-center">
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero / Parallax -->
+  <section class="parallax-section2">
+    <div class="parallax-content2">
+      <div style="color:#fad02e; font-weight:900;">GoodFlight Labs</div>
+      <h1 class="gfg-hero-title">
+        <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Labs</span> 🧪
+      </h1>
+      <p class="gfg-hero-sub">
+        Lessons, practice plans, and clean golf guidance — built to make improvement simple.
+      </p>
+
+      <div class="gfg-badge-row">
+        <span class="gfg-mini-chip">📘 Lessons</span>
+        <span class="gfg-mini-chip">🎯 Drills</span>
+        <span class="gfg-mini-chip">🧠 Strategy</span>
+        <span class="gfg-mini-chip">⏱️ Practice Plans</span>
+      </div>
+
+      <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+        <button id="labsPlanBtn" class="gfg-pill-btn">🗓️ Build Practice Plan</button>
+        <a href="main3cal.html" class="gfg-pill-btn gfg-pill-btn--ghost">Open MyFlight</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <section class="container gfg-section gfg-labs-wrap">
+    <div class="gfg-labs-grid">
+
+      <!-- Left: Plan Builder / Overview -->
+      <div class="card">
+        <div class="card-header">🎯 Lesson Hub & Practice Builder</div>
+        <div class="card-body">
+          <p class="mb-3">
+            Use this page as your “training HQ” for tips, drills, and structured practice.
+            Keep it simple: pick your goal, pick your time, and we’ll generate a clean plan you can follow.
+          </p>
+
+          <div class="gfg-glass-card">
+            <div class="gfg-glass-card__inner">
+              <div class="gfg-mini-form">
+                <div class="row g-2 align-items-end">
+                  <div class="col-lg-5">
+                    <label class="form-label mb-1" for="goalSelect">Goal</label>
+                    <select id="goalSelect" class="form-select">
+                      <option value="ballstriking">Ball Striking</option>
+                      <option value="driving">Driving Accuracy</option>
+                      <option value="wedges">Wedges (30–120)</option>
+                      <option value="shortgame">Short Game</option>
+                      <option value="putting">Putting</option>
+                      <option value="scoring">Lower Scores (All-around)</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-4">
+                    <label class="form-label mb-1" for="minutesSelect">Time Today</label>
+                    <select id="minutesSelect" class="form-select">
+                      <option value="20">20 minutes</option>
+                      <option value="30" selected>30 minutes</option>
+                      <option value="45">45 minutes</option>
+                      <option value="60">60 minutes</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-3 d-grid">
+                    <button id="buildPlanBtn" class="gfg-pill-btn">Generate</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <div style="font-weight:900; color: var(--yellow);">Your Plan</div>
+                <div class="gfg-big">30-Min Plan</div>
+                <div id="planSub" class="gfg-subtle">Choose a goal + time, then generate.</div>
+              </div>
+
+              <div class="mt-3">
+                <div id="planList" style="line-height:1.75; color: rgba(0, 0, 0, 0.92);">
+                  <div>• Warm-up: 3–5 minutes</div>
+                  <div>• Skill block: 15 minutes</div>
+                  <div>• Scoring block: 10 minutes</div>
+                  <div>• Review: 2 minutes</div>
+                </div>
+              </div>
+
+              <div class="mt-3 d-flex flex-wrap gap-2 justify-content-center">
+                <a class="gfg-pill-btn" href="NewsArticles/main4news.html">Read Updates</a>
+                <a class="gfg-pill-btn" href="games/greenflightgames.html">Play Games</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right: Tips / Rotation -->
+      <div class="card">
+        <div class="card-header">🧠 Tips & Tricks</div>
+        <div class="card-body">
+          <p class="mb-3">
+            Short, high-impact reminders that keep you moving in the right direction.
+          </p>
+
+          <blockquote class="gfg-quote">
+            <div id="tipText">
+              <strong>Tip:</strong> “Pick a target, commit, and swing with tempo.”
+            </div>
+          </blockquote>
+
+          <div class="gfg-center-row mt-3">
+            <button id="newTipBtn" class="gfg-pill-btn">✨ New Tip</button>
+          </div>
+
+          <div class="mt-3" style="font-size:.95rem; color: var(--muted);">
+            Pro: Swap these lines for your own lesson notes, drills, or coaching cues.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Unified feature icon cards (professional CTAs) -->
+    <div class="feature-icons mt-4">
+      <div class="icon-box">
+        <h1>📘</h1>
+        <h5>Lesson Topics</h5>
+        <p>Ball striking, wedges, short game, putting, and course strategy — organized and easy to follow.</p>
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="main3cal.html">Start in MyFlight</a>
+        </div>
+      </div>
+
+      <div class="icon-box">
+        <h1>🎯</h1>
+        <h5>Drills Library</h5>
+        <p>Quick drills that fit your time: 20, 30, 45, or 60 minutes. Clean structure, real progress.</p>
+        <div class="mt-3 d-flex justify-content-center">
+          <button class="gfg-pill-btn" id="scrollToPlanBtn">Build a Plan</button>
+        </div>
+      </div>
+
+      <div class="icon-box">
+        <h1>⛳</h1>
+        <h5>Play + Improve</h5>
+        <p>Make practice fun: play Wolf / 666 / BBB and keep the competition going while you improve.</p>
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="games/greenflightgames.html">Open Games</a>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Login / Signup Modal -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="loginMessage" style="height: 1.5em;"></div>
+          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+          <hr />
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="signupMessage" style="height: 1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<footer class="gfg-footer">
+  <div class="gfg-footer-container">
+
+    <!-- Logo Section -->
+    <div class="gfg-footer-logo">
+      <img src="photos/TrueBitForgeNorthLogo1.png" alt="TrueBit Forge North LLC Logo">
+    </div>
+
+    <!-- Footer Info -->
+    <div class="gfg-footer-content">
+      <p class="gfg-footer-copy">
+        © 2026 GreenFlightGolf. All rights reserved.
+      </p>
+
+      <p class="gfg-footer-ownership">
+        GreenFlightGolf is owned and operated by 
+        <strong>TrueBit Forge North LLC</strong>, 
+        a Wisconsin limited liability company.
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Shared scripts (auth, etc.) -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script src="myscripts.js"></script>
+
+  <!-- Page JS (safe, no dependencies) -->
+  <script>
+    const tips = [
+      "Pick a target, commit, and swing with tempo.",
+      "Start line matters more than curve — own your face control.",
+      "Short game: land it on a spot, not “somewhere near the pin.”",
+      "One swing thought max. The course is not the range.",
+      "Wedges: control contact first, distance second.",
+      "Putting: speed is king — start line is the queen.",
+      "Big misses usually come from rushing the transition."
+    ];
+
+    const plans = {
+      ballstriking: {
+        title: "Ball Striking Plan",
+        items: [
+          "Warm-up: 5 minutes (half swings + tempo).",
+          "Contact block: 12 minutes (same club, center strikes).",
+          "Start line block: 10 minutes (aim small, finish balanced).",
+          "Pressure reps: 3 minutes (3 balls = 3 targets)."
+        ]
+      },
+      driving: {
+        title: "Driving Accuracy Plan",
+        items: [
+          "Warm-up: 5 minutes (mobility + easy swings).",
+          "Fairway window: 12 minutes (pick a corridor, commit).",
+          "Tempo reps: 10 minutes (80% speed, same finish).",
+          "Pressure reps: 3 minutes (must-hit fairway target)."
+        ]
+      },
+      wedges: {
+        title: "Wedges 30–120 Plan",
+        items: [
+          "Warm-up: 4 minutes (chips to a landing spot).",
+          "Distance ladder: 14 minutes (30/50/70/90).",
+          "Trajectory control: 10 minutes (low/med/high).",
+          "Pressure reps: 2 minutes (one ball = one target)."
+        ]
+      },
+      shortgame: {
+        title: "Short Game Plan",
+        items: [
+          "Warm-up: 4 minutes (basic bump-and-run).",
+          "Landing spot: 14 minutes (same spot, different clubs).",
+          "Up & down: 10 minutes (chip then 1 putt attempt).",
+          "Pressure reps: 2 minutes (must-get inside 6 ft)."
+        ]
+      },
+      putting: {
+        title: "Putting Plan",
+        items: [
+          "Warm-up: 4 minutes (3-foot makes).",
+          "Speed ladder: 14 minutes (10/20/30 feet).",
+          "Start line: 10 minutes (gate drill or visual line).",
+          "Pressure reps: 2 minutes (5 in a row from 4 feet)."
+        ]
+      },
+      scoring: {
+        title: "All-Around Scoring Plan",
+        items: [
+          "Warm-up: 5 minutes (wedge + putt).",
+          "Wedge block: 10 minutes (3 distances).",
+          "Short game: 10 minutes (chip + 1 putt).",
+          "Finish: 5 minutes (putts 3–6 feet)."
+        ]
+      }
+    };
+
+    function pickTip() {
+      return tips[Math.floor(Math.random() * tips.length)];
+    }
+
+    function setPlan(goal, minutes) {
+      const p = plans[goal] || plans.scoring;
+
+      document.getElementById("planTitle").textContent = `${minutes}-Min ${p.title}`;
+      document.getElementById("planSub").textContent = "Run this exactly as written. Keep it simple and repeatable.";
+
+      const list = p.items.map(i => `<div>• ${i}</div>`).join("");
+      document.getElementById("planList").innerHTML = list;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // init tip
+      document.getElementById("tipText").innerHTML = `<strong>Tip:</strong> “${pickTip()}”`;
+
+      // buttons
+      document.getElementById("newTipBtn").addEventListener("click", () => {
+        document.getElementById("tipText").innerHTML = `<strong>Tip:</strong> “${pickTip()}”`;
+      });
+
+      const build = () => {
+        const goal = document.getElementById("goalSelect").value;
+        const minutes = document.getElementById("minutesSelect").value;
+        setPlan(goal, minutes);
+      };
+
+      document.getElementById("buildPlanBtn").addEventListener("click", build);
+      document.getElementById("labsPlanBtn").addEventListener("click", build);
+
+      document.getElementById("scrollToPlanBtn").addEventListener("click", () => {
+        window.scrollTo({ top: document.querySelector(".gfg-labs-wrap").offsetTop - 10, behavior: "smooth" });
+      });
+
+      // default plan
+      setPlan("scoring", "30");
+    });
+  </script>
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("CJRVHaDVYa2VCU89T");
+    })();
+  </script>
+
+  <script>
+    // Back to top
+    const mybutton = document.getElementById("btn-back-to-top");
+
+    window.addEventListener("scroll", () => {
+      if (!mybutton) return;
+      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
+    });
+
+    mybutton?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+</body>
+
+</html>

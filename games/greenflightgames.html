@@ -1,0 +1,626 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>GoodFlightGolf Games - Wolf, Six-Six-Six, Bingo Bango Bongo</title>
+  <link rel="icon" href="../photos/GFGlogo.png" type="image/x-icon">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../main2.css">
+
+  <!-- SEO -->
+  <meta name="description"
+    content="GoodFlightGames — play Wolf, Six-Six-Six, and Bingo Bango Bongo. Save games, track results, and keep season leaders.">
+  <meta name="keywords"
+    content="golf games wolf, six six six golf, bingo bango bongo, golf side games, goodflightgames">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="GoodFlightGolf">
+  <meta property="og:title" content="GoodFlightGames - Play Wolf & More">
+  <meta property="og:description"
+    content="Play golf side games with friends, save games, and track your season leaders.">
+  <meta property="og:image" content="../photos/GFGlogo.png">
+  <meta property="og:url" content="https://yourdomain.com/">
+  <meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body>
+  <!-- Back to top button -->
+  <button type="button" id="btn-back-to-top" aria-label="Back to top">
+    <p>Back to Top</p>
+  </button>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">GoodFlight<span>Golf</span>⛳</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Home 🏠</a></li>
+          <li class="nav-item"><a class="nav-link" href="../main3cal.html">MyFlight 🎯</a></li>
+          <li class="nav-item"><a class="nav-link" href="../NewsArticles/main4news.html">News 🧾</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="greenflightgames.html">GoodFlight<span style="color:#fad02e;">Games</span>💸</a>
+          </li>
+
+          <li class="nav-item">
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / Signup
+            </a>
+          </li>
+
+          <li class="nav-item d-flex align-items-center">
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Parallax / Hero -->
+  <section class="parallax-section2">
+    <div class="parallax-content2">
+      <div id="welcomeMessage"></div>
+
+      <h1 class="gfg-hero-title">
+        <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Games</span>💸
+      </h1>
+
+      <p class="gfg-hero-sub">Choose a game, save results, and keep the season going.</p>
+
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="gfg-logo-wrapper">
+            <img src="../photos/GFGlogo.png" alt="GFG Logo" class="gfg-logo-img" />
+          </div>
+
+          <div class="d-flex justify-content-center gap-2 flex-wrap">
+            <button id="showSavedGamesBtn" class="gfg-pill-btn">📂 Saved Games</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Games grid -->
+  <section class="container gfg-section">
+    <div class="feature-icons mt-4" id="game-features">
+      <div class="icon-box">
+        <h1>🐺</h1>
+        <a href="Wolf.html">
+          <h5>Wolf</h5>
+        </a>
+        <p>Play the game Wolf with your friends and test your skills with some added fun!</p>
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="Wolf.html">Open Wolf</a>
+        </div>
+      </div>
+
+      <div class="icon-box">
+        <h1>👹</h1>
+        <a href="666.html">
+          <h5>Six-Six-Six</h5>
+        </a>
+        <p>It's time to bow down and play Six-Six-Six — can you beat the high score?</p>
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="666.html">Open 666</a>
+        </div>
+      </div>
+
+      <div class="icon-box">
+        <h1>🪘</h1>
+        <a href="BingoBangoBongo.html">
+          <h5>Bingo · Bango · Bongo</h5>
+        </a>
+        <p>Enjoy Bingo Bango Bongo — a fun twist on classic golf games!</p>
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="bbb.html">Open BBB</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Saved Games Modal (same IDs; upgraded content via JS without changing your page layout) -->
+  <div id="savedGamesModal" class="gfg-modal" hidden role="dialog" aria-modal="true" aria-labelledby="savedGamesTitle">
+    <div class="gfg-modal__panel">
+      <div class="gfg-modal__header">
+        <div>
+          <h3 id="savedGamesTitle" class="m-0">Saved Games</h3>
+          <!-- meta line injected/used by JS; safe to keep here -->
+          <div id="savedGamesMeta" class="gfg-modal__meta">—</div>
+        </div>
+
+        <button id="closeSavedGamesBtn" class="gfg-modal__close" aria-label="Close">✕</button>
+      </div>
+
+      <div id="savedGamesList" class="gfg-modal__body">
+        <!-- Filled by JS -->
+      </div>
+
+      <div class="gfg-modal__footer">
+        <button class="gfg-pill-btn gfg-pill-btn--ghost" id="closeSavedGamesBtn2">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback -->
+  <section class="container gfg-section">
+    <div class="row justify-content-center">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">💬 Feedback & Suggestions</div>
+          <div class="card-body">
+            <form id="feedbackForm">
+              <div class="mb-3">
+                <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
+                <textarea class="form-control" id="feedbackInput" rows="3"
+                  placeholder="Type your feedback here..."></textarea>
+              </div>
+              <button type="submit" class="gfg-pill-btn">📨 Submit Feedback</button>
+              <p id="feedbackStatus" class="mt-2"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../feedback.js"></script>
+  </section>
+
+  <!-- Login / Signup Modal (Bootstrap) -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="loginMessage" style="height: 1.5em;"></div>
+          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+          <hr />
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="signupMessage" style="height: 1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<footer class="gfg-footer">
+  <div class="gfg-footer-container">
+
+    <!-- Logo Section -->
+    <div class="gfg-footer-logo">
+      <img src="photos/TrueBitForgeNorthLogo1.png" alt="TrueBit Forge North LLC Logo">
+    </div>
+
+    <!-- Footer Info -->
+    <div class="gfg-footer-content">
+      <p class="gfg-footer-copy">
+        © 2026 GreenFlightGolf. All rights reserved.
+      </p>
+
+      <p class="gfg-footer-ownership">
+        GreenFlightGolf is owned and operated by 
+        <strong>TrueBit Forge North LLC</strong>, 
+        a Wisconsin limited liability company.
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- EmailJS (myscripts.js uses it) -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <!-- Auth / shared scripts -->
+  <script src="../myscripts.js"></script>
+
+
+
+  <!-- ✅ Saved Games logic (premium modal + dropdown accordion; does NOT change the page) -->
+<script>
+/* ==========================================================
+   SAVED GAMES — HOME MODAL (Wolf + 666 + BBB)
+   - Lists all users/{uid}/savedGames
+   - Renders details per gameType
+   - "Open Game" pushes sessionStorage and redirects
+========================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("savedGamesModal");
+  const showBtn = document.getElementById("showSavedGamesBtn");
+  const closeBtn = document.getElementById("closeSavedGamesBtn");
+  const closeBtn2 = document.getElementById("closeSavedGamesBtn2");
+  const list = document.getElementById("savedGamesList");
+
+  if (!modal || !showBtn || !closeBtn || !list) {
+    console.error("[SavedGames] Missing required elements. Check IDs.");
+    return;
+  }
+
+  // Hard guarantee: hidden on load
+  modal.hidden = true;
+
+  let meta = document.getElementById("savedGamesMeta");
+  if (!meta) {
+    const title = document.getElementById("savedGamesTitle");
+    meta = document.createElement("div");
+    meta.id = "savedGamesMeta";
+    meta.className = "gfg-modal__meta";
+    meta.textContent = "—";
+    if (title && title.parentElement) title.parentElement.appendChild(meta);
+  }
+
+  const safeText = (v) => (v === null || v === undefined || v === "" ? "—" : String(v));
+
+  const openModal = () => {
+    modal.hidden = false;
+    document.body.classList.add("gfg-no-scroll");
+  };
+
+  const closeModal = () => {
+    modal.hidden = true;
+    document.body.classList.remove("gfg-no-scroll");
+  };
+
+  const getTimestampLabel = (data) => {
+    try {
+      if (data?.timestamp?.toDate) return data.timestamp.toDate().toLocaleString();
+      if (data?.timestamp?.seconds) return new Date(data.timestamp.seconds * 1000).toLocaleString();
+      if (typeof data?.timestamp === "number") return new Date(data.timestamp).toLocaleString();
+    } catch {}
+    return "—";
+  };
+
+  const normalizeGameType = (data) => {
+    const raw = (data?.gameType || data?.gameName || "").toString().toLowerCase();
+    if (raw.includes("wolf")) return "wolf";
+    if (raw.includes("666") || raw.includes("six") || raw.includes("sixes")) return "666";
+    if (raw.includes("bbb") || raw.includes("bingo")) return "bbb";
+    return (data?.gameType || "unknown").toString().toLowerCase();
+  };
+
+  const getGameLabel = (data) => {
+    const t = normalizeGameType(data);
+    if (t === "wolf") return "🐺 Wolf";
+    if (t === "666") return "👹 Six-Six-Six";
+    if (t === "bbb") return "🪘 Bingo · Bango · Bongo";
+    return "🎮 Saved Game";
+  };
+
+  const getGameUrl = (data) => {
+    const t = normalizeGameType(data);
+    if (t === "wolf") return "Wolf.html";
+    if (t === "666") return "666.html";
+    if (t === "bbb") return "BingoBangoBongo.html";
+    return "greenflightgames.html";
+  };
+
+  // ---------- DETAIL RENDERERS ----------
+  window.renderWolfDetails = function renderWolfDetails(docId, data) {
+    const players = Array.isArray(data.players) ? data.players : [];
+    const totals = Array.isArray(data.totals) ? data.totals : [];
+    const hole = data.hole ?? "—";
+
+    return `
+      <div class="gfg-results">
+        <div class="gfg-kv"><div class="k">Game</div><div class="v">🐺 Wolf</div></div>
+        <div class="gfg-kv"><div class="k">Hole</div><div class="v">${safeText(hole)}</div></div>
+
+        <div class="gfg-kv"><div class="k">Players</div>
+          <div class="v">
+            ${players.length ? players.map((p,i)=>`<div>• ${safeText(p)} — ${safeText(totals[i] ?? 0)} pts</div>`).join("") : "—"}
+          </div>
+        </div>
+
+        <div class="gfg-kv"><div class="k">Doc ID</div><div class="v"><code>${safeText(docId)}</code></div></div>
+
+        <div class="gfg-actions-row">
+          <button class="gfg-pill-btn gfg-pill-btn--sm gfg-open" data-doc="${safeText(docId)}">Open Game</button>
+          <button class="gfg-pill-btn gfg-pill-btn--sm gfg-pill-btn--ghost gfg-delete" data-doc="${safeText(docId)}">Delete</button>
+        </div>
+      </div>
+    `;
+  };
+
+  window.renderSixesDetails = function renderSixesDetails(docId, data) {
+    const players = Array.isArray(data.players) ? data.players : [];
+    const totals = Array.isArray(data.totals) ? data.totals : [];
+
+    // some saves might store "hole", others "holePageStart" — show whichever exists
+    const holeLabel = data.hole ?? data.holePageStart ?? "—";
+
+    const format = data.format || data.scoringFormat || "—";
+
+    return `
+      <div class="gfg-results">
+        <div class="gfg-kv"><div class="k">Game</div><div class="v">👹 Six-Six-Six</div></div>
+        <div class="gfg-kv"><div class="k">Hole</div><div class="v">${safeText(holeLabel)}</div></div>
+        <div class="gfg-kv"><div class="k">Format</div><div class="v">${safeText(format)}</div></div>
+
+        <div class="gfg-kv"><div class="k">Players</div>
+          <div class="v">
+            ${players.length ? players.map((p,i)=>`<div>• ${safeText(p)} — ${safeText(totals[i] ?? 0)} pts</div>`).join("") : "—"}
+          </div>
+        </div>
+
+        <div class="gfg-kv"><div class="k">Doc ID</div><div class="v"><code>${safeText(docId)}</code></div></div>
+
+        <div class="gfg-actions-row">
+          <button class="gfg-pill-btn gfg-pill-btn--sm gfg-open" data-doc="${safeText(docId)}">Open Game</button>
+          <button class="gfg-pill-btn gfg-pill-btn--sm gfg-pill-btn--ghost gfg-delete" data-doc="${safeText(docId)}">Delete</button>
+        </div>
+      </div>
+    `;
+  };
+
+  window.renderBBBDetails = function renderBBBDetails(docId, data) {
+    const players = Array.isArray(data.players) ? data.players : [];
+    const totals = Array.isArray(data.totals) ? data.totals : [];
+    const bet = data.bet ?? "—";
+
+    // BBB uses paging; show page start cleanly
+    const pageStart = data.holePageStart ?? 1;
+    const end = Math.min(Number(pageStart) + 3, 18);
+
+    // count picks (selections structure from bbb.js: selections[hole]={bingo,bango,bongo})
+    let picks = 0;
+    const sel = (data.selections && typeof data.selections === "object") ? data.selections : {};
+    try {
+      Object.keys(sel).forEach(h => {
+        const row = sel[h] || {};
+        ["bingo","bango","bongo"].forEach(k => {
+          const v = row[k];
+          if (v !== null && v !== undefined && v !== "") picks++;
+        });
+      });
+    } catch {}
+
+    return `
+      <div class="gfg-results">
+        <div class="gfg-kv"><div class="k">Game</div><div class="v">🪘 Bingo · Bango · Bongo</div></div>
+        <div class="gfg-kv"><div class="k">Page</div><div class="v">Holes ${safeText(pageStart)} – ${safeText(end)}</div></div>
+        <div class="gfg-kv"><div class="k">Bet</div><div class="v">$${safeText(bet)} / point</div></div>
+        <div class="gfg-kv"><div class="k">Selections</div><div class="v">${safeText(picks)} picks</div></div>
+
+        <div class="gfg-kv"><div class="k">Players</div>
+          <div class="v">
+            ${players.length ? players.map((p,i)=>`<div>• ${safeText(p)} — ${safeText(totals[i] ?? 0)} pts</div>`).join("") : "—"}
+          </div>
+        </div>
+
+        <div class="gfg-kv"><div class="k">Doc ID</div><div class="v"><code>${safeText(docId)}</code></div></div>
+
+        <div class="gfg-actions-row">
+          <button class="gfg-pill-btn gfg-pill-btn--sm gfg-open" data-doc="${safeText(docId)}">Open Game</button>
+          <button class="gfg-pill-btn gfg-pill-btn--sm gfg-pill-btn--ghost gfg-delete" data-doc="${safeText(docId)}">Delete</button>
+        </div>
+      </div>
+    `;
+  };
+
+  const renderDetails = (docId, data) => {
+    const t = normalizeGameType(data);
+
+    if (t === "wolf" && typeof window.renderWolfDetails === "function") {
+      return window.renderWolfDetails(docId, data);
+    }
+    if (t === "666" && typeof window.renderSixesDetails === "function") {
+      return window.renderSixesDetails(docId, data);
+    }
+    if (t === "bbb" && typeof window.renderBBBDetails === "function") {
+      return window.renderBBBDetails(docId, data);
+    }
+
+    return `
+      <div class="gfg-results">
+        <div class="gfg-kv">
+          <div class="k">Saved Data (raw)</div>
+          <div class="v"><pre class="gfg-pre">${JSON.stringify(data, null, 2)}</pre></div>
+        </div>
+      </div>
+    `;
+  };
+
+  const buildSavedItem = (docId, data) => {
+    const gameLabel = getGameLabel(data);
+    const when = getTimestampLabel(data);
+
+    const item = document.createElement("div");
+    item.className = "gfg-saved-item";
+    item.dataset.docId = docId;
+    item.__data = data;
+
+    item.innerHTML = `
+      <div style="width:100%;">
+        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+          <div>
+            <div class="gfg-saved-item__title">${safeText(gameLabel)}</div>
+            <div class="gfg-saved-item__meta">${safeText(when)}</div>
+          </div>
+
+          <div class="gfg-saved-item__actions">
+            <button class="gfg-pill-btn gfg-pill-btn--sm gfg-toggle" type="button">View</button>
+          </div>
+        </div>
+
+        <div class="gfg-saved-details hidden"></div>
+      </div>
+    `;
+    return item;
+  };
+
+  const loadSavedGames = async () => {
+    list.innerHTML = `<div class="gfg-muted">Loading…</div>`;
+
+    if (!window.firebase?.auth || !window.firebase?.firestore) {
+      meta.textContent = "Firebase not loaded yet.";
+      list.innerHTML = `<div class="gfg-muted">Firebase not loaded. Refresh the page.</div>`;
+      return;
+    }
+
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      meta.textContent = "Please log in to view saved games.";
+      list.innerHTML = `<div class="gfg-muted">You must be logged in.</div>`;
+      return;
+    }
+
+    meta.textContent = user.email ? `Signed in as ${user.email}` : "Signed in";
+
+    try {
+      const snap = await firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("savedGames")
+        .orderBy("timestamp", "desc")
+        .get();
+
+      if (snap.empty) {
+        list.innerHTML = `<div class="gfg-muted">No saved games yet.</div>`;
+        return;
+      }
+
+      list.innerHTML = `<div class="gfg-saved-list"></div>`;
+      const container = list.querySelector(".gfg-saved-list");
+
+      snap.forEach(doc => container.appendChild(buildSavedItem(doc.id, doc.data() || {})));
+    } catch (err) {
+      console.error("[SavedGames] Firestore error", err);
+      list.innerHTML = `<div class="gfg-muted">Couldn’t load saved games. Check console + Firestore rules.</div>`;
+    }
+  };
+
+  // Open modal + load
+  showBtn.addEventListener("click", async () => {
+    openModal();
+    await loadSavedGames();
+  });
+
+  // Close handlers
+  closeBtn.addEventListener("click", closeModal);
+  if (closeBtn2) closeBtn2.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
+
+  // Accordion toggle
+  list.addEventListener("click", (e) => {
+    const btn = e.target.closest(".gfg-toggle");
+    if (!btn) return;
+
+    const item = e.target.closest(".gfg-saved-item");
+    if (!item) return;
+
+    const details = item.querySelector(".gfg-saved-details");
+    if (!details) return;
+
+    const isOpen = !details.classList.contains("hidden");
+
+    // Close all
+    list.querySelectorAll(".gfg-saved-details").forEach(d => d.classList.add("hidden"));
+    list.querySelectorAll(".gfg-toggle").forEach(b => (b.textContent = "View"));
+
+    if (isOpen) return;
+
+    const docId = item.dataset.docId || "—";
+    details.innerHTML = renderDetails(docId, item.__data || {});
+    details.classList.remove("hidden");
+    btn.textContent = "Hide";
+  });
+
+  // Open + Delete actions inside details
+  list.addEventListener("click", async (e) => {
+    const openBtn = e.target.closest(".gfg-open");
+    const delBtn = e.target.closest(".gfg-delete");
+    const item = e.target.closest(".gfg-saved-item");
+    if (!item) return;
+
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+
+    const docId = item.dataset.docId;
+    const data = item.__data || {};
+
+    if (openBtn) {
+      const url = getGameUrl(data);
+
+      sessionStorage.setItem("gfg_savedGame", JSON.stringify({
+        gameType: normalizeGameType(data),
+        data
+      }));
+
+      window.location.href = url;
+      return;
+    }
+
+    if (delBtn) {
+      if (!confirm("Delete this saved game?")) return;
+
+      try {
+        await firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("savedGames")
+          .doc(docId)
+          .delete();
+
+        await loadSavedGames();
+      } catch (err) {
+        console.error(err);
+        alert("Could not delete saved game.");
+      }
+    }
+  });
+});
+</script>
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("CJRVHaDVYa2VCU89T");
+    })();
+  </script>
+
+  <script>
+    // Back to top
+    const mybutton = document.getElementById("btn-back-to-top");
+
+    window.addEventListener("scroll", () => {
+      if (!mybutton) return;
+      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
+    });
+
+    mybutton?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+
+</body>
+
+</html>

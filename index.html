@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>GoodFlightGolf - Free Golf Handicap Calculator, Shot Tracker & Club Distance Log</title>
+  <meta name="description"
+    content="Use GoodFlightGolf to calculate your handicap, track shot flights, and log your club distances — all free and easy to use.">
+  <meta name="keywords"
+    content="golf handicap calculator, shot flight calculator, club distance log, free golf tools, track golf stats">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="GoodFlightGolf">
+
+  <meta property="og:title" content="GoodFlightGolf - Free Handicap & Shot Tools">
+  <meta property="og:description"
+    content="Track your handicap, log your club distances, and simulate shots — all for free.">
+  <meta property="og:image" content="https://yourdomain.com/photos/GFGlogo.png">
+  <meta property="og:url" content="https://yourdomain.com/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="photos/GFGlogo.png" type="image/x-icon">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="main2.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- MapLibre (load once) -->
+  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+</head>
+
+<body>
+  <!-- Back to top button -->
+  <button type="button" id="btn-back-to-top" aria-label="Back to top">
+    <p>Back to Top</p>
+  </button>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>⛳</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home </a></li>
+          <li class="nav-item"><a class="nav-link" href="main3cal.html">MyFlight</a></li>
+          <li class="nav-item"><a class="nav-link" href="NewsArticles/main4news.html">News</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="games/greenflightgames.html">GoodFlight<span
+                style="color:#fad02e;">Games</span></a>
+          </li>
+
+          <li class="nav-item">
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / Signup
+            </a>
+          </li>
+
+          <li class="nav-item d-flex align-items-center">
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO PARALLAX (top) -->
+  <section class="parallax-section2">
+    <div class="parallax-content2">
+      <div id="welcomeMessage"></div>
+
+      <h1 class="gfg-hero-title">
+        <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>⛳
+      </h1>
+      <p class="gfg-hero-sub">Your ultimate golf companion with calculators, charts, and more.</p>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="gfg-logo-wrapper">
+            <img src="photos/GFGlogo.png" alt="GFG Logo" class="gfg-logo-img" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Optional: Premium “Wolf-style” button example -->
+      <div class="mt-3 d-flex justify-content-center gap-2 flex-wrap">
+        <a class="gfg-pill-btn gfg-pill-btn--ghost" href="main3cal.html">🎯 Go to MyFlight</a>
+        <a class="gfg-pill-btn" href="games/greenflightgames.html">💸 GoodFlight Games</a>
+        <a class="gfg-pill-btn gfg-pill-btn--ghost" href="NewsArticles/main4news.html">📰 News / Site Updates</a>
+        <a class="gfg-pill-btn" href="merch/merch.html">🛍️ GoodFlight Merch</a>
+        <a class="gfg-pill-btn gfg-pill-btn--ghost" href="labs.html">🧪 GoodFlight Labs</a>
+        <a class="gfg-pill-btn" href="other/about.html">🏖️ About Us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="container gfg-section">
+    <div class="feature-icons mt-4" id="features">
+
+
+
+      <div class="icon-box gfg-feature-card">
+        <h1>⛳</h1>
+        <a href="games/greenflightgames.html">
+          <h5>GoodFlightGames</h5>
+        </a>
+        <p>
+          Play games on the course like Wolf, Six-Six-Six and Bingo · Bango · Bongo and log your scores in real time!
+          Save your games and see who is the season leader!
+        </p>
+
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="games/greenflightgames.html">Open Games</a>
+        </div>
+      </div>
+
+      <div class="icon-box gfg-feature-card">
+        <h1>🎯</h1>
+        <a href="main3cal.html">
+          <h5>MyFlight</h5>
+        </a>
+        <p>
+          Log in and save your distances per club. Calculate your HPC and view it on your chart over time.
+          Having trouble in the elements? Calculate your shot against the elements with our BEC (Battle the Elements
+          Calculator).
+        </p>
+
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="main3cal.html">Open MyFlight</a>
+        </div>
+      </div>
+
+      <div class="icon-box gfg-feature-card">
+        <h1>📰</h1>
+        <a href="NewsArticles/main4news.html">
+          <h5>News / Site Updates</h5>
+        </a>
+        <p>
+          Website updates, news articles by our writers, world rankings, and PGA Tour news.
+        </p>
+
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="NewsArticles/main4news.html">Open News</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FEATURES (SECTION 2) -->
+    <div class="feature-icons mt-4" id="features-2">
+
+      <!-- Merch -->
+      <div class="icon-box gfg-feature-card">
+        <h1>🛍️</h1>
+        <a href="merch/merch.html">
+          <h5>GoodFlight Merch</h5>
+        </a>
+        <p>
+          Rep GoodFlightGolf on and off the course — hoodies, hats, polos, and clean gear drops.
+          Build your cart and place orders right on the site.
+        </p>
+
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="other/maintenance.html">Shop Merch</a>
+        </div>
+      </div>
+
+      <!-- GoodFlight Labs -->
+      <div class="icon-box gfg-feature-card">
+        <h1>🧪</h1>
+        <a href="labs.html">
+          <h5>GoodFlight Labs</h5>
+        </a>
+        <p>
+          Lessons, drills, and practice plans built to make improvement simple.
+          Generate a clean plan and stay consistent week to week.
+        </p>
+
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="other/maintenance.html">Open Labs</a>
+        </div>
+      </div>
+
+      <!-- Blank / Coming Soon -->
+      <div class="icon-box gfg-feature-card">
+        <h1>🚧</h1>
+        <a href="404.html">
+          <h5>Test links</h5>
+        </a>
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="other/maintenance.html">Maintenance Test</a>
+        </div><br>
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="404.html">404 Test</a>
+        </div><br>
+        <div class="mt-3 d-flex justify-content-center">
+          <a class="gfg-pill-btn" href="other/about.html">🏖️ About Us</a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+
+
+  <!-- SECOND PARALLAX (optional) -->
+  <section class="parallax-section">
+    <div class="parallax-content">
+      <h1 class="gfg-hero-title">
+        <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>⛳
+      </h1>
+      <p class="gfg-hero-sub">Your ultimate golf companion with calculators, charts, and more.</p>
+    </div>
+  </section>
+
+  <div class="container gfg-section">
+    <!-- DID YOU KNOW? -->
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">💡 Did You Know?</div>
+          <div class="card-body" id="golfFact">Loading a fun golf fact...</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const facts = [
+        "🏌️‍♂️ Golf is the only sport ever played on the Moon — Alan Shepard hit two golf balls during Apollo 14.",
+        "⛳ The word 'golf' likely comes from the Dutch word 'kolf', meaning 'club'.",
+        "🚀 The longest recorded drive in a golf competition is 515 yards.",
+        "🏴‍☠️ The first 18-hole course was established in 1764 at St Andrews in Scotland.",
+        "🐯 Tiger Woods made his first hole-in-one when he was just 8 years old.",
+        "📏 A golf ball has 336 dimples on average."
+      ];
+      document.addEventListener("DOMContentLoaded", () => {
+        const fact = facts[Math.floor(Math.random() * facts.length)];
+        document.getElementById("golfFact").textContent = fact;
+      });
+    </script>
+
+    <!-- GOLF COURSE LOOKUP -->
+    <div class="row justify-content-center">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">⛳ Nearby Golf Courses</div>
+          <div class="card-body">
+            <p>Click the button to search for nearby golf courses:</p>
+            <button id="gfSearchBtn" class="gfg-pill-btn">Search Nearby Courses</button>
+
+            <div id="gfMapContainer" class="gfg-map"></div>
+            <div id="gfCourseList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURED GAME -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">🎮 Featured Golf Game - WGT Golf</div>
+          <div class="card-body text-center">
+            <p class="card-text">
+              Get into the swing of things with our favorite golf game on PC and your phone. It's free!
+            </p>
+            <video autoplay loop muted playsinline class="w-100 mb-3 rounded">
+              <source src="photos/vid1bird.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <a href="..." class="gfg-pill-btn">Explore Game</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECOMMENDED COURSE -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card text-center">
+          <div class="card-header">🏌️‍♂️ Recommended Course</div>
+          <div class="card-body">
+            <p class="card-text">Check out one of our favorite courses to play and improve your game.</p>
+            <div class="ratio ratio-16x9">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11583.873995648255!2d-92.87464559342715!3d44.97275401689594!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x52b2ccbb5788243f%3A0x3c1c3b24ad859193!2sRoyal%20Golf%20Club!5e0!3m2!1sen!2sus!4v1752600702202!5m2!1sen!2sus"
+                style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="row justify-content-center">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">💬 Feedback & Suggestions</div>
+          <div class="card-body">
+            <form id="feedbackForm">
+              <div class="mb-3">
+                <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
+                <textarea class="form-control" id="feedbackInput" rows="3"
+                  placeholder="Type your feedback here..."></textarea>
+              </div>
+              <button type="submit" class="gfg-pill-btn">📨 Submit Feedback</button>
+              <p id="feedbackStatus" class="mt-2"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="feedback.js"></script>
+  </div>
+
+  <!-- Login / Signup Modal -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="loginMessage" style="height: 1.5em;"></div>
+          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+
+          <hr />
+
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="signupMessage" style="height: 1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<footer class="gfg-footer">
+  <div class="gfg-footer-container">
+
+    <!-- Logo Section -->
+    <div class="gfg-footer-logo">
+      <img src="photos/TrueBitForgeNorthLogo1.png" alt="TrueBit Forge North LLC Logo">
+    </div>
+
+    <!-- Footer Info -->
+    <div class="gfg-footer-content">
+      <p class="gfg-footer-copy">
+        © 2026 GreenFlightGolf. All rights reserved.
+      </p>
+
+      <p class="gfg-footer-ownership">
+        GreenFlightGolf is owned and operated by 
+        <strong>TrueBit Forge North LLC</strong>
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("CJRVHaDVYa2VCU89T");
+    })();
+  </script>
+
+  <!-- Sortable -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+  <script src="myscripts.js"></script>
+  <script src="main.js"></script>
+  <script src="gfCourseFinder.js"></script>
+
+  <script>
+    // Back to top
+    const mybutton = document.getElementById("btn-back-to-top");
+
+    window.addEventListener("scroll", () => {
+      if (!mybutton) return;
+      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
+    });
+
+    mybutton?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+</body>
+
+</html>

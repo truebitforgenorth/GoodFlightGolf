@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bingo Bango Bongo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap & Main CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../main2.css">
+  <link rel="stylesheet" href="bbb.css">
+  <style>
+    /* ======================================
+     Slight fullscreen shrink for small phones
+     (about 10%)
+  ====================================== */
+    @media (max-width: 480px) {
+  
+      #selectionWrapper.fullscreen {
+        padding: 0.75rem !important;
+      }
+  
+      #selectionWrapper.fullscreen h2,
+      #selectionWrapper.fullscreen h3,
+      #selectionWrapper.fullscreen h4 {
+        font-size: 0.9rem !important;
+      }
+  
+      #selectionWrapper.fullscreen button {
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+      }
+  
+      #selectionWrapper.fullscreen .card {
+        padding: 0.75rem !important;
+      }
+  
+    }
+  </style>
+</head>
+
+<body class="gfg-bbb-page">
+    <!-- Back to top button -->
+  <button type="button" id="btn-back-to-top" aria-label="Back to top">
+    <p>Back to Top</p>
+  </button>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">GoodFlight<span>Golf</span>⛳</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Home 🏠</a></li>
+          <li class="nav-item"><a class="nav-link" href="../main3cal.html">MyFlight 🎯</a></li>
+          <li class="nav-item"><a class="nav-link" href="../NewsArticles/main4news.html">News 🧾</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="greenflightgames.html">GoodFlight<span style="color:#fad02e;">Games</span>💸</a>
+          </li>
+          <li>
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / Signup
+            </a>
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="parallax-section2">
+    <div class="parallax-content2">
+      <h1 class="gfg-hero-title">🪘 Bingo Bango Bongo</h1>
+      <p class="gfg-hero-sub">Track Bingo/Bango/Bongo points + payouts.</p>
+    </div>
+  </div>
+
+  <div class="container my-4">
+
+    <!-- Rules Button -->
+    <button id="bbbRulesBtn" class="gfg-pill-btn mb-3">📜 BBB Rules</button>
+
+    <!-- Rules Modal -->
+    <div id="bbbRulesModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h3 class="m-0">🪘 BBB Rules</h3>
+          <button id="closeBBBRulesBtn" class="btn btn-sm btn-secondary">Close</button>
+        </div>
+
+        <div id="bbbRulesBody" style="line-height:1.6; font-size: 0.95rem;"></div>
+      </div>
+    </div>
+
+    <!-- Players & Bet -->
+    <div class="card game-card p-4 mb-3">
+      <h4>Players & Bet</h4>
+      <div class="row g-2 mb-3">
+        <div class="col-6"><input class="form-control bbb-player" placeholder="Player 1"></div>
+        <div class="col-6"><input class="form-control bbb-player" placeholder="Player 2"></div>
+        <div class="col-6"><input class="form-control bbb-player" placeholder="Player 3"></div>
+        <div class="col-6"><input class="form-control bbb-player" placeholder="Player 4"></div>
+      </div>
+
+      <div class="row g-2">
+        <div class="col-6 col-md-3">
+          <label class="small fw-bold">Bet per point ($)</label>
+          <input type="number" id="bbbBet" class="form-control" value="0.25" min="0" step="0.25">
+        </div>
+      </div>
+    </div>
+
+    <!-- FULLSCREEN WRAPPER -->
+    <div id="selectionWrapper" class="card game-card p-4 mb-3">
+      <div class="mb-3 text-center">
+        <button id="fullscreenBtn" class="btn btn-secondary">📱 Fullscreen Selection</button>
+      </div>
+
+      <div id="fullscreenContent">
+
+        <!-- Hole Nav -->
+        <div class="card game-card p-3 mb-3 text-center" id="holeNavCard">
+          <div class="d-flex justify-content-between align-items-center">
+            <button id="prevHoleBtn" class="btn btn-secondary">← Back</button>
+            <h4 id="bbbHoleTitle" class="m-0"></h4>
+            <button id="nextHoleBtn" class="btn btn-secondary">Next →</button>
+          </div>
+        </div>
+
+        <!-- Hole Setup -->
+        <div class="card game-card p-4 mb-3" id="holeSetupCard">
+          <h4>Hole Setup & Results</h4>
+
+          <div class="row g-2 mb-2">
+            <div class="col-12 col-md-4">
+              <label class="small">Bingo (first on green)</label>
+              <select id="bbbBingoSelect" class="form-select"></select>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="small">Bango (closest to pin)</label>
+              <select id="bbbBangoSelect" class="form-select"></select>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="small">Bongo (first in the hole)</label>
+              <select id="bbbBongoSelect" class="form-select"></select>
+            </div>
+          </div>
+
+          <div class="small text-muted mt-2">
+            Tip: You can leave any category blank (—) and fill it later.
+          </div>
+        </div>
+
+        <!-- SCOREBOARD -->
+        <div class="card game-card p-2" id="scoreboardCard">
+          <h4 class="text-center fs-6 mb-1">🪘 BBB Scoreboard</h4>
+
+          <div class="d-flex mb-1 text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6" id="t0"></div>
+              <div id="m0" class="fs-6 fw-bold"></div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6" id="t1"></div>
+              <div id="m1" class="fs-6 fw-bold"></div>
+            </div>
+          </div>
+
+          <div class="d-flex text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6" id="t2"></div>
+              <div id="m2" class="fs-6 fw-bold"></div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6" id="t3"></div>
+              <div id="m3" class="fs-6 fw-bold"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Login / Signup Modal -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="loginMessage" style="height: 1.5em;"></div>
+          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+          <hr />
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="signupMessage" style="height: 1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<footer class="gfg-footer">
+  <div class="gfg-footer-container">
+
+    <!-- Logo Section -->
+    <div class="gfg-footer-logo">
+      <img src="photos/TrueBitForgeNorthLogo1.png" alt="TrueBit Forge North LLC Logo">
+    </div>
+
+    <!-- Footer Info -->
+    <div class="gfg-footer-content">
+      <p class="gfg-footer-copy">
+        © 2026 GreenFlightGolf. All rights reserved.
+      </p>
+
+      <p class="gfg-footer-ownership">
+        GreenFlightGolf is owned and operated by 
+        <strong>TrueBit Forge North LLC</strong>, 
+        a Wisconsin limited liability company.
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+  <!-- Firebase SDK (compat versions, no modules) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+
+  <!-- Bootstrap JS for modal -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="../myscripts.js"></script>
+  <script src="bbb.js"></script>
+
+</body>
+</html>

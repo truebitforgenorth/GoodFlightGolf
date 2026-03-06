@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GoodFlightGolf Merch</title>
+
+  <link rel="icon" href="../photos/GFGlogo.png" type="image/x-icon" />
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="../main2.css" />
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="merch.css" />
+</head>
+
+<body class="gfg-merch-page">
+
+  <!-- Back to top button -->
+  <button type="button" id="btn-back-to-top" aria-label="Back to top">
+    <p>Back to Top</p>
+  </button>
+
+  <!-- Navbar (same structure as your other pages, just ../ links) -->
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">GoodFlight<span>Golf</span>⛳</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5 align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Home 🏠</a></li>
+          <li class="nav-item"><a class="nav-link" href="../main3cal.html">MyFlight 🎯</a></li>
+          <li class="nav-item"><a class="nav-link" href="../NewsArticles/main4news.html">News 🧾</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="../games/greenflightgames.html">GoodFlight<span style="color:#fad02e;">Games</span>💸</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link active" href="index.html">Merch 🛍️</a>
+          </li>
+
+          <li class="nav-item">
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / Signup
+            </a>
+          </li>
+
+          <li class="nav-item d-flex align-items-center">
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+
+          <!-- Cart button -->
+          <li class="nav-item ms-lg-2">
+            <button id="openCartBtn" class="gfg-pill-btn gfg-pill-btn--ghost">
+              🛒 Cart <span id="cartCount" class="gfg-cart-badge">0</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="parallax-section2 gfg-merch-hero">
+    <div class="parallax-content2">
+      <div style="color:#fad02e; font-weight:900;">Official Store</div>
+      <h1 class="gfg-hero-title">
+        <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Merch</span> 🛍️
+      </h1>
+      <p class="gfg-hero-sub">Premium gear for golfers who want to look clean on and off the course.</p>
+
+      <div class="mt-3 d-flex justify-content-center gap-2 flex-wrap">
+        <a class="gfg-pill-btn" href="#shop">Shop Now</a>
+        <button id="scrollToFeatured" class="gfg-pill-btn gfg-pill-btn--ghost">⭐ Featured</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <section id="shop" class="container gfg-section">
+    <div class="row g-3 align-items-stretch">
+
+      <!-- Left: filters -->
+      <div class="col-lg-4">
+        <div class="card h-100">
+          <div class="card-header">🧭 Find Your Gear</div>
+          <div class="card-body">
+
+            <label class="form-label fw-bold">Search</label>
+            <input id="searchInput" class="form-control mb-3" placeholder="Hoodie, hat, polo..." />
+
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label fw-bold">Category</label>
+                <select id="categorySelect" class="form-select">
+                  <option value="all">All</option>
+                  <option value="hoodies">Hoodies</option>
+                  <option value="hats">Hats</option>
+                  <option value="shirts">Shirts</option>
+                  <option value="polos">Polos</option>
+                  <option value="accessories">Accessories</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label fw-bold">Sort</label>
+                <select id="sortSelect" class="form-select">
+                  <option value="featured">Featured</option>
+                  <option value="priceLow">Price: Low → High</option>
+                  <option value="priceHigh">Price: High → Low</option>
+                  <option value="newest">Newest</option>
+                </select>
+              </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <label class="form-label fw-bold">Price Range</label>
+            <div class="d-flex gap-2">
+              <input id="minPrice" type="number" class="form-control" placeholder="Min" />
+              <input id="maxPrice" type="number" class="form-control" placeholder="Max" />
+            </div>
+
+            <hr class="my-3" />
+
+            <label class="form-label fw-bold">Quick Picks</label>
+            <div class="d-flex gap-2 flex-wrap">
+              <button class="gfg-pill-btn" data-chip="bestSellers">🔥 Best Sellers</button>
+              <button class="gfg-pill-btn" data-chip="newDrops">🆕 New Drops</button>
+              <button class="gfg-pill-btn" data-chip="under35">💸 Under $35</button>
+            </div>
+
+            <hr class="my-3" />
+
+            <div class="d-flex gap-2">
+              <button id="applyFiltersBtn" class="gfg-pill-btn w-100">Apply</button>
+              <button id="resetFiltersBtn" class="gfg-pill-btn w-100">Reset</button>
+            </div>
+
+            <div class="mt-3 small text-muted">
+              Tip: Click any product to see details, pick size/color, then add to cart.
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: products -->
+      <div class="col-lg-8">
+        <div class="card h-100">
+          <div class="card-header">🛍️ Store</div>
+          <div class="card-body">
+
+            <div id="featuredRow" class="gfg-featured-strip mb-3">
+              <div class="gfg-featured-title">⭐ Featured</div>
+              <div id="featuredProducts" class="gfg-featured-grid"></div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="fw-bold">Products</div>
+              <div class="text-muted small"><span id="resultsCount">0</span> items</div>
+            </div>
+
+            <div id="productsGrid" class="gfg-products-grid"></div>
+
+            <div id="emptyState" class="gfg-empty-state d-none">
+              <div class="fw-bold">No matches found.</div>
+              <div class="text-muted">Try clearing filters or searching something broader.</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Product Detail Modal -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content gfg-product-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productModalTitle">Product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="gfg-product-image-wrap">
+                <img id="productModalImg" class="gfg-product-image" alt="Product" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="fw-bold mb-1" id="productModalPrice">$0</div>
+              <div class="text-muted mb-2" id="productModalDesc"></div>
+
+              <div class="row g-2">
+                <div class="col-6">
+                  <label class="form-label fw-bold">Size</label>
+                  <select id="productModalSize" class="form-select"></select>
+                </div>
+                <div class="col-6">
+                  <label class="form-label fw-bold">Color</label>
+                  <select id="productModalColor" class="form-select"></select>
+                </div>
+              </div>
+
+              <div class="mt-2">
+                <label class="form-label fw-bold">Quantity</label>
+                <div class="gfg-qty">
+                  <button id="qtyMinus" class="gfg-qty-btn" type="button">−</button>
+                  <input id="qtyInput" class="form-control text-center" type="number" min="1" value="1" />
+                  <button id="qtyPlus" class="gfg-qty-btn" type="button">+</button>
+                </div>
+              </div>
+
+              <div class="mt-3 d-flex gap-2">
+                <button id="addToCartBtn" class="gfg-pill-btn w-100">Add to Cart</button>
+                <button id="quickBuyBtn" class="gfg-pill-btn w-100">Quick Buy</button>
+              </div>
+
+              <div class="mt-3 small text-muted">
+                Orders are saved to your profile if you’re logged in.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Drawer -->
+  <div id="cartDrawer" class="gfg-cart-drawer" aria-hidden="true">
+    <div class="gfg-cart-panel">
+      <div class="gfg-cart-header">
+        <div>
+          <div class="fw-bold">🛒 Your Cart</div>
+          <div class="text-muted small" id="cartSubText">Ready when you are.</div>
+        </div>
+        <button id="closeCartBtn" class="gfg-cart-close" aria-label="Close cart">✕</button>
+      </div>
+
+      <div class="gfg-cart-body">
+        <div id="cartItems"></div>
+
+        <div id="cartEmpty" class="gfg-empty-cart d-none">
+          <div class="fw-bold">Your cart is empty.</div>
+          <div class="text-muted">Add a hoodie, hat, or polo and it’ll show up here.</div>
+        </div>
+      </div>
+
+      <div class="gfg-cart-footer">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="fw-bold">Total</div>
+          <div class="fw-bold" id="cartTotal">$0</div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1">Shipping Email</label>
+          <input id="checkoutEmail" class="form-control" placeholder="you@email.com" />
+          <div class="small text-muted mt-1">If logged in, we’ll auto-fill this.</div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold mb-1">Notes (optional)</label>
+          <input id="orderNotes" class="form-control" placeholder="Size swap, gift note, etc." />
+        </div>
+
+        <div class="d-flex gap-2">
+          <button id="placeOrderBtn" class="gfg-pill-btn w-100">Place Order</button>
+          <button id="clearCartBtn" class="gfg-pill-btn w-100">Clear</button>
+        </div>
+
+        <div id="orderStatus" class="mt-2 small"></div>
+      </div>
+    </div>
+
+    <div id="cartBackdrop" class="gfg-cart-backdrop" aria-hidden="true"></div>
+  </div>
+
+  <!-- Login / Signup Modal (same ids used by myscripts.js) -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="loginMessage" style="height: 1.5em;"></div>
+          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+
+          <hr />
+
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="signupMessage" style="height: 1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<footer class="gfg-footer">
+  <div class="gfg-footer-container">
+
+    <!-- Logo Section -->
+    <div class="gfg-footer-logo">
+      <img src="photos/TrueBitForgeNorthLogo1.png" alt="TrueBit Forge North LLC Logo">
+    </div>
+
+    <!-- Footer Info -->
+    <div class="gfg-footer-content">
+      <p class="gfg-footer-copy">
+        © 2026 GreenFlightGolf. All rights reserved.
+      </p>
+
+      <p class="gfg-footer-ownership">
+        GreenFlightGolf is owned and operated by 
+        <strong>TrueBit Forge North LLC</strong>, 
+        a Wisconsin limited liability company.
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+  <!-- Firebase compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+
+  <!-- Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- EmailJS (optional, safe) -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <!-- Your global auth/login script -->
+  <script src="../myscripts.js"></script>
+
+  <!-- Page JS -->
+  <script src="merch.js"></script>
+
+  <script>
+    // Back to top
+    const mybutton = document.getElementById("btn-back-to-top");
+    window.addEventListener("scroll", () => {
+      if (!mybutton) return;
+      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
+    });
+    mybutton?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  </script>
+</body>
+</html>

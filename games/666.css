@@ -1,0 +1,237 @@
+/* 666 — small polish styles (safe; doesn't break Wolf) */
+/* =====================================================
+   666 / Six-Six-Six page — unified styles (safe + scoped)
+===================================================== */
+.gfg-666-page .game-card{
+  transition: none !important; /* no hover animation */
+}
+
+.gfg-666-page .team-win{
+  background: #359447 !important;
+  color: #fff !important;
+}
+
+.gfg-666-page .team-lose{
+  background: #0f8992 !important;
+  color: #fff !important;
+}
+
+/* Mode buttons: keep bootstrap behavior but match vibe a bit */
+.gfg-666-page .gfg-mode-btn{
+  font-weight: 800;
+  border-radius: 14px;
+}
+
+.gfg-666-page .mode-group .btn.selected{
+  color: #fff !important;
+}
+
+.gfg-666-page .mode-group .btn-outline-primary.selected{
+  background: #0d6efd !important;
+  border-color: #0d6efd !important;
+}
+.gfg-666-page .mode-group .btn-outline-danger.selected{
+  background: #dc3545 !important;
+  border-color: #dc3545 !important;
+}
+.gfg-666-page .mode-group .btn-outline-warning.selected{
+  background: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: #111 !important;
+}
+
+/* Use your existing .hidden convention */
+.gfg-666-page .hidden{ display:none !important; }
+
+/* =====================================================
+   Unified fullscreen behavior (same approach as Wolf)
+   - hides nav/footer
+   - wrapper becomes full screen
+   - scoreboard sticks to bottom
+===================================================== */
+body.fullscreen-active .gfg-navbar,
+body.fullscreen-active #foot{
+  display: none !important;
+}
+
+.gfg-666-page #selectionWrapper.fullscreen{
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  overflow: hidden;
+  margin: 0;
+  border-radius: 0;
+}
+
+/* content scroll area */
+.gfg-666-page #fullscreenContent{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding-bottom: 10px;
+}
+
+/* sticky scoreboard */
+.gfg-666-page #scoreboardCard{
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+.gfg-team-box {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 14px;
+  padding: 12px;
+  background: #fff;
+}
+
+.gfg-team-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.gfg-team-pill {
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 2px solid rgba(0,0,0,0.08);
+}
+
+.gfg-team-pill--one {
+  border-color: rgba(53,148,71,0.45);
+  background: rgba(53,148,71,0.07);
+}
+
+.gfg-team-pill--two {
+  border-color: rgba(217,83,79,0.45);
+  background: rgba(217,83,79,0.07);
+}
+
+/* selected state (same as Wolf behavior) */
+.gfg-666-page .mode-group .btn.selected {
+  outline: 3px solid rgba(0,0,0,0.12);
+}
+
+/* =====================================================
+   666 — make Rules/Fullscreen/Nav match Wolf pill buttons
+===================================================== */
+.gfg-666-page #sixesRulesBtn,
+.gfg-666-page #fullscreenBtn,
+.gfg-666-page #holeNavCard button{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:.55rem !important;
+
+  padding: 12px 18px !important;
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+  letter-spacing: .2px !important;
+
+  background: linear-gradient(180deg, var(--wolf-dark), #111223) !important;
+  color: var(--yellow) !important;
+  border: 1px solid rgba(53,148,71,0.55) !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18) !important;
+
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition), border-color var(--transition) !important;
+  cursor:pointer !important;
+}
+
+.gfg-666-page #sixesRulesBtn:hover,
+.gfg-666-page #fullscreenBtn:hover,
+.gfg-666-page #holeNavCard button:hover{
+  background: linear-gradient(180deg, var(--wolf-dark-2), #14162a) !important;
+  transform: translateY(-2px) !important;
+  border-color: rgba(250,208,46,0.55) !important;
+  box-shadow: 0 16px 34px rgba(0,0,0,0.26) !important;
+}
+
+/* Back/Next slightly smaller */
+.gfg-666-page #holeNavCard button{
+  padding: 10px 14px !important;
+  font-size: .92rem !important;
+}
+
+
+/* 666 Rules Modal — hardened (no conflict with .hidden) */
+#sixesRulesModal{
+  position: fixed;
+  inset: 0;
+  background: rgba(23,25,39,0.85);
+  backdrop-filter: blur(6px);
+  display: none;                /* default closed */
+  justify-content: center;
+  align-items: center;
+  z-index: 25000 !important;    /* above fullscreen/nav */
+  padding: 16px;
+}
+
+#sixesRulesModal.is-open{
+  display: flex !important;
+}
+
+#sixesRulesModal .modal-content{
+  background: #171927;
+  color: #fff;
+  width: 95%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  border-radius: 18px;
+  border: 2px solid #359447;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* 666 FULLSCREEN — force true viewport takeover (match Wolf) */
+body.fullscreen-active{
+  overflow: hidden !important;
+}
+
+body.fullscreen-active .gfg-navbar,
+body.fullscreen-active #foot{
+  display: none !important;
+}
+
+/* make sure 666 page can target itself (either class works) */
+.gfg-666-page #selectionWrapper.fullscreen{
+  position: fixed !important;
+  inset: 0 !important;
+
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+
+  z-index: 20000 !important;   /* <-- key difference */
+  background: linear-gradient(135deg, #ffffff 0%, #f6faf6 100%) !important;
+
+  margin: 0 !important;
+  border-radius: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 1rem !important;
+}
+
+.gfg-666-page #selectionWrapper.fullscreen #fullscreenContent{
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding-bottom: 10px;
+}
+
+.gfg-666-page #selectionWrapper.fullscreen #scoreboardCard{
+  margin-top: auto !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 10 !important;
+}

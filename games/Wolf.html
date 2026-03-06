@@ -1,0 +1,581 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Wolf Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap & Main CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../main2.css">
+  <link rel="stylesheet" href="wolf.css">
+  <style>
+    /* ======================================
+Slight fullscreen shrink for small phones
+(about 10%)
+====================================== */
+    @media (max-width: 480px) {
+
+      #selectionWrapper.fullscreen {
+        padding: 0.75rem !important;
+      }
+
+      #selectionWrapper.fullscreen h2,
+      #selectionWrapper.fullscreen h3,
+      #selectionWrapper.fullscreen h4 {
+        font-size: 0.9rem !important;
+      }
+
+      #selectionWrapper.fullscreen button {
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+      }
+
+      #selectionWrapper.fullscreen .card {
+        padding: 0.75rem !important;
+      }
+
+    }
+
+    #selectionWrapper.fullscreen {
+      height: 100dvh;
+      /* dynamic viewport height */
+    }
+  </style>
+</head>
+
+<body class="wolf-page">
+  <!-- Back to top button -->
+  <button type="button" id="btn-back-to-top" aria-label="Back to top">
+    <p>Back to Top</p>
+  </button>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">GoodFlight<span>Golf</span>⛳</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Home 🏠</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../main3cal.html">MyFlight 🎯</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../NewsArticles/main4news.html">News 🧾</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="greenflightgames.html">GoodFlight<span style="color: #fad02e;">Games</span>💸</a>
+          </li>
+          <li>
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">Login /
+              Signup</a>
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color: white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="parallax-section2">
+    <div class="parallax-content2">
+      <h1 class="gfg-hero-title">🐺 Wolf</h1>
+      <p class="gfg-hero-sub">Track players, holes, and payouts with your team or lone Wolf!</p>
+    </div>
+  </div>
+
+  <!--Container-->
+  <div class="container my-4">
+
+
+
+<!-- Wolf Game Logic Example -->
+<div class="card game-card p-4 mb-3">
+      <!-- Wolf Rules Bnt -->
+    <button style="width: 190px;" id="wolfRulesBtn" class="btn btn-outline-light mb-3">📜 Wolf Rules</button>
+
+    <!-- Wolf Rules Modal -->
+    <div id="wolfRulesModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h3 class="m-0">🐺 Wolf Rules</h3>
+          <button id="closeWolfRulesBtn" class="btn btn-sm btn-secondary">Close</button>
+        </div>
+
+        <div id="wolfRulesBody" style="line-height:1.6; font-size: 0.95rem;"></div>
+      </div>
+    </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+
+
+    <h4 class="m-0">Game Logic</h4>
+    <button class="btn
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#wolfLogicContent">
+      Show / Hide
+    </button>
+  </div>
+
+  <div class="collapse" id="wolfLogicContent">
+
+    <p class="mb-2"><strong>Setup Example:</strong></p>
+    <ul class="mb-4">
+      <li>Base = 4</li>
+      <li>Lone Mult = 2</li>
+      <li>Dump Mult = 2</li>
+      <li>Blind Mult = 4</li>
+      <li>Example Carryover Pot = 8</li>
+    </ul>
+
+    <!-- WIN OUTCOMES -->
+    <h5 class="mb-3">✅ Win Outcomes</h5>
+    <div class="table-responsive mb-4">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Mode</th>
+            <th>Format</th>
+            <th>Formula</th>
+            <th>Example Result</th>
+            <th>Example Result w/ Pot</th>
+            <th>Total Points (No Pot)</th>
+            <th>Total Points (With Pot = 8)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Team</strong></td>
+            <td>2 vs 2</td>
+            <td>base / 2 to each winner</td>
+            <td>2 each</td>
+            <td>2 each + (8 ÷ 2) = 6 each</td>
+            <td><strong>4 total</strong></td>
+            <td><strong>12 total</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Lone</strong></td>
+            <td>1 vs 3</td>
+            <td>(2 × 2) × 3</td>
+            <td>4 × 3 = 12</td>
+            <td>12 + 8 = 20</td>
+            <td><strong>12 total</strong></td>
+            <td><strong>20 total</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Dump</strong></td>
+            <td>1 vs 3</td>
+            <td>(2 × 2) × 3</td>
+            <td>4 × 3 = 12</td>
+            <td>12 + 8 = 20</td>
+            <td><strong>12 total</strong></td>
+            <td><strong>20 total</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Blind</strong></td>
+            <td>1 vs 3</td>
+            <td>(2 × 4) × 3</td>
+            <td>8 × 3 = 24</td>
+            <td>24 + 8 = 32</td>
+            <td><strong>24 total</strong></td>
+            <td><strong>32 total</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- LOSS OUTCOMES -->
+    <h5 class="mb-3">❌ Loss Outcomes (No Negative Points)</h5>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Mode</th>
+            <th>Format</th>
+            <th>Formula</th>
+            <th>Example Result</th>
+            <th>Example Result w/ Pot</th>
+            <th>Total Points (No Pot)</th>
+            <th>Total Points (With Pot = 8)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Team</strong></td>
+            <td>2 vs 2</td>
+            <td>base / 2 to each winner</td>
+            <td>2 each</td>
+            <td>2 each + (8 ÷ 2) = 6 each</td>
+            <td><strong>4 total</strong></td>
+            <td><strong>12 total</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Lone</strong></td>
+            <td>1 vs 3</td>
+            <td>2 × 2 to each opponent</td>
+            <td>4 each</td>
+            <td>4 each + (8 ÷ 3) ≈ 6.67 each</td>
+            <td><strong>12 total</strong></td>
+            <td><strong>20 total</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Dump</strong></td>
+            <td>1 vs 3</td>
+            <td>2 × 2 to each opponent</td>
+            <td>4 each</td>
+            <td>4 each + (8 ÷ 3) ≈ 6.67 each</td>
+            <td><strong>12 total</strong></td>
+            <td><strong>20 total</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Blind</strong></td>
+            <td>1 vs 3</td>
+            <td>2 × 4 to each opponent</td>
+            <td>8 each</td>
+            <td>8 each + (8 ÷ 3) ≈ 10.67 each</td>
+            <td><strong>24 total</strong></td>
+            <td><strong>32 total</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!--Wolf Players and Payouts-->
+    <div class="card game-card p-4 mb-3">
+      <h4>Players & Payouts</h4>
+
+      <div class="row g-2 mb-3">
+        <div class="col-6"><input class="form-control player" placeholder="Player 1"></div>
+        <div class="col-6"><input class="form-control player" placeholder="Player 2"></div>
+        <div class="col-6"><input class="form-control player" placeholder="Player 3"></div>
+        <div class="col-6"><input class="form-control player" placeholder="Player 4"></div>
+      </div>
+
+      <div class="row g-2">
+        <!-- ✅ Points Per Hole -->
+        <div class="col-6">
+          <label class="small">Points Per Hole</label>
+          <input id="base" type="number" class="form-control" value="6">
+        </div>
+
+        <div class="col-6">
+          <label class="small">$/Point</label>
+          <input id="dollarValue" type="number" step=".25" class="form-control" value="1">
+        </div>
+
+        <!-- ✅ Lone Toggle + Inputs -->
+        <div class="col-12 mt-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <label class="small m-0">Lone Setting</label>
+            <div class="form-check form-switch m-0">
+              <input class="form-check-input" type="checkbox" id="loneUseMultiplier" checked>
+              <label class="form-check-label small" for="loneUseMultiplier">Use Multiplier</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <label class="small">Lone Mult</label>
+          <input id="loneMult" type="number" class="form-control" value="2">
+        </div>
+        <div class="col-6">
+          <label class="small">Lone Fixed Points</label>
+          <input id="loneFixed" type="number" class="form-control" value="0">
+        </div>
+
+        <!-- ✅ Dump Toggle + Inputs -->
+        <div class="col-12 mt-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <label class="small m-0">Dump Setting</label>
+            <div class="form-check form-switch m-0">
+              <input class="form-check-input" type="checkbox" id="dumpUseMultiplier" checked>
+              <label class="form-check-label small" for="dumpUseMultiplier">Use Multiplier</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <label class="small">Dump Mult</label>
+          <input id="dumpMult" type="number" class="form-control" value="2">
+        </div>
+        <div class="col-6">
+          <label class="small">Dump Fixed Points</label>
+          <input id="dumpFixed" type="number" class="form-control" value="0">
+        </div>
+
+        <!-- ✅ Blind Toggle + Inputs -->
+        <div class="col-12 mt-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <label class="small m-0">Blind Setting</label>
+            <div class="form-check form-switch m-0">
+              <input class="form-check-input" type="checkbox" id="blindUseMultiplier" checked>
+              <label class="form-check-label small" for="blindUseMultiplier">Use Multiplier</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <label class="small">Blind Mult</label>
+          <input id="blindMult" type="number" class="form-control" value="2">
+        </div>
+        <div class="col-6">
+          <label class="small">Blind Fixed Points</label>
+          <input id="blindFixed" type="number" class="form-control" value="0">
+        </div>
+      </div>
+
+      <!-- ✅ TIE OPTIONS + TOGGLE -->
+      <div class="row g-2 mt-3">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center">
+            <label class="small m-0">Tie Setting</label>
+            <div class="form-check form-switch m-0">
+              <input class="form-check-input" type="checkbox" id="tieUseMultiplier">
+              <label class="form-check-label small" for="tieUseMultiplier">Use Multiplier</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <label class="small">Tie Points (Fixed)</label>
+          <input type="number" id="tieSetPoints" class="form-control" min="0" value="6">
+        </div>
+        <div class="col-6">
+          <label class="small">Tie Multiplier</label>
+          <input type="number" id="tieMultiplier" class="form-control" min="1" value="2">
+        </div>
+      </div>
+    </div>
+
+    <!-- FULLSCREEN WRAPPER -->
+    <div id="selectionWrapper" class="card game-card p-4 mb-3">
+
+      <div class="mb-3 text-center">
+        <button id="fullscreenBtn" class="btn btn-secondary">📱 Fullscreen Selection</button>
+      </div>
+
+      <div id="fullscreenContent">
+
+        <!-- Hole Nav -->
+        <div class="card game-card p-3 mb-3 text-center" id="holeNavCard">
+          <div class="d-flex justify-content-between align-items-center">
+            <button class="btn btn-secondary" onclick="prevHole()">← Back</button>
+            <h4 id="holeTitle" class="m-0"></h4>
+            <button class="btn btn-secondary" onclick="nextHole()">Next →</button>
+          </div>
+        </div>
+
+        <!-- Hole Setup -->
+        <div class="card game-card p-4 mb-3" id="holeSetupCard">
+          <h4>Hole Setup & Results</h4>
+
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="small">Wolf</label>
+              <select id="wolfSelect" class="form-select"></select>
+            </div>
+            <div class="col-6">
+              <label class="small">Hole Setup</label>
+              <select id="holeSetupSelect" class="form-select"></select>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <button id="pushBtn" class="btn btn-warning w-100" onclick="selectResult(this,'push')">Push</button>
+            </div>
+            <div class="col-6">
+              <button id="dumpModeBtn" class="btn btn-dark w-100" onclick="selectDump(this)">Dump</button>
+            </div>
+          </div>
+
+          <div id="teamBtns" class="d-grid gap-2 hidden">
+            <button class="btn team-win" onclick="selectResult(this,'wolfTeam')">Wolf Team Wins</button>
+            <button class="btn team-lose" onclick="selectResult(this,'others')">Other Team Wins</button>
+          </div>
+
+          <div id="loneBtns" class="d-grid gap-2 hidden">
+            <button class="btn lone-win" onclick="selectResult(this,'loneWin')">Lone Wolf Wins</button>
+            <button class="btn lone-lose" onclick="selectResult(this,'loneLose')">Lone Wolf Loses</button>
+          </div>
+
+          <div id="dumpBtns" class="d-grid gap-2 hidden">
+            <button class="btn dump-win" onclick="selectResult(this,'dumpWin')">Dump Wins</button>
+            <button class="btn dump-lose" onclick="selectResult(this,'dumpLose')">Others Win</button>
+          </div>
+
+          <div id="blindBtns" class="d-grid gap-2 hidden">
+            <button class="btn lone-win" onclick="selectResult(this,'loneWin')">Blind Wolf Wins</button>
+            <button class="btn lone-lose" onclick="selectResult(this,'loneLose')">Blind Wolf Loses</button>
+          </div>
+        </div>
+
+        <!-- POT -->
+        <div id="potBanner" class="pot-banner hidden">
+          POT: <span id="potValue">0</span> pts
+        </div>
+
+        <!-- SCOREBOARD -->
+        <div class="card game-card p-2" id="scoreboardCard">
+          <h4 class="text-center fs-6 mb-1">🐺 Wolf Scoreboard</h4>
+
+          <div class="d-flex mb-1 text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6" id="t0"></div>
+              <div id="m0" class="fs-6 fw-bold"></div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6" id="t1"></div>
+              <div id="m1" class="fs-6 fw-bold"></div>
+            </div>
+          </div>
+
+          <div class="d-flex text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6" id="t2"></div>
+              <div id="m2" class="fs-6 fw-bold"></div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6" id="t3"></div>
+              <div id="m3" class="fs-6 fw-bold"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!--feedback-->
+    <div class="row justify-content-center">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">💬 Feedback & Suggestions</div>
+          <div class="card-body">
+            <form id="feedbackForm">
+              <div class="mb-3">
+                <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
+                <textarea class="form-control" id="feedbackInput" rows="3"
+                  placeholder="Type your feedback here..."></textarea>
+              </div>
+              <button type="submit" class="btn">📨 Submit Feedback</button>
+              <p id="feedbackStatus" class="mt-2"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../feedback.js"></script>
+
+  </div>
+
+  <!-- Login / Signup Modal -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="loginMessage" style="height: 1.5em;"></div>
+          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+          <hr />
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="signupMessage" style="height: 1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="foot" class="text-center mt-5 py-4">
+    &copy; 2025 GoodFlightGolf. All rights reserved.
+  </footer>
+
+  <!-- Firebase SDK (compat versions, no modules) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+
+  <!-- Bootstrap JS for modal -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("CJRVHaDVYa2VCU89T");
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+
+  <script src="../myscripts.js"></script>
+  <script src="wolf.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const modal = document.getElementById("wolfRulesModal");
+      const openBtn = document.getElementById("wolfRulesBtn");
+      const closeBtn = document.getElementById("closeWolfRulesBtn");
+
+      if (!modal || !openBtn || !closeBtn) return;
+
+      // start hidden no matter what
+      modal.classList.add("hidden");
+
+      openBtn.addEventListener("click", () => {
+        modal.classList.remove("hidden");
+      });
+
+      closeBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+      });
+
+      // click outside closes
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.classList.add("hidden");
+      });
+
+      // ESC closes
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") modal.classList.add("hidden");
+      });
+    });
+  </script>
+
+  <script>
+    // Back to top
+    const mybutton = document.getElementById("btn-back-to-top");
+
+    window.addEventListener("scroll", () => {
+      if (!mybutton) return;
+      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
+    });
+
+    mybutton?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+
+</body>
+
+</html>

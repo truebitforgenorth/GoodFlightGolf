@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us | GreenFlightGolf</title>
+    <link rel="icon" href="photos/GFGlogo.png" type="image/png" />
+    <link rel="stylesheet" href="../main2.css" />
+
+    <style>
+        /* =====================================================
+       ABOUT PAGE — FULLY SCOPED
+       Safe to use alongside main2.css
+    ===================================================== */
+        body.gfg-about-page {
+            background:
+                radial-gradient(circle at top left, rgba(53, 148, 71, 0.08), transparent 28%),
+                radial-gradient(circle at top right, rgba(250, 208, 46, 0.10), transparent 24%),
+                linear-gradient(180deg, #f6faf6 0%, #ffffff 45%, #f6faf6 100%);
+            color: #1f2937;
+            overflow-x: hidden;
+        }
+
+        body.gfg-about-page * {
+            box-sizing: border-box;
+        }
+
+        body.gfg-about-page .gfg-about-wrap {
+            width: min(1200px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        body.gfg-about-page .gfg-about-section {
+            padding: 72px 0;
+            position: relative;
+        }
+
+        body.gfg-about-page .gfg-about-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(53, 148, 71, 0.10);
+            border: 1px solid rgba(53, 148, 71, 0.18);
+            color: #276a36;
+            font-size: 0.88rem;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        body.gfg-about-page .gfg-about-title {
+            font-size: clamp(2.4rem, 5vw, 4.7rem);
+            line-height: 1.04;
+            font-weight: 900;
+            color: #0f172a;
+            margin: 0 0 18px;
+            letter-spacing: -1.8px;
+        }
+
+        body.gfg-about-page .gfg-about-lead {
+            font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+            line-height: 1.8;
+            color: #475569;
+            max-width: 780px;
+            margin: 0;
+        }
+
+        /* HERO */
+        body.gfg-about-page .gfg-about-hero {
+            position: relative;
+            padding: 96px 0 72px;
+            overflow: hidden;
+        }
+
+        body.gfg-about-page .gfg-about-hero-grid {
+            display: grid;
+            grid-template-columns: 1.12fr 0.88fr;
+            gap: 28px;
+            align-items: stretch;
+        }
+
+        body.gfg-about-page .gfg-about-hero-left {
+            position: relative;
+            z-index: 2;
+        }
+
+        body.gfg-about-page .gfg-about-hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 30px;
+        }
+
+        body.gfg-about-page .gfg-about-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 52px;
+            padding: 13px 22px;
+            border-radius: 999px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+        }
+
+        body.gfg-about-page .gfg-about-btn-primary {
+            background: linear-gradient(180deg, #359447, #276a36);
+            color: #fff;
+            box-shadow: 0 16px 36px rgba(39, 106, 54, 0.24);
+            border: 1px solid rgba(39, 106, 54, 0.45);
+        }
+
+        body.gfg-about-page .gfg-about-btn-secondary {
+            background: #fff;
+            color: #0f172a;
+            border: 1px solid rgba(15, 23, 42, 0.10);
+            box-shadow: 0 14px 30px rgba(2, 6, 23, 0.08);
+        }
+
+        body.gfg-about-page .gfg-about-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        body.gfg-about-page .gfg-about-hero-right {
+            position: relative;
+            min-height: 520px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            z-index: 2;
+        }
+
+        body.gfg-about-page .gfg-about-panel {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 28px;
+            box-shadow: 0 24px 54px rgba(15, 23, 42, 0.10);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.gfg-about-page .gfg-about-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(53, 148, 71, 0.06), rgba(250, 208, 46, 0.06));
+            pointer-events: none;
+        }
+
+        body.gfg-about-page .gfg-about-panel-tall {
+            min-height: 250px;
+        }
+
+        body.gfg-about-page .gfg-about-panel-short {
+            min-height: 190px;
+        }
+
+        body.gfg-about-page .gfg-about-panel h3 {
+            position: relative;
+            z-index: 1;
+            margin: 0 0 10px;
+            font-size: 1.25rem;
+            color: #0f172a;
+        }
+
+        body.gfg-about-page .gfg-about-panel p,
+        body.gfg-about-page .gfg-about-panel li {
+            position: relative;
+            z-index: 1;
+            color: #475569;
+            line-height: 1.75;
+            margin: 0;
+            font-size: 0.98rem;
+        }
+
+        body.gfg-about-page .gfg-about-panel ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+
+        body.gfg-about-page .gfg-about-metric {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        body.gfg-about-page .gfg-about-metric-number {
+            font-size: 2.6rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #359447;
+        }
+
+        body.gfg-about-page .gfg-about-metric-label {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 1rem;
+        }
+
+        body.gfg-about-page .gfg-about-orb,
+        body.gfg-about-page .gfg-about-ring {
+            position: absolute;
+            border-radius: 999px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body.gfg-about-page .gfg-about-orb.one {
+            width: 260px;
+            height: 260px;
+            right: -80px;
+            top: -40px;
+            background: radial-gradient(circle, rgba(53, 148, 71, 0.18), rgba(53, 148, 71, 0));
+            filter: blur(10px);
+        }
+
+        body.gfg-about-page .gfg-about-orb.two {
+            width: 280px;
+            height: 280px;
+            left: -100px;
+            bottom: -90px;
+            background: radial-gradient(circle, rgba(250, 208, 46, 0.16), rgba(250, 208, 46, 0));
+            filter: blur(8px);
+        }
+
+        body.gfg-about-page .gfg-about-ring {
+            border: 1px solid rgba(53, 148, 71, 0.16);
+        }
+
+        body.gfg-about-page .gfg-about-ring.one {
+            width: 520px;
+            height: 520px;
+            top: -150px;
+            left: -120px;
+        }
+
+        body.gfg-about-page .gfg-about-ring.two {
+            width: 360px;
+            height: 360px;
+            right: -120px;
+            bottom: -120px;
+            border-color: rgba(250, 208, 46, 0.22);
+        }
+
+        /* STATS STRIP */
+        body.gfg-about-page .gfg-about-stats {
+            margin-top: 34px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        body.gfg-about-page .gfg-about-stat {
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 20px;
+            padding: 20px 18px;
+            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+            backdrop-filter: blur(8px);
+        }
+
+        body.gfg-about-page .gfg-about-stat strong {
+            display: block;
+            font-size: 1.55rem;
+            color: #359447;
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+
+        body.gfg-about-page .gfg-about-stat span {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* GENERAL CARDS */
+        body.gfg-about-page .gfg-about-card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            margin-top: 34px;
+        }
+
+        body.gfg-about-page .gfg-about-card {
+            background: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.gfg-about-page .gfg-about-card::after {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #359447, #fad02e);
+        }
+
+        body.gfg-about-page .gfg-about-card h3 {
+            margin: 10px 0 12px;
+            font-size: 1.28rem;
+            color: #0f172a;
+        }
+
+        body.gfg-about-page .gfg-about-card p {
+            margin: 0;
+            color: #475569;
+            line-height: 1.8;
+            font-size: 0.98rem;
+        }
+
+        body.gfg-about-page .gfg-about-icon {
+            width: 54px;
+            height: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(53, 148, 71, 0.14), rgba(250, 208, 46, 0.18));
+            color: #276a36;
+            font-size: 1.35rem;
+            font-weight: 900;
+        }
+
+        /* STORY / SPLIT SECTION */
+        body.gfg-about-page .gfg-about-split {
+            display: grid;
+            grid-template-columns: 0.95fr 1.05fr;
+            gap: 28px;
+            align-items: stretch;
+        }
+
+        body.gfg-about-page .gfg-about-story-box,
+        body.gfg-about-page .gfg-about-quote-box {
+            background: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+            padding: 32px;
+            height: 100%;
+        }
+
+        body.gfg-about-page .gfg-about-story-box p,
+        body.gfg-about-page .gfg-about-quote-box p,
+        body.gfg-about-page .gfg-about-story-box li {
+            color: #475569;
+            line-height: 1.85;
+            font-size: 1rem;
+        }
+
+        body.gfg-about-page .gfg-about-story-box h3,
+        body.gfg-about-page .gfg-about-quote-box h3 {
+            margin: 0 0 16px;
+            font-size: 1.5rem;
+            color: #0f172a;
+        }
+
+        body.gfg-about-page .gfg-about-quote {
+            font-size: 1.45rem;
+            line-height: 1.6;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 20px;
+        }
+
+        body.gfg-about-page .gfg-about-story-list {
+            margin: 22px 0 0;
+            padding-left: 20px;
+        }
+
+        /* FEATURE STRIP */
+        body.gfg-about-page .gfg-about-feature-strip {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 28px;
+        }
+
+        body.gfg-about-page .gfg-about-feature {
+            background: linear-gradient(180deg, #ffffff, #f9fcf9);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+        }
+
+        body.gfg-about-page .gfg-about-feature h4 {
+            margin: 0 0 10px;
+            color: #0f172a;
+            font-size: 1.1rem;
+        }
+
+        body.gfg-about-page .gfg-about-feature p {
+            margin: 0;
+            color: #475569;
+            line-height: 1.75;
+        }
+
+        /* TIMELINE */
+        body.gfg-about-page .gfg-about-timeline {
+            position: relative;
+            margin-top: 36px;
+            display: grid;
+            gap: 18px;
+        }
+
+        body.gfg-about-page .gfg-about-timeline::before {
+            content: "";
+            position: absolute;
+            left: 17px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #359447, rgba(53, 148, 71, 0.08));
+        }
+
+        body.gfg-about-page .gfg-about-step {
+            position: relative;
+            display: grid;
+            grid-template-columns: 54px 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+
+        body.gfg-about-page .gfg-about-step-dot {
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #359447, #276a36);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            box-shadow: 0 10px 22px rgba(39, 106, 54, 0.24);
+            margin-top: 3px;
+            position: relative;
+            z-index: 2;
+        }
+
+        body.gfg-about-page .gfg-about-step-card {
+            background: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 22px;
+            padding: 22px 24px;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+        }
+
+        body.gfg-about-page .gfg-about-step-card h4 {
+            margin: 0 0 8px;
+            color: #0f172a;
+            font-size: 1.05rem;
+        }
+
+        body.gfg-about-page .gfg-about-step-card p {
+            margin: 0;
+            color: #475569;
+            line-height: 1.75;
+        }
+
+        /* CTA */
+        body.gfg-about-page .gfg-about-cta {
+            position: relative;
+            padding: 0 0 90px;
+        }
+
+        body.gfg-about-page .gfg-about-cta-box {
+            background:
+                radial-gradient(circle at top left, rgba(250, 208, 46, 0.18), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(53, 148, 71, 0.20), transparent 35%),
+                linear-gradient(135deg, #101827 0%, #172233 100%);
+            border-radius: 34px;
+            padding: 42px 34px;
+            color: #fff;
+            box-shadow: 0 28px 60px rgba(15, 23, 42, 0.22);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.gfg-about-page .gfg-about-cta-box h2 {
+            margin: 0 0 14px;
+            font-size: clamp(2rem, 4vw, 3.1rem);
+            line-height: 1.08;
+            font-weight: 900;
+            letter-spacing: -1.2px;
+            color: #fff;
+        }
+
+        body.gfg-about-page .gfg-about-cta-box p {
+            margin: 0;
+            max-width: 760px;
+            line-height: 1.85;
+            color: rgba(255, 255, 255, 0.86);
+            font-size: 1.03rem;
+        }
+
+        body.gfg-about-page .gfg-about-cta-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        body.gfg-about-page .gfg-about-btn-light {
+            background: #fff;
+            color: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+        }
+
+        body.gfg-about-page .gfg-about-btn-gold {
+            background: linear-gradient(180deg, #fad02e, #e7bc19);
+            color: #111827;
+            border: 1px solid rgba(250, 208, 46, 0.4);
+            box-shadow: 0 14px 28px rgba(250, 208, 46, 0.18);
+        }
+
+        /* TEXT STYLES */
+        body.gfg-about-page .gfg-about-section-heading {
+            font-size: clamp(1.9rem, 3vw, 3rem);
+            line-height: 1.1;
+            margin: 0 0 14px;
+            color: #0f172a;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        body.gfg-about-page .gfg-about-section-subtext {
+            max-width: 820px;
+            color: #475569;
+            line-height: 1.8;
+            font-size: 1.02rem;
+            margin: 0;
+        }
+
+        body.gfg-about-page .gfg-about-highlight {
+            color: #276a36;
+            font-weight: 800;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1080px) {
+
+            body.gfg-about-page .gfg-about-hero-grid,
+            body.gfg-about-page .gfg-about-split,
+            body.gfg-about-page .gfg-about-card-grid,
+            body.gfg-about-page .gfg-about-stats,
+            body.gfg-about-page .gfg-about-feature-strip {
+                grid-template-columns: 1fr;
+            }
+
+            body.gfg-about-page .gfg-about-hero-right {
+                min-height: unset;
+            }
+        }
+
+        @media (max-width: 720px) {
+            body.gfg-about-page .gfg-about-hero {
+                padding: 70px 0 54px;
+            }
+
+            body.gfg-about-page .gfg-about-section {
+                padding: 56px 0;
+            }
+
+            body.gfg-about-page .gfg-about-panel,
+            body.gfg-about-page .gfg-about-card,
+            body.gfg-about-page .gfg-about-story-box,
+            body.gfg-about-page .gfg-about-quote-box,
+            body.gfg-about-page .gfg-about-step-card {
+                padding: 22px;
+                border-radius: 22px;
+            }
+
+            body.gfg-about-page .gfg-about-cta-box {
+                padding: 30px 22px;
+                border-radius: 24px;
+            }
+
+            body.gfg-about-page .gfg-about-wrap {
+                width: min(100% - 22px, 1200px);
+            }
+        }
+    </style>
+</head>
+
+<body class="gfg-about-page">
+
+
+
+    <!-- HERO -->
+    <section class="gfg-about-hero">
+        <div class="gfg-about-orb one"></div>
+        <div class="gfg-about-orb two"></div>
+        <div class="gfg-about-ring one"></div>
+        <div class="gfg-about-ring two"></div>
+
+        <div class="gfg-about-wrap">
+
+            <div class="gfg-about-hero-grid">
+                <div class="gfg-about-hero-left">
+                    <div class="gfg-about-kicker">About GreenFlightGolf</div>
+                    <h1 class="gfg-about-title">
+                        Built for golfers who want more than just a scorecard.
+                    </h1>
+                    <p class="gfg-about-lead">
+                        GreenFlightGolf was created to bring together the competitive spirit of golf,
+                        the precision of performance tracking, and the power of modern technology into
+                        one clean, growing platform. We are building a place where golfers can calculate,
+                        compete, analyze, improve, and enjoy the game on a deeper level.
+                    </p>
+
+                    <div class="gfg-about-hero-actions">
+                        <a href="../index.html" class="gfg-about-btn gfg-about-btn-primary">Back to Home</a>
+                        <a href="#our-story" class="gfg-about-btn gfg-about-btn-secondary">Explore Our Story</a>
+                    </div>
+
+                    <div class="gfg-about-stats">
+                        <div class="gfg-about-stat">
+                            <strong>Performance</strong>
+                            <span>Tools designed to help golfers make smarter decisions and understand their
+                                game.</span>
+                        </div>
+                        <div class="gfg-about-stat">
+                            <strong>Competition</strong>
+                            <span>Game formats and scoring systems that make group rounds more fun and organized.</span>
+                        </div>
+                        <div class="gfg-about-stat">
+                            <strong>Innovation</strong>
+                            <span>A modern golf platform that blends data, design, and user-friendly features.</span>
+                        </div>
+                        <div class="gfg-about-stat">
+                            <strong>Growth</strong>
+                            <span>A vision that keeps expanding with tools, pages, and experiences for serious
+                                players.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gfg-about-hero-right">
+                    <div class="gfg-about-panel gfg-about-panel-tall">
+                        <div class="gfg-about-metric">
+                            <div class="gfg-about-metric-number">01</div>
+                            <div class="gfg-about-metric-label">Precision-driven tools</div>
+                            <p>
+                                From shot calculations to performance-focused features, GreenFlightGolf is built around
+                                useful tools that support real golf decisions.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="gfg-about-panel gfg-about-panel-short">
+                        <h3>Competitive by nature</h3>
+                        <p>
+                            Games like Wolf, 666, and other group formats give rounds structure, tension, and energy.
+                        </p>
+                    </div>
+
+                    <div class="gfg-about-panel gfg-about-panel-short">
+                        <h3>Designed to feel premium</h3>
+                        <p>
+                            Clean layouts, sharp styling, and a modern visual identity that reflects the quality of the
+                            brand.
+                        </p>
+                    </div>
+
+                    <div class="gfg-about-panel gfg-about-panel-tall">
+                        <h3>Made for the modern golfer</h3>
+                        <ul>
+                            <li>Track performance</li>
+                            <li>Use calculators with purpose</li>
+                            <li>Manage golf games more easily</li>
+                            <li>Turn casual rounds into smarter competition</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MISSION / DIFFERENCE -->
+    <section class="gfg-about-section">
+        <div class="gfg-about-wrap">
+            <div class="gfg-about-kicker">What We Stand For</div>
+            <h2 class="gfg-about-section-heading">Our mission is to elevate the way golfers experience improvement.</h2>
+            <p class="gfg-about-section-subtext">
+                At GreenFlightGolf, the goal is not to add noise to the game. It is to create tools and experiences that
+                actually matter. We believe golf deserves technology that feels purposeful, competitive formats that are
+                easier
+                to manage, and a platform that respects both the tradition of the game and the future of it. Every page,
+                every
+                calculator, every feature, and every design decision is meant to help golfers engage with the game in a
+                smarter,
+                more exciting way.
+            </p>
+
+            <div class="gfg-about-card-grid">
+                <div class="gfg-about-card">
+                    <div class="gfg-about-icon">⛳</div>
+                    <h3>Built for real golfers</h3>
+                    <p>
+                        GreenFlightGolf is not built around empty features. It is built around the parts of golf players
+                        actually
+                        care about: distances, decisions, formats, scores, improvement, and the kind of small
+                        competitive details
+                        that make rounds memorable.
+                    </p>
+                </div>
+
+                <div class="gfg-about-card">
+                    <div class="gfg-about-icon">📊</div>
+                    <h3>Data that has purpose</h3>
+                    <p>
+                        Numbers only matter when they help you play better. That is why our performance tools focus on
+                        practical,
+                        usable insights instead of clutter. We want golfers to understand their game, not get buried in
+                        meaningless data.
+                    </p>
+                </div>
+
+                <div class="gfg-about-card">
+                    <div class="gfg-about-icon">🔥</div>
+                    <h3>Competition made better</h3>
+                    <p>
+                        Golf becomes even better when the competition is organized, clear, and engaging. Our game pages
+                        are designed
+                        to keep matches moving, eliminate confusion, and make group formats feel more polished and fun.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STORY -->
+    <section class="gfg-about-section" id="our-story">
+        <div class="gfg-about-wrap">
+            <div class="gfg-about-split">
+                <div class="gfg-about-story-box">
+                    <div class="gfg-about-kicker">Our Story</div>
+                    <h3>Why GreenFlightGolf exists</h3>
+                    <p>
+                        GreenFlightGolf started from a simple but powerful idea: golfers should have access to better
+                        tools,
+                        cleaner design, and more useful experiences all in one place. Too often, golf resources feel
+                        fragmented.
+                        One tool lives in one place, a game format is explained somewhere else, performance tracking
+                        lives somewhere
+                        else, and none of it feels connected.
+                    </p>
+                    <p>
+                        GreenFlightGolf was created to change that. The vision was to build a platform where golfers
+                        could return
+                        again and again for meaningful tools, practical game support, performance insights, and a
+                        stronger overall
+                        experience around the sport.
+                    </p>
+
+                    <ul class="gfg-about-story-list">
+                        <li>One place for golf tools that actually help.</li>
+                        <li>One place for games that make rounds more competitive.</li>
+                        <li>One place for tracking growth and understanding performance.</li>
+                        <li>One place where golf and modern design feel naturally connected.</li>
+                    </ul>
+                </div>
+
+                <div class="gfg-about-quote-box">
+                    <div class="gfg-about-kicker">The Idea Behind It</div>
+                    <p class="gfg-about-quote">
+                        “What if all the tools, game formats, and golf resources players actually wanted were brought
+                        together into
+                        one platform that looked great, worked smoothly, and kept getting better?”
+                    </p>
+                    <p>
+                        That mindset continues to shape GreenFlightGolf. The platform is being built for golfers who
+                        care about
+                        <span class="gfg-about-highlight">playing smarter</span>, <span
+                            class="gfg-about-highlight">competing harder</span>,
+                        and <span class="gfg-about-highlight">tracking their progress with purpose</span>.
+                    </p>
+
+                    <div class="gfg-about-feature-strip">
+                        <div class="gfg-about-feature">
+                            <h4>Classic game, modern tools</h4>
+                            <p>
+                                Golf’s traditions matter. GreenFlightGolf respects that, while introducing digital tools
+                                that make the game more useful and enjoyable.
+                            </p>
+                        </div>
+                        <div class="gfg-about-feature">
+                            <h4>Designed to keep evolving</h4>
+                            <p>
+                                This is not a static site. It is a growing platform with a bigger vision for
+                                calculators, tracking, games, and interactive features.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHAT MAKES US DIFFERENT -->
+    <section class="gfg-about-section">
+        <div class="gfg-about-wrap">
+            <div class="gfg-about-kicker">What Makes Us Different</div>
+            <h2 class="gfg-about-section-heading">A golf platform where strategy, technology, and competition meet.</h2>
+            <p class="gfg-about-section-subtext">
+                GreenFlightGolf is not trying to be just another golf page. It is being built as a fuller ecosystem. The
+                focus
+                is on bringing together the parts of the game that players care about most and presenting them in a
+                clean,
+                modern, and genuinely useful way.
+            </p>
+
+            <div class="gfg-about-card-grid">
+                <div class="gfg-about-card">
+                    <div class="gfg-about-icon">🎯</div>
+                    <h3>Performance-focused mindset</h3>
+                    <p>
+                        Every golfer wants more consistency, more clarity, and better decisions. Our calculators and
+                        tracking tools
+                        are built to support that mindset by giving users information they can actually use on and off
+                        the course.
+                    </p>
+                </div>
+
+                <div class="gfg-about-card">
+                    <div class="gfg-about-icon">🏆</div>
+                    <h3>Competitive round support</h3>
+                    <p>
+                        Wolf, 666, and other golf games are some of the best parts of playing with a group, but they can
+                        get messy
+                        fast without good structure. GreenFlightGolf helps bring order, excitement, and visual clarity
+                        to those formats.
+                    </p>
+                </div>
+
+                <div class="gfg-about-card">
+                    <div class="gfg-about-icon">💻</div>
+                    <h3>Clean modern experience</h3>
+                    <p>
+                        The platform is being built with the belief that golf websites can feel premium. Sharp visuals,
+                        strong layout,
+                        responsive pages, and a polished brand experience all matter because they shape how users
+                        interact with the site.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHAT GFG OFFERS -->
+    <section class="gfg-about-section">
+        <div class="gfg-about-wrap">
+            <div class="gfg-about-kicker">What GreenFlightGolf Offers</div>
+            <h2 class="gfg-about-section-heading">More than content — an expanding toolkit for golfers.</h2>
+            <p class="gfg-about-section-subtext">
+                GreenFlightGolf is being built around a growing set of features that support improvement, simplify game
+                management,
+                and make the overall golf experience more interactive.
+            </p>
+
+            <div class="gfg-about-card-grid">
+                <div class="gfg-about-card">
+                    <div class="gfg-about-icon">🧮</div>
+                    <h3>Shot and golf tools</h3>
+                    <p>
+                        Tools like shot calculators and performance-based features are designed to help golfers think
+                        more clearly
+                        about distance, conditions, and execution. The goal is to turn information into better
+                        decisions.
+                    </p>
+                </div>
+
+                <div class="gfg-about-card">
+                    <div class="gfg-about-icon">📈</div>
+                    <h3>Tracking and progression</h3>
+                    <p>
+                        Golf improvement happens over time, not in one round. Tracking features help users see patterns,
+                        follow progress,
+                        and build a better understanding of where their game is headed.
+                    </p>
+                </div>
+
+                <div class="gfg-about-card">
+                    <div class="gfg-about-icon">🎲</div>
+                    <h3>Interactive golf games</h3>
+                    <p>
+                        Group golf should feel exciting, organized, and easy to follow. GreenFlightGolf brings popular
+                        formats into a more
+                        usable digital experience so players can spend less time sorting rules and more time competing.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISION -->
+    <section class="gfg-about-section">
+        <div class="gfg-about-wrap">
+            <div class="gfg-about-kicker">Our Vision</div>
+            <h2 class="gfg-about-section-heading">We believe the future of golf is smarter, more connected, and more
+                interactive.</h2>
+            <p class="gfg-about-section-subtext">
+                Golf is evolving. Players want more than static content. They want tools that help them think, features
+                that help
+                them track, game pages that actually work, and platforms that feel alive. GreenFlightGolf is being
+                shaped around
+                that future.
+            </p>
+
+            <div class="gfg-about-timeline">
+                <div class="gfg-about-step">
+                    <div class="gfg-about-step-dot">1</div>
+                    <div class="gfg-about-step-card">
+                        <h4>Make golf tools more practical</h4>
+                        <p>
+                            Build calculators and support systems that feel clear, useful, and connected to real golf
+                            decisions instead of generic filler features.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="gfg-about-step">
+                    <div class="gfg-about-step-dot">2</div>
+                    <div class="gfg-about-step-card">
+                        <h4>Make competitive rounds easier to manage</h4>
+                        <p>
+                            Turn classic golf betting games and match formats into smoother digital experiences that
+                            help players focus on the fun and competition.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="gfg-about-step">
+                    <div class="gfg-about-step-dot">3</div>
+                    <div class="gfg-about-step-card">
+                        <h4>Make progress visible</h4>
+                        <p>
+                            Give golfers better ways to track their growth over time so improvement feels measurable,
+                            motivating, and easier to understand.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="gfg-about-step">
+                    <div class="gfg-about-step-dot">4</div>
+                    <div class="gfg-about-step-card">
+                        <h4>Keep building a fuller golf ecosystem</h4>
+                        <p>
+                            Expand GreenFlightGolf into a stronger all-in-one destination for tools, experiences,
+                            calculators, game formats, and golf-focused innovation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOUNDER -->
+    <section class="gfg-about-section">
+        <div class="gfg-about-wrap">
+            <div class="gfg-about-split">
+                <div class="gfg-about-story-box">
+                    <div class="gfg-about-kicker">Founder</div>
+                    <h3>Built with a golfer’s mindset</h3>
+                    <p>
+                        GreenFlightGolf was founded by <span class="gfg-about-highlight">Kyle Larson</span>, with the
+                        idea that golf tools
+                        should be more useful, more engaging, and better designed. The platform comes from a genuine
+                        desire to improve
+                        the golfer’s experience — not just by adding features, but by building features that truly
+                        matter.
+                    </p>
+                    <p>
+                        The foundation of the brand is rooted in competitive energy, personal improvement, and the drive
+                        to create
+                        something that golfers can keep coming back to.
+                    </p>
+                </div>
+
+                <div class="gfg-about-quote-box">
+                    <div class="gfg-about-kicker">Brand Philosophy</div>
+                    <h3>What GreenFlightGolf stands for</h3>
+                    <p>
+                        GreenFlightGolf is about more than just information. It is about creating an experience around
+                        golf that feels
+                        sharper, cleaner, and more intentional. It stands for performance, competition, clarity,
+                        creativity, and long-term growth.
+                    </p>
+                    <p>
+                        It is being built for golfers who love the game enough to take the details seriously — and who
+                        still want the
+                        experience to feel exciting, modern, and fun.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="gfg-about-cta">
+        <div class="gfg-about-wrap">
+            <div class="gfg-about-cta-box">
+                <div class="gfg-about-kicker"
+                    style="background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.14); color: #fff;">
+                    Join the Movement
+                </div>
+                <h2>Play smarter. Compete harder. Build a better golf experience.</h2>
+                <p>
+                    GreenFlightGolf is growing into a modern home for golfers who care about performance, strategy, and
+                    competition.
+                    Whether you are here for the tools, the games, the tracking, or the vision behind the platform, this
+                    is only the beginning.
+                </p>
+
+                <div class="gfg-about-cta-actions">
+                    <a href="index.html" class="gfg-about-btn gfg-about-btn-light">Return Home</a>
+                    <a href="labs.html" class="gfg-about-btn gfg-about-btn-gold">Explore More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<footer class="gfg-footer">
+  <div class="gfg-footer-container">
+
+    <!-- Logo Section -->
+    <div class="gfg-footer-logo">
+      <img src="photos/TrueBitForgeNorthLogo1.png" alt="TrueBit Forge North LLC Logo">
+    </div>
+
+    <!-- Footer Info -->
+    <div class="gfg-footer-content">
+      <p class="gfg-footer-copy">
+        © 2026 GreenFlightGolf. All rights reserved.
+      </p>
+
+      <p class="gfg-footer-ownership">
+        GreenFlightGolf is owned and operated by 
+        <strong>TrueBit Forge North LLC</strong>, 
+        a Wisconsin limited liability company.
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+</body>
+
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GoodFlightGolf-HomePage Free Golf Handicap Calculator, Shot Tracker & Club Distance Log</title>
+    <link rel="icon" href="../photos/GFGlogo.png" type="image/x-icon">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../main2.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="path/to/your/favicon.png" type="image/png" />
+
+    <!--SEO-->
+    <title>Free Golf Handicap Calculator, Shot Tracker & Club Distance Log</title>
+    <meta name="description"
+        content="Use GoodFlightGolf to calculate your handicap, track shot flights, and log your club distances — all free and easy to use.">
+    <meta name="keywords"
+        content="golf handicap calculator, shot flight calculator, club distance log, free golf tools, track golf stats">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="GoodFlightGolf">
+    <meta property="og:title" content="GoodFlightGolf - Free Handicap & Shot Tools">
+    <meta property="og:description"
+        content="Track your handicap, log your club distances, and simulate shots — all for free.">
+    <meta property="og:image" content="https://yourdomain.com/photos/GFGlogo.png">
+    <meta property="og:url" content="https://yourdomain.com/">
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body>
+    <!-- Back to top button -->
+    <button type="button" id="btn-back-to-top">
+        <p>Back to Top</p>
+    </button>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">GoodFlight<span>Golf</span>⛳</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav fs-5">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home 🏠</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../main3cal.html">MyFlight 🧮</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="main4news.html">News 🧾</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../games/greenflightgames.html">GoodFlight<span style="color: #fad02e;">Games</span>⛳</a>
+                    </li>
+                    <li>
+                        <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal"
+                            role="button">Login /
+                            Signup</a>
+                        <span id="userEmail" class="btn bg-primary me-3 d-none" style="color: white;"></span>
+                        <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Weather Widget -->
+    <div id="ww_e891b459a24b7" v='1.3' loc='auto'
+        a='{"t":"responsive","lang":"en","sl_lpl":1,"ids":[],"font":"Arial","sl_ics":"one_a","sl_sot":"fahrenheit","cl_bkg":"#388E3C","cl_font":"#FFFFFF","cl_cloud":"#FFFFFF","cl_persp":"#FFFFFF","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722","cl_odd":"#0000000a"}'>
+        More forecasts: <a href="https://oneweather.org/orlando/30_days/" id="ww_e891b459a24b7_u" target="_blank">30 day
+            weather Orlando</a></div>
+    <script async src="https://app3.weatherwidget.org/js/?id=ww_e891b459a24b7"></script>
+
+    <!-- Parallax Section -->
+    <section class="parallax-section2">
+        <div class="parallax-content2">
+            <div style="color: #fad02e;" id="welcomeMessage"></div>
+            <h1><span style="color: #359447;">GoodFlight</span><span style="color: #fad02e;">Golf</span>⛳</h1>
+            <p style="color: white;">Your ultimate golf companion with calculators, charts, and more.</p>
+            <!-- Logo -->
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="gfg-logo-wrapper">
+                        <img src="../photos/GFGlogo.png" alt="GFG Logo" class="gfg-logo-img" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--main container-->
+    <div class="container"><br>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Viktor Hovland’s 2025 PGA Tour Season: Momentum and Major Promise</h2>
+                        <span class="text-muted">
+                            <extrasmall>⏱ 2 min read | Posted 08/10/2025</extrasmall>
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">
+                            <p><strong>A Triumphant Return at Valspar</strong><br>
+                                After nearly two years without a win, Hovland broke through with a flawless performance
+                                at the Valspar
+                                Championship in March—firing rounds of 70-67-69-67 (−11) to edge out Justin Thomas by a
+                                single stroke
+                                for
+                                his first PGA Tour title of 2025
+                                (<a href="https://en.wikipedia.org/wiki/Viktor_Hovland?utm_source=chatgpt.com"
+                                    target="_blank">Wikipedia</a>,
+                                <a href="https://www.espn.com/golf/player/results/_/id/4364873/viktor-hovland?utm_source=chatgpt.com"
+                                    target="_blank">ESPN</a>).
+                            </p>
+
+                            <p><strong>Notable Major Showings</strong><br>
+                                At the U.S. Open in June at Oakmont, Hovland delivered one of his season’s best
+                                performances,
+                                finishing solo
+                                third with a score of +2 and pocketing about US$1.46 million
+                                (<a href="https://en.wikipedia.org/wiki/2025_U.S._Open_%28golf%29?utm_source=chatgpt.com"
+                                    target="_blank">Wikipedia</a>,
+                                <a href="https://www.espn.com/golf/player/results/_/id/4364873/viktor-hovland?utm_source=chatgpt.com"
+                                    target="_blank">ESPN</a>).
+                                He also recorded a solid showing at The Masters, tying for 21st at −2
+                                (<a href="https://www.espn.com/golf/player/results/_/id/4364873/viktor-hovland?utm_source=chatgpt.com"
+                                    target="_blank">ESPN</a>,
+                                <a href="https://en.wikipedia.org/wiki/2025_Masters_Tournament?utm_source=chatgpt.com"
+                                    target="_blank">Wikipedia</a>).
+                            </p>
+
+                            <p><strong>Consistent Top-10s, Room for Improvement</strong><br>
+                                Beyond his win and major finish, Hovland has logged two top-10s so far. With a scoring
+                                average of 70.5
+                                across 15 events, he’s amassed roughly US$4.41 million in earnings this season
+                                (<a href="https://www.statmuse.com/pga/ask/victor-hovland-golf-stats?utm_source=chatgpt.com"
+                                    target="_blank">StatMuse</a>).
+                            </p>
+
+                            <p><strong>Mixed Results in Other Key Events</strong><br>
+                                His FedEx St. Jude Championship saw him finish T41 at −1
+                                (<a href="https://www.espn.com/golf/player/results/_/id/4364873/viktor-hovland?utm_source=chatgpt.com"
+                                    target="_blank">ESPN</a>).
+                                In the Genesis Scottish Open, Hovland shot an impressive bogey-free 66 (−4) in Round 1
+                                and ultimately
+                                ended
+                                tied for 11th
+                                (<a href="https://www.youtube.com/watch?v=iL0DD3mOrAI&utm_source=chatgpt.com"
+                                    target="_blank">YouTube</a>,
+                                <a href="https://www.cbssports.com/golf/players/3048509/viktor-hovland/tournament-results/?utm_source=chatgpt.com"
+                                    target="_blank">CBS Sports</a>,
+                                <a href="https://www.espn.com/golf/player/results/_/id/4364873/viktor-hovland?utm_source=chatgpt.com"
+                                    target="_blank">ESPN</a>).
+                                However, he missed the cut at a few high-profile tournaments including the Genesis
+                                Invitational,
+                                Arnold
+                                Palmer Invitational, and THE PLAYERS Championship
+                                (<a href="https://www.espn.com/golf/player/results/_/id/4364873/viktor-hovland?utm_source=chatgpt.com"
+                                    target="_blank">ESPN</a>).
+                            </p>
+
+                            <p><strong>On the Radar for Season-End and Ryder Cup</strong><br>
+                                With his Valspar win and strong U.S. Open finish, Hovland is gaining attention as a
+                                late-season
+                                contender;
+                                outlets even cite him as an “outright value pick” for upcoming events like the St. Jude
+                                Championship
+                                (<a href="https://www.golfmonthly.com/betting/bazzas-best-bets-at-the-fedex-st-jude-championship-2025?utm_source=chatgpt.com"
+                                    target="_blank">Golf Monthly</a>).
+                                As the Ryder Cup looms, European captain Luke Donald is watching closely—Hovland’s form
+                                positions him
+                                as a
+                                possible key contributor to the team
+                                (<a href="https://www.thetimes.co.uk/article/ryder-cup-2025-how-europe-are-shaping-up-for-giant-new-york-task-98wprwv0m?utm_source=chatgpt.com"
+                                    target="_blank">The Times</a>).
+                            </p>
+
+                            <h4 class="mt-4">Summary at a Glance</h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Highlight</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Win</strong></td>
+                                            <td>Valspar Championship (March)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Major Result</strong></td>
+                                            <td>3rd at U.S. Open; T21 at The Masters</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Stats</strong></td>
+                                            <td>2 Top-10s, ~US$4.41 M in earnings, 70.5 scoring avg</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Others</strong></td>
+                                            <td>Mixed results in other Tour events</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Outlook</strong></td>
+                                            <td>Strong late-season potential and Ryder Cup watchlist</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="mt-3">
+                                Viktor Hovland’s 2025 season has been a blend of breakthrough moments and flashes of
+                                brilliance—even
+                                when
+                                the consistency isn’t always there. His marquee win and strong performance in major
+                                championships keep
+                                him
+                                firmly in the conversation as the season marches toward its climax.
+                            </p>
+                            <!-- Writer -->
+                            <p>
+                                <hr>
+                            <p>About the Writer:</p>
+                            <strong>Charles Greenfield</strong><br>
+                            <em>Writing the game, one hole at a time.</em>
+                            <br><br>
+                            I’ve been chasing golf balls — and stories — for as long as I can remember. From early
+                            mornings at my
+                            local muni to unforgettable rounds on some of the game’s great courses, golf has taught me
+                            patience,
+                            persistence, and a healthy respect for the rough. I write the way I play: with curiosity, a
+                            love for
+                            tradition, and just enough humor to keep it fun. Writing the game, one hole at a time.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Updates & News Card -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-header">GoodFlightGolf Updates</div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            We've been busy improving your experience! Here's what's new on GoodFlightGolf:
+                        </p>
+                        <ul class="list-group list-group-flush text-start">
+                            <li class="list-group-item">🧮 <strong>Handicap Calculator</strong>: Enter up to 3 scores
+                                and get an accurate handicap.</li>
+                            <li class="list-group-item">📊 <strong>Handicap Progression Chart</strong>: Track your
+                                improvement over time with a visual graph powered by Chart.js.</li>
+                            <li class="list-group-item">📁 <strong>Saved Handicap History</strong>: Automatically stores
+                                your calculated handicaps to your Firebase profile.</li>
+                            <li class="list-group-item">🏌️ <strong>Club Distance Calculator</strong>: Enter your top 3
+                                shots with any club to calculate your average distance.</li>
+                            <li class="list-group-item">🌐 <strong>Firebase Login System</strong>: Secure signup, login,
+                                and personalized data for every golfer.</li>
+                            <li class="list-group-item">📌 <strong>Clean Responsive Layout</strong>: Optimized for
+                                mobile and desktop using Bootstrap 5.3.</li>
+                        </ul>
+                        <p class="mt-3 text-muted"><small>More features coming soon – stay tuned!</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <!--newsLoader-->
+            <div class="col-md-6" id="articles">
+                <div class="card text-center">
+                    <div class="card-header">GoodFlightGolf News</div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            News articles our writers have written for everything golf-related!
+                        </p>
+                        <ul class="list-group list-group-flush text-start" id="articleList">
+                            <!-- Articles will be dynamically inserted here -->
+                        </ul>
+                        <p class="mt-3 text-muted"><small>More features coming soon – stay tuned!</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div><!--endcontainer,Parallax--><!-- Parallax Section -->
+    <section class="parallax-section">
+        <div class="parallax-content">
+            <h1><span style="color: #359447;">GoodFlight</span><span style="color: #fad02e;">Golf</span>⛳</h1>
+            <p style="color: white;">Your ultimate golf companion with calculators, charts, and more.</p>
+        </div>
+    </section>
+
+    <!--Second container-->
+    <div class="container"><br>
+
+        <!-- DID YOU KNOW? CARD -->
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">💡 Did You Know?</div>
+                    <div class="card-body" id="golfFact">
+                        Loading a fun golf fact...
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            const facts = [
+                "🏌️‍♂️ Golf is the only sport ever played on the Moon — Alan Shepard hit two golf balls during Apollo 14.",
+                "⛳ The word 'golf' likely comes from the Dutch word 'kolf', meaning 'club'.",
+                "🚀 The longest recorded drive in a golf competition is 515 yards.",
+                "🏴‍☠️ The first 18-hole course was established in 1764 at St Andrews in Scotland.",
+                "🐯 Tiger Woods made his first hole-in-one when he was just 8 years old.",
+                "📏 A golf ball has 336 dimples on average.",
+                "🌍 Golf is played in over 200 countries worldwide.",
+                "🎯 The chances of making two holes-in-one in a round are about 1 in 67 million!",
+                "💼 The first professional golfers were caddies who gave lessons to wealthy amateurs.",
+                "💸 The most expensive golf club ever sold was a 1906 putter that went for over $181,000.",
+                "⛰️ The highest golf course in the world is at Yak Golf Course in India — 13,025 feet above sea level.",
+                "📅 Golf has been played since the 15th century.",
+                "🧤 A golfer once used a prosthetic arm to play in the PGA — true story: Tommy McAuliffe.",
+                "🦅 A score of two under par on a single hole is called an eagle. Even rarer? An albatross — three under par!",
+                "🌪️ A tornado once hit a golf course during a tournament in Texas in 1995. No one was hurt.",
+                "🕳️ The largest golf course in the world is Mission Hills in China, with 12 18-hole courses.",
+                "🐊 Some courses in Florida have actual alligator warnings on signs near water hazards.",
+                "👟 The longest golf marathon (most holes played in 24 hours) is 420 holes!",
+                "🎥 Golf was first televised in 1953.",
+                "🌡️ The optimal temperature for a golf ball to perform is around 80°F (27°C).",
+                "🧊 Cold weather reduces ball compression, leading to shorter drives.",
+                "📚 There are over 10,000 books written about golf — from fiction to physics.",
+                "🏛️ Golf was once banned in Scotland in the 1400s — people were skipping military training to play.",
+                "🎮 Golf video games date back to 1978 — one of the first was for the Atari 2600.",
+                "🥇 Golf returned to the Olympics in 2016 after a 112-year absence.",
+                "🤯 Phil Mickelson is right-handed but plays golf left-handed.",
+                "👶 Rory McIlroy hit a 40-yard drive at age 2.",
+                "🌳 Augusta National Golf Club was once a plant nursery — many holes are named after flowers.",
+                "🛫 A golf ball was hit at 211 mph by Kyle Berkshire, the current long drive champion.",
+                "🌑 Night golf is popular in parts of Asia and the Middle East, with fully lit courses."
+            ];
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const fact = facts[Math.floor(Math.random() * facts.length)];
+                document.getElementById("golfFact").textContent = fact;
+            });
+        </script>
+
+        <!--recomended games-->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">🎮 Featured Golf Game - WGT Golf</div>
+                    <div class="card-body text-center">
+                        <p class="card-text">Get into the swing of things with our favorite golf game on PC and your
+                            phone. It's
+                            free!</p>
+                        <video autoplay loop muted playsinline class="w-100 mb-3 rounded">
+                            <source src="../photos/vid1bird.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommended Course Map Card -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card text-center">
+                    <div class="card-header">🏌️‍♂️ Recommended Course</div>
+                    <div class="card-body">
+                        <p class="card-text">Check out one of our favorite courses to play and improve your game.
+                        </p>
+                        <div class="ratio ratio-16x9">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11583.873995648255!2d-92.87464559342715!3d44.97275401689594!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x52b2ccbb5788243f%3A0x3c1c3b24ad859193!2sRoyal%20Golf%20Club!5e0!3m2!1sen!2sus!4v1752600702202!5m2!1sen!2sus"
+                                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--feedback-->
+        <section id="feedbackSection" class="card">
+            <div class="card-header">💬 Feedback & Suggestions</div>
+            <div class="card-body">
+                <form id="feedbackForm">
+                    <div class="mb-3">
+                        <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
+                        <textarea class="form-control" id="feedbackInput" rows="3"
+                            placeholder="Type your feedback here..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">📨 Submit Feedback</button>
+                    <p id="feedbackStatus" class="mt-2"></p>
+                </form>
+            </div>
+        </section>
+
+        <!-- Login / Signup Modal -->
+        <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Login form -->
+                        <h6>Login</h6>
+                        <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+                        <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+                        <div id="loginMessage" style="height: 1.5em;"></div>
+                        <button id="loginBtn" class="btn btn-success mb-4">Login</button>
+                        <hr />
+                        <!-- Signup form -->
+                        <h6>Sign Up</h6>
+                        <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+                        <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+                        <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
+                        <div id="signupMessage" style="height: 1.5em;"></div>
+                        <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--end container-->
+    </div>
+
+    <footer id="foot" class="text-center mt-5 py-4">
+        &copy; 2025 GoodFlightGolf. All rights reserved.
+    </footer>
+
+    <!-- Firebase SDK (compat versions, no modules) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+    <!-- Bootstrap JS for modal -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- Your auth script -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script>
+        (function () {
+            emailjs.init("CJRVHaDVYa2VCU89T"); // your PUBLIC key
+        })();
+    </script>
+    <!--sortable-->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+    <script src="../myscripts.js"></script>
+    <script src="../clubDistance.js"></script>
+    <script src="../main.js"></script>
+    <script src="../feedback.js"></script>
+    <script src="../chart.js"></script>
+    <script src="news.js"></script>
+    <script src="newsLoader.js"></script>
+
+</body>
+
+</html>

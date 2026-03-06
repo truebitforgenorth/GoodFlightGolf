@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Maintenance • GoodFlightGolf</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="photos/GFGlogo.png" type="image/x-icon" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Bad+Script&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --green: #359447;
+      --yellow: #fad02e;
+      --dark: #0f172a;
+
+      --surface: rgba(255, 255, 255, .12);
+      --border: rgba(255, 255, 255, .18);
+      --shadow: 0 18px 60px rgba(0, 0, 0, .28);
+      --radius: 22px;
+      --t: 180ms ease;
+
+      --ink: rgba(255, 255, 255, .92);
+      --muted: rgba(255, 255, 255, .76);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      background:
+        radial-gradient(1200px 700px at 20% 20%, rgba(53, 148, 71, .25), transparent 55%),
+        radial-gradient(900px 500px at 80% 10%, rgba(250, 208, 46, .18), transparent 60%),
+        radial-gradient(900px 600px at 70% 90%, rgba(53, 148, 71, .18), transparent 55%),
+        linear-gradient(135deg, #07110a 0%, #0b1327 55%, #0a1720 100%);
+    }
+
+    /* Floating accents (do not create overflow) */
+    .glow,
+    .glow2,
+    .grid {
+      pointer-events: none;
+    }
+
+    .glow {
+      position: fixed;
+      inset: -30vh -30vw auto auto;
+      width: 70vmax;
+      height: 70vmax;
+      background: radial-gradient(circle at 30% 30%, rgba(250, 208, 46, .35), transparent 55%);
+      filter: blur(35px);
+      opacity: .55;
+      animation: drift 10s ease-in-out infinite alternate;
+    }
+
+    .glow2 {
+      position: fixed;
+      inset: auto auto -35vh -30vw;
+      width: 75vmax;
+      height: 75vmax;
+      background: radial-gradient(circle at 60% 60%, rgba(53, 148, 71, .33), transparent 58%);
+      filter: blur(38px);
+      opacity: .55;
+      animation: drift 12s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes drift {
+      from {
+        transform: translate(0, 0) scale(1);
+      }
+
+      to {
+        transform: translate(20px, -18px) scale(1.04);
+      }
+    }
+
+    .grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 1), rgba(0, 0, 0, .15) 60%, transparent 78%);
+      opacity: .35;
+    }
+
+    /* Use dynamic viewport for mobile browsers */
+    .wrap {
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(18px, 3.5vw, 28px) 16px;
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .card {
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .06));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      position: relative;
+
+      width: 100%;
+      max-width: 1040px;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(700px 220px at 12% 0%, rgba(250, 208, 46, .22), transparent 60%),
+        radial-gradient(800px 260px at 88% 10%, rgba(53, 148, 71, .20), transparent 65%);
+      pointer-events: none;
+    }
+
+    .inner {
+      position: relative;
+      padding: clamp(16px, 3vw, 28px);
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: clamp(14px, 2.4vw, 24px);
+      align-items: center;
+    }
+
+    /* earlier collapse improves responsiveness */
+    @media (max-width: 900px) {
+      .inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .10);
+      border: 1px solid rgba(255, 255, 255, .18);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .brand h1 span {
+      color: var(--yellow);
+    }
+
+    .badge {
+      margin-left: auto;
+      font-weight: 800;
+      font-size: .85rem;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, .55);
+      border: 1px solid rgba(255, 255, 255, .16);
+      color: rgba(255, 255, 255, .9);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 99px;
+      background: rgba(250, 208, 46, .95);
+      box-shadow: 0 0 0 6px rgba(250, 208, 46, .14);
+      animation: pulse 1.4s ease-in-out infinite;
+      flex: 0 0 auto;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(.95);
+        box-shadow: 0 0 0 6px rgba(250, 208, 46, .14);
+      }
+
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 10px rgba(250, 208, 46, .08);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .badge {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+      }
+    }
+
+    .big {
+      font-size: clamp(1.85rem, 6.4vw, 3.4rem);
+      line-height: 1.08;
+      margin: 10px 0 10px;
+      font-weight: 900;
+      letter-spacing: -0.7px;
+    }
+
+    .big em {
+      font-family: "Bad Script", cursive;
+      font-style: normal;
+      color: var(--yellow);
+      text-shadow: 0 10px 40px rgba(250, 208, 46, .12);
+    }
+
+    .sub {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.2vw, 1.05rem);
+      max-width: 68ch;
+    }
+
+    /* make status chips responsive like a grid */
+    .statusRow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0 6px;
+      align-items: stretch;
+    }
+
+    .chip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .14);
+      color: rgba(255, 255, 255, .88);
+      font-weight: 800;
+      font-size: .85rem;
+      text-align: center;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chip strong {
+      color: var(--yellow);
+    }
+
+    @media (max-width: 720px) {
+      .statusRow {
+        grid-template-columns: 1fr;
+      }
+
+      .chip {
+        justify-content: flex-start;
+        white-space: normal;
+        overflow: visible;
+      }
+    }
+
+    .progress {
+      margin-top: 14px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, .20);
+      border: 1px solid rgba(255, 255, 255, .14);
+      overflow: hidden;
+      height: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+    }
+
+    .bar {
+      height: 100%;
+      width: 42%;
+      background:
+        linear-gradient(90deg,
+          rgba(53, 148, 71, .0) 0%,
+          rgba(53, 148, 71, .65) 30%,
+          rgba(250, 208, 46, .85) 55%,
+          rgba(53, 148, 71, .65) 80%,
+          rgba(53, 148, 71, .0) 100%);
+      transform: translateX(-60%);
+      animation: loading 1.8s ease-in-out infinite;
+    }
+
+    @keyframes loading {
+      0% {
+        transform: translateX(-80%);
+        opacity: .75;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(220%);
+        opacity: .75;
+      }
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      transition: transform var(--t), box-shadow var(--t), background var(--t), color var(--t), border-color var(--t);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, rgba(53, 148, 71, .95), rgba(39, 106, 54, .95));
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(53, 148, 71, .22);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 44px rgba(53, 148, 71, .30);
+    }
+
+    .btn-ghost {
+      background: rgba(15, 23, 42, .55);
+      border: 1px solid rgba(255, 255, 255, .16);
+      color: rgba(255, 255, 255, .92);
+    }
+
+    .btn-ghost:hover {
+      transform: translateY(-2px);
+      border-color: rgba(250, 208, 46, .55);
+      box-shadow: 0 16px 44px rgba(0, 0, 0, .25);
+    }
+
+    /* stack buttons sooner */
+    @media (max-width: 620px) {
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+      }
+    }
+
+    .tip {
+      margin-top: 14px;
+      font-size: .92rem;
+      color: rgba(255, 255, 255, .72);
+    }
+
+    .tip code {
+      background: rgba(255, 255, 255, .10);
+      border: 1px solid rgba(255, 255, 255, .14);
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: rgba(255, 255, 255, .9);
+    }
+
+    /* Right scene: make it FLEXIBLE (no big min-height) */
+    .scene {
+      border-radius: calc(var(--radius) - 6px);
+      border: 1px solid rgba(255, 255, 255, .16);
+      background: rgba(255, 255, 255, .06);
+      overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+      width: 100%;
+
+      /* better responsive sizing */
+      height: clamp(210px, 34vw, 320px);
+      max-height: 360px;
+      isolation: isolate;
+    }
+
+    .scene .sky {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(900px 380px at 25% 10%, rgba(250, 208, 46, .16), transparent 62%),
+        radial-gradient(740px 340px at 70% 0%, rgba(53, 148, 71, .18), transparent 60%),
+        linear-gradient(180deg, rgba(15, 23, 42, .62), rgba(15, 23, 42, .18));
+    }
+
+    .bench {
+      position: absolute;
+      left: -8%;
+      right: -8%;
+      bottom: -34%;
+      height: 78%;
+      background:
+        radial-gradient(circle at 30% 35%, rgba(53, 148, 71, .55), rgba(39, 106, 54, .36) 58%, rgba(10, 23, 32, .25) 100%);
+      transform: rotate(-6deg);
+      filter: blur(.2px);
+    }
+
+    .sceneTitle {
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      font-size: clamp(30px, 7vw, 52px);
+      line-height: 1;
+      color: rgba(255, 255, 255, .10);
+      user-select: none;
+      z-index: 0;
+    }
+
+    /* Animated gear + wrench */
+    .gear {
+      position: absolute;
+      left: 10%;
+      top: 18%;
+      width: clamp(60px, 10vw, 86px);
+      height: clamp(60px, 10vw, 86px);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, .92), rgba(210, 210, 210, .75));
+      box-shadow: 0 16px 30px rgba(0, 0, 0, .30);
+      animation: gearSpin 2.2s linear infinite;
+    }
+
+    .gear::before {
+      content: "";
+      position: absolute;
+      inset: clamp(12px, 2vw, 18px);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(15, 23, 42, .55), rgba(15, 23, 42, .18));
+      border: 1px solid rgba(255, 255, 255, .18);
+    }
+
+    .gear::after {
+      content: "";
+      position: absolute;
+      inset: -14px;
+      border-radius: 50%;
+      background:
+        conic-gradient(from 0deg,
+          rgba(255, 255, 255, .0) 0 10deg,
+          rgba(255, 255, 255, .22) 10deg 20deg,
+          rgba(255, 255, 255, .0) 20deg 30deg);
+      opacity: .9;
+      mask: radial-gradient(circle, transparent 55px, #000 56px);
+    }
+
+    @keyframes gearSpin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .wrench {
+      position: absolute;
+      left: 24%;
+      top: 46%;
+      width: clamp(120px, 20vw, 160px);
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .75);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, .25);
+      transform: rotate(-18deg);
+      opacity: .92;
+    }
+
+    .wrench::before {
+      content: "";
+      position: absolute;
+      left: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .74);
+      clip-path: polygon(0% 40%, 25% 15%, 50% 40%, 75% 15%, 100% 40%, 80% 60%, 100% 85%, 75% 60%, 50% 85%, 25% 60%);
+    }
+
+    .wrench::after {
+      content: "";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, .35);
+      border: 2px solid rgba(255, 255, 255, .55);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
+    }
+
+    .ball {
+      position: absolute;
+      right: 13%;
+      top: 22%;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, #d9d9d9);
+      box-shadow: 0 18px 30px rgba(0, 0, 0, .28);
+      animation: bob 1.15s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    .ball::after {
+      content: "";
+      position: absolute;
+      inset: -18px;
+      border-radius: 50%;
+      border: 2px dashed rgba(255, 255, 255, .20);
+      animation: spin 1.05s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes bob {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(10px);
+      }
+    }
+
+    .label {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      right: 18px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, .55);
+      border: 1px solid rgba(255, 255, 255, .14);
+      color: rgba(255, 255, 255, .88);
+      font-size: .95rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 3;
+    }
+
+    .pill {
+      font-weight: 800;
+      font-size: .85rem;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(53, 148, 71, .22);
+      border: 1px solid rgba(53, 148, 71, .35);
+      color: rgba(255, 255, 255, .92);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 560px) {
+      .label {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .9rem;
+      color: rgba(255, 255, 255, .75);
+      flex-wrap: wrap;
+    }
+
+    .kbd span {
+      padding: 3px 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .10);
+      border: 1px solid rgba(255, 255, 255, .14);
+      color: rgba(255, 255, 255, .9);
+      font-weight: 800;
+      font-size: .82rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="glow"></div>
+  <div class="glow2"></div>
+  <div class="grid"></div>
+
+  <main class="wrap">
+    <section class="card" aria-label="Maintenance Page">
+      <div class="inner">
+        <!-- Left -->
+        <div>
+          <div class="brand">
+            <div class="logo" aria-hidden="true">
+              <img src="../photos/GFGlogo.png" alt="GFG">
+            </div>
+            <h1>GoodFlight<span>Golf</span></h1>
+            <div class="badge"><span class="dot"></span> Maintenance • In Progress</div>
+          </div>
+
+          <div class="big">
+            We’re tuning the site for a <em>cleaner</em> round.
+          </div>
+
+          <p class="sub">
+            This page is temporarily down while we upgrade performance, polish the UI,
+            and tighten up the Games experience. Your next visit should feel faster and smoother.
+          </p>
+
+          <div class="statusRow">
+            <div class="chip">⚙️ Status: <strong id="statusText">Deploying</strong></div>
+            <div class="chip">🕒 ETA: <strong id="etaText">TBD</strong></div>
+            <div class="chip">📍 <span id="pathOut">Path: /</span></div>
+          </div>
+
+          <div class="progress" aria-label="Loading">
+            <div class="bar"></div>
+          </div>
+
+          <div class="actions">
+            <a class="btn btn-primary" href="../index.html">🏠 Back Home</a>
+            <a class="btn btn-ghost" href="../games/greenflightgames.html">💸 Go to Games</a>
+            <button class="btn btn-ghost" id="refreshBtn" type="button">🔄 Refresh</button>
+          </div>
+
+          <div class="tip">
+            Tip: Press <code>H</code> for Home • <code>G</code> for Games • <code>R</code> to Refresh.
+          </div>
+
+          <div class="tip kbd" style="margin-top:10px;">
+            <strong style="color:rgba(255,255,255,.9);">Now doing:</strong>
+            <span id="taskOut">Optimizing assets</span>
+          </div>
+        </div>
+
+        <!-- Right -->
+        <div class="scene" aria-hidden="true">
+          <div class="sky"></div>
+          <div class="bench"></div>
+          <div class="sceneTitle">MAINT</div>
+
+          <div class="gear"></div>
+          <div class="wrench"></div>
+          <div class="ball"></div>
+
+          <div class="label">
+            <div><strong>Heads up:</strong> This page stays stable during deploys.</div>
+            <div class="pill" id="pillOut">Auto-updating…</div>
+          </div>
+          &copy; 2026 TrueBit Forge North LLC. All rights reserved.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="foot" class="text-center mt-5 py-4">
+    &copy; 2026 TrueBit Forge North LLC. All rights reserved.
+  </footer>
+
+  <script>
+    // Debug path
+    (function () {
+      const out = document.getElementById("pathOut");
+      if (out) out.textContent = "Path: " + window.location.pathname;
+    })();
+
+    // Refresh button
+    document.getElementById("refreshBtn")?.addEventListener("click", () => {
+      window.location.reload();
+    });
+
+    // Keyboard shortcuts: G = Games, H = Home, R = Refresh
+    window.addEventListener("keydown", (e) => {
+      if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+      const key = (e.key || "").toLowerCase();
+      if (key === "g") window.location.href = "../games/greenflightgames.html";
+      if (key === "h") window.location.href = "../index.html";
+      if (key === "r") window.location.reload();
+    });
+
+    // Cycle status + tasks
+    const statuses = ["Deploying", "Rebuilding", "Optimizing", "Warming up", "Verifying"];
+    const tasks = ["Optimizing assets", "Polishing UI", "Updating game logic", "Tightening security", "Clearing the cache", "Final checks"];
+    const pills = ["Auto-updating…", "Deploy running…", "Almost there…", "Staging verified…", "Going live soon…"];
+
+    let i = 0, j = 0, k = 0;
+    setInterval(() => {
+      i = (i + 1) % statuses.length;
+      const el = document.getElementById("statusText");
+      if (el) el.textContent = statuses[i];
+    }, 1800);
+
+    setInterval(() => {
+      j = (j + 1) % tasks.length;
+      const el = document.getElementById("taskOut");
+      if (el) el.textContent = tasks[j];
+    }, 1500);
+
+    setInterval(() => {
+      k = (k + 1) % pills.length;
+      const el = document.getElementById("pillOut");
+      if (el) el.textContent = pills[k];
+    }, 2100);
+  </script>
+
+  <script>
+    // ----------------------------
+    // Cursor Parallax (maintenance)
+    // ----------------------------
+    (function () {
+      const layers = Array.from(document.querySelectorAll("[data-depth]"));
+      if (!layers.length) return;
+
+      const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (prefersReduced) return;
+
+      let targetX = 0, targetY = 0;
+      let currentX = 0, currentY = 0;
+
+      const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+
+      function setTargetFromClient(clientX, clientY) {
+        const x = (clientX / window.innerWidth - 0.5);
+        const y = (clientY / window.innerHeight - 0.5);
+        targetX = clamp(x, -0.5, 0.5);
+        targetY = clamp(y, -0.5, 0.5);
+      }
+
+      window.addEventListener("mousemove", (e) => {
+        setTargetFromClient(e.clientX, e.clientY);
+      }, { passive: true });
+
+      window.addEventListener("touchmove", (e) => {
+        const t = e.touches && e.touches[0];
+        if (!t) return;
+        setTargetFromClient(t.clientX, t.clientY);
+      }, { passive: true });
+
+      function animate() {
+        // smooth follow (lerp)
+        currentX += (targetX - currentX) * 0.08;
+        currentY += (targetY - currentY) * 0.08;
+
+        layers.forEach(el => {
+          const depth = parseFloat(el.getAttribute("data-depth") || "0");
+          const dx = currentX * depth;
+          const dy = currentY * depth;
+          el.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      requestAnimationFrame(animate);
+    })();
+  </script>
+</body>
+
+</html>
