@@ -56,7 +56,7 @@ const pushBtn = document.getElementById("pushBtn");
 // Scoreboard slots reuse Wolf IDs for names/money
 const tEls = [0, 1, 2, 3].map(i => document.getElementById(`t${i}`));
 const mEls = [0, 1, 2, 3].map(i => document.getElementById(`m${i}`));
-const ptsEls = [0, 1, 2, 3].map(i => document.getElementById(`pts${i}`));
+
 
 // ---------------------------
 // GAME STATE
@@ -199,8 +199,7 @@ function updateTotals() {
   const dollar = +dollarValueInput.value || 0;
 
   for (let i = 0; i < 4; i++) {
-    if (tEls[i]) tEls[i].innerText = safeName(i);
-    if (ptsEls[i]) ptsEls[i].innerText = `${totals[i]} pts`;
+    if (tEls[i]) tEls[i].innerText = `${safeName(i)}: ${totals[i]} pts`;
 
     const net = totals[i] * dollar;
     if (mEls[i]) {

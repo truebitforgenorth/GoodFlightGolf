@@ -144,11 +144,11 @@ function updateTotals() {
   const bet = +betInput?.value || 0;
 
   for (let i = 0; i < 4; i++) {
-    if (tEls[i]) tEls[i].innerText = safeName(i);
+    if (tEls[i]) tEls[i].innerText = `${safeName(i)}: ${totals[i]} pts`;
 
     const net = totals[i] * bet;
     if (mEls[i]) {
-      mEls[i].innerText = `(${totals[i]} pts) ` + (net >= 0 ? "+" : "-") + "$" + Math.abs(net).toFixed(2);
+      mEls[i].innerText = (net >= 0 ? "+" : "-") + "$" + Math.abs(net).toFixed(2);
       mEls[i].style.color = net >= 0 ? "#359447" : "#d9534f";
     }
   }
