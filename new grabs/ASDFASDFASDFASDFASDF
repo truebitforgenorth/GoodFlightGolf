@@ -1,0 +1,35 @@
+THIS IS SIMPLE MATH, keep inputs how they are. Only change the math logic so it fcking works
+
+TEAM 2V2,  WIN (wolf team or non-wolf team) = BASE / 2 PER WINNER, LOSERS GETS NOTHING 
+
+LONE 
+WIN (BASE) * loneMult
+LOSE (BASE) * loneMult PAID TO OTHER 3 PLAYERS
+
+DUMP 
+WIN (BASE) * dumpMult
+LOSE (BASE) * dumpMult PAID TO OTHER 3 PLAYERS
+
+BLIND
+WIN (BASE) * blindMult
+LOSE (BASE) * blind Mult PAID TO OTHER 3 PLAYERS
+
+
+with pot
+
+THIS IS SIMPLE MATH, keep inputs how they are. Only change the math logic so it fcking works
+
+TEAM 2V2,  WIN (wolf team or non-wolf team) = BASE + pot / 2  PER WINNER, LOSERS GETS NOTHING 
+
+LONE 
+WIN (BASE) * loneMult + pot
+LOSE (BASE) * loneMult + (pot / 3) PAID TO OTHER 3 PLAYERS
+
+DUMP 
+WIN (BASE) * dumpMult + pot
+LOSE (BASE) * dumpMult + (pot / 3) PAID TO OTHER 3 PLAYERS
+
+BLIND
+WIN (BASE) * blindMult + pot
+LOSE (BASE) * blind Mult + (pot / 3) PAID TO OTHER 3 PLAYERS
+example. win-  base=3 mult=2 
