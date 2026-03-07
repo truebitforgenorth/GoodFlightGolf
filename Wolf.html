@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Wolf Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap & Main CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../main2.css">
+  <link rel="stylesheet" href="wolf.css">
+  <style>
+    /* ======================================
+Slight fullscreen shrink for small phones
+(about 10%)
+====================================== */
+    @media (max-width: 480px) {
+
+      #selectionWrapper.fullscreen {
+        padding: 0.75rem !important;
+      }
+
+      #selectionWrapper.fullscreen h2,
+      #selectionWrapper.fullscreen h3,
+      #selectionWrapper.fullscreen h4 {
+        font-size: 0.9rem !important;
+      }
+
+      #selectionWrapper.fullscreen button {
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+      }
+
+      #selectionWrapper.fullscreen .card {
+        padding: 0.75rem !important;
+      }
+
+    }
+
+    #selectionWrapper.fullscreen {
+      height: 100dvh;
+      /* dynamic viewport height */
+    }
+  </style>
+</head>
+
+<body class="wolf-page">
+  <!-- Back to top button -->
+  <button type="button" id="btn-back-to-top" aria-label="Back to top">
+    <p>Back to Top</p>
+  </button>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">GoodFlight<span>Golf</span>⛳</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item">
+            <a class="nav-link" href="../index.html">Home 🏠</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../main3cal.html">MyFlight 🎯</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../NewsArticles/main4news.html">News 🧾</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="greenflightgames.html">GoodFlight<span style="color: #fad02e;">Games</span>💸</a>
+          </li>
+          <li>
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">Login /
+              Signup</a>
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color: white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="parallax-section2">
+    <div class="parallax-content2">
+      <h1 class="gfg-hero-title">🐺 Wolf</h1>
+      <p class="gfg-hero-sub">Track players, holes, and payouts with your team or lone Wolf!</p>
+    </div>
+  </div>
+
+  <!--Container-->
+  <div class="container my-4">
+
+
+
+<!-- Wolf Game Logic Example -->
+<div class="card game-card p-4 mb-3">
+      <!-- Wolf Rules Bnt -->
+    <button style="width: 190px;" id="wolfRulesBtn" class="btn btn-outline-light mb-3">📜 Wolf Rules</button>
+
+    <!-- Wolf Rules Modal -->
+    <div id="wolfRulesModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h3 class="m-0">🐺 Wolf Rules</h3>
+          <button id="closeWolfRulesBtn" class="btn btn-sm btn-secondary">Close</button>
+        </div>
+
+        <div id="wolfRulesBody" style="line-height:1.6; font-size: 0.95rem;"></div>
+      </div>
+    </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h4 class="m-0">Game Logic</h4>
+    <button class="btn"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#wolfLogicContent">
+      Show / Hide
+    </button>
+  </div>
+
+  <div class="collapse" id="wolfLogicContent">
+
+    <p class="mb-2"><strong>How Scoring Works:</strong></p>
+    <ul class="mb-4">
+      <li><strong>Team holes</strong> use the Base value.</li>
+      <li><strong>Lone, Dump, and Blind</strong> each use fixed point amounts that you set below.</li>
+      <li><strong>Win</strong> and <strong>Lose</strong> values are separate, so you can customize each outcome however you want.</li>
+      <li><strong>Fixed solo wins</strong> pay exactly the amount you enter — no extra math is added.</li>
+      <li>If a <strong>pot/carryover</strong> exists, it is only used when points need to be <strong>split between multiple winners</strong>.</li>
+      <li>This game does <strong>not use negative points</strong> — only winners receive points.</li>
+    </ul>
+
+    <h5 class="mb-3">🤝 Team Scoring</h5>
+    <div class="table-responsive mb-4">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Mode</th>
+            <th>Format</th>
+            <th>Who Gets Points</th>
+            <th>Points Awarded</th>
+            <th>Pot Handling</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Team Win</strong></td>
+            <td>2 vs 2</td>
+            <td>Wolf + Partner</td>
+            <td>Each winner gets <strong>Base ÷ 2</strong></td>
+            <td>Any pot is split evenly between the 2 winners</td>
+          </tr>
+          <tr>
+            <td><strong>Team Loss</strong></td>
+            <td>2 vs 2</td>
+            <td>The other 2 players</td>
+            <td>Each winner gets <strong>Base ÷ 2</strong></td>
+            <td>Any pot is split evenly between the 2 winners</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h5 class="mb-3">🎯 Custom Solo Scoring</h5>
+    <div class="table-responsive mb-4">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Mode</th>
+            <th>Result</th>
+            <th>Format</th>
+            <th>Who Gets Points</th>
+            <th>Points Awarded</th>
+            <th>Pot Handling</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Lone</strong></td>
+            <td>Win</td>
+            <td>1 vs 3</td>
+            <td>The Lone Wolf</td>
+            <td>The Lone Wolf gets your set <strong>Lone Win Points</strong></td>
+            <td>No split math — pays the exact Lone Win amount you entered</td>
+          </tr>
+          <tr>
+            <td><strong>Lone</strong></td>
+            <td>Lose</td>
+            <td>1 vs 3</td>
+            <td>The 3 opponents</td>
+            <td>Each winning opponent gets your set <strong>Lone Lose Points</strong></td>
+            <td>Pot is split evenly between the 3 winners</td>
+          </tr>
+
+          <tr>
+            <td><strong>Dump</strong></td>
+            <td>Win</td>
+            <td>1 vs 3</td>
+            <td>The Dump player</td>
+            <td>The Dump player gets your set <strong>Dump Win Points</strong></td>
+            <td>No split math — pays the exact Dump Win amount you entered</td>
+          </tr>
+          <tr>
+            <td><strong>Dump</strong></td>
+            <td>Lose</td>
+            <td>1 vs 3</td>
+            <td>The other 3 players</td>
+            <td>Each winning player gets your set <strong>Dump Lose Points</strong></td>
+            <td>Pot is split evenly between the 3 winners</td>
+          </tr>
+
+          <tr>
+            <td><strong>Blind</strong></td>
+            <td>Win</td>
+            <td>1 vs 3</td>
+            <td>The Blind Wolf</td>
+            <td>The Blind Wolf gets your set <strong>Blind Win Points</strong></td>
+            <td>No split math — pays the exact Blind Win amount you entered</td>
+          </tr>
+          <tr>
+            <td><strong>Blind</strong></td>
+            <td>Lose</td>
+            <td>1 vs 3</td>
+            <td>The 3 opponents</td>
+            <td>Each winning opponent gets your set <strong>Blind Lose Points</strong></td>
+            <td>Pot is split evenly between the 3 winners</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h5 class="mb-3">🔁 Push / Carryover</h5>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Situation</th>
+            <th>What Happens</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Push / Tie</strong></td>
+            <td>No player gets points for that hole.</td>
+          </tr>
+          <tr>
+            <td><strong>Carryover Enabled</strong></td>
+            <td>Your set <strong>Tie Carryover Points</strong> are added to the pot.</td>
+          </tr>
+          <tr>
+            <td><strong>Future Win with Pot</strong></td>
+            <td>The winners for that hole receive both their normal points and the carryover pot.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!--Wolf Players and Payouts-->
+    <div class="card game-card p-4 mb-3">
+      <h4>Players & Payouts</h4>
+
+      <div class="row g-2 mb-3">
+        <div class="col-6"><input class="form-control player" placeholder="Player 1"></div>
+        <div class="col-6"><input class="form-control player" placeholder="Player 2"></div>
+        <div class="col-6"><input class="form-control player" placeholder="Player 3"></div>
+        <div class="col-6"><input class="form-control player" placeholder="Player 4"></div>
+      </div>
+
+      <div class="row g-2">
+        <div class="col-6">
+          <label class="small">Points Per Hole</label>
+          <input id="base" type="number" class="form-control" value="6">
+        </div>
+
+        <div class="col-6">
+          <label class="small">$/Point</label>
+          <input id="dollarValue" type="number" step=".25" class="form-control" value="1">
+        </div>
+
+        <div class="col-6 mt-2">
+          <label class="small">Lone Win Points</label>
+          <input id="loneWinPoints" type="number" class="form-control" value="12">
+        </div>
+        <div class="col-6 mt-2">
+          <label class="small">Lone Lose Points</label>
+          <input id="loneLosePoints" type="number" class="form-control" value="4">
+        </div>
+
+        <div class="col-6 mt-2">
+          <label class="small">Dump Win Points</label>
+          <input id="dumpWinPoints" type="number" class="form-control" value="12">
+        </div>
+        <div class="col-6 mt-2">
+          <label class="small">Dump Lose Points</label>
+          <input id="dumpLosePoints" type="number" class="form-control" value="4">
+        </div>
+
+        <div class="col-6 mt-2">
+          <label class="small">Blind Win Points</label>
+          <input id="blindWinPoints" type="number" class="form-control" value="24">
+        </div>
+        <div class="col-6 mt-2">
+          <label class="small">Blind Lose Points</label>
+          <input id="blindLosePoints" type="number" class="form-control" value="8">
+        </div>
+
+        <div class="col-6 mt-2">
+          <label class="small">Tie Carryover Points</label>
+          <input type="number" id="tieSetPoints" class="form-control" min="0" value="6">
+        </div>      </div>
+    </div>
+
+    <!-- FULLSCREEN WRAPPER -->
+    <div id="selectionWrapper" class="card game-card p-4 mb-3">
+
+      <div class="mb-3 text-center">
+        <button id="fullscreenBtn" class="btn btn-secondary">📱 Fullscreen Selection</button>
+      </div>
+
+      <div id="fullscreenContent">
+
+        <!-- Hole Nav -->
+        <div class="card game-card p-3 mb-3 text-center" id="holeNavCard">
+          <div class="d-flex justify-content-between align-items-center">
+            <button class="btn btn-secondary" onclick="prevHole()">← Back</button>
+            <h4 id="holeTitle" class="m-0"></h4>
+            <button class="btn btn-secondary" onclick="nextHole()">Next →</button>
+          </div>
+        </div>
+
+        <!-- Hole Setup -->
+        <div class="card game-card p-4 mb-3" id="holeSetupCard">
+          <h4>Hole Setup & Results</h4>
+
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="small">Wolf</label>
+              <select id="wolfSelect" class="form-select"></select>
+            </div>
+            <div class="col-6">
+              <label class="small">Hole Setup</label>
+              <select id="holeSetupSelect" class="form-select"></select>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <button id="pushBtn" class="btn btn-warning w-100" onclick="selectResult(this,'push')">Push</button>
+            </div>
+            <div class="col-6">
+              <button id="dumpModeBtn" class="btn btn-dark w-100" onclick="selectDump(this)">Dump</button>
+            </div>
+          </div>
+
+          <div id="teamBtns" class="d-grid gap-2 hidden">
+            <button class="btn team-win" onclick="selectResult(this,'wolfTeam')">Wolf Team Wins</button>
+            <button class="btn team-lose" onclick="selectResult(this,'others')">Other Team Wins</button>
+          </div>
+
+          <div id="loneBtns" class="d-grid gap-2 hidden">
+            <button class="btn lone-win" onclick="selectResult(this,'loneWin')">Lone Wolf Wins</button>
+            <button class="btn lone-lose" onclick="selectResult(this,'loneLose')">Lone Wolf Loses</button>
+          </div>
+
+          <div id="dumpBtns" class="d-grid gap-2 hidden">
+            <button class="btn dump-win" onclick="selectResult(this,'dumpWin')">Dump Wins</button>
+            <button class="btn dump-lose" onclick="selectResult(this,'dumpLose')">Others Win</button>
+          </div>
+
+          <div id="blindBtns" class="d-grid gap-2 hidden">
+            <button class="btn lone-win" onclick="selectResult(this,'loneWin')">Blind Wolf Wins</button>
+            <button class="btn lone-lose" onclick="selectResult(this,'loneLose')">Blind Wolf Loses</button>
+          </div>
+        </div>
+
+        <!-- POT -->
+        <div id="potBanner" class="pot-banner hidden">
+          POT: <span id="potValue">0</span> pts
+        </div>
+
+        <!-- SCOREBOARD -->
+        <div class="card game-card p-2" id="scoreboardCard">
+          <h4 class="text-center fs-6 mb-1">🐺 Wolf Scoreboard</h4>
+
+          <div class="d-flex mb-1 text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6" id="t0"></div>
+              <div id="m0" class="fs-6 fw-bold"></div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6" id="t1"></div>
+              <div id="m1" class="fs-6 fw-bold"></div>
+            </div>
+          </div>
+
+          <div class="d-flex text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6" id="t2"></div>
+              <div id="m2" class="fs-6 fw-bold"></div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6" id="t3"></div>
+              <div id="m3" class="fs-6 fw-bold"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!--feedback-->
+    <div class="row justify-content-center">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">💬 Feedback & Suggestions</div>
+          <div class="card-body">
+            <form id="feedbackForm">
+              <div class="mb-3">
+                <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
+                <textarea class="form-control" id="feedbackInput" rows="3"
+                  placeholder="Type your feedback here..."></textarea>
+              </div>
+              <button type="submit" class="btn">📨 Submit Feedback</button>
+              <p id="feedbackStatus" class="mt-2"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../feedback.js"></script>
+
+  </div>
+
+  <!-- Login / Signup Modal -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="loginMessage" style="height: 1.5em;"></div>
+          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+          <hr />
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="signupMessage" style="height: 1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="foot" class="text-center mt-5 py-4">
+    &copy; 2025 GoodFlightGolf. All rights reserved.
+  </footer>
+
+  <!-- Firebase SDK (compat versions, no modules) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+
+  <!-- Bootstrap JS for modal -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("CJRVHaDVYa2VCU89T");
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+
+  <script src="../myscripts.js"></script>
+  <script src="wolf.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const modal = document.getElementById("wolfRulesModal");
+      const openBtn = document.getElementById("wolfRulesBtn");
+      const closeBtn = document.getElementById("closeWolfRulesBtn");
+
+      if (!modal || !openBtn || !closeBtn) return;
+
+      // start hidden no matter what
+      modal.classList.add("hidden");
+
+      openBtn.addEventListener("click", () => {
+        modal.classList.remove("hidden");
+      });
+
+      closeBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+      });
+
+      // click outside closes
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.classList.add("hidden");
+      });
+
+      // ESC closes
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") modal.classList.add("hidden");
+      });
+    });
+  </script>
+
+  <script>
+    // Back to top
+    const mybutton = document.getElementById("btn-back-to-top");
+
+    window.addEventListener("scroll", () => {
+      if (!mybutton) return;
+      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
+    });
+
+    mybutton?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+
+</body>
+
+</html>

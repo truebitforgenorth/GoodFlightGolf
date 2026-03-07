@@ -1,0 +1,243 @@
+/* =========================================
+   GAME CARD & BUTTONS
+========================================= */
+.game-card {
+  transition: none !important; /* remove hover animation */
+}
+
+.mode-group .btn.selected {
+  color: white !important;
+}
+
+.mode-group .btn-outline-primary.selected {
+  background: #0d6efd !important;
+  border: #0d6efd !important;
+}
+
+.mode-group .btn-outline-danger.selected {
+  background: #dc3545 !important;
+  border: #dc3545 !important;
+}
+
+.mode-group .btn-outline-warning.selected {
+  background: #ffc107 !important;
+  border: #ffc107 !important;
+  color: black !important;
+}
+
+.mode-group .btn-outline-dark.selected {
+  background: #212529 !important;
+  border: #212529 !important;
+}
+
+.team-win, .lone-win, .dump-win {
+  background: #359447 !important;
+  color: white;
+}
+
+.team-lose, .lone-lose {
+  background: #d9534f !important;
+  color: white;
+}
+
+.dump-lose {
+  background: #0f8992 !important;
+  color: white;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* =========================================
+   POT BANNER
+========================================= */
+.pot-banner {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: gold;
+  color: black;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px;
+  font-size: 20px;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.25);
+}
+
+.pot-pop {
+  animation: potPop 600ms ease;
+}
+
+@keyframes potPop {
+  0% { transform: scale(.8); }
+  40% { transform: scale(1.25); }
+  70% { transform: scale(.95); }
+  100% { transform: scale(1); }
+}
+
+/* =========================================
+   FULLSCREEN LAYOUT
+========================================= */
+body.fullscreen-active #foot {
+  display: none !important;
+}
+
+#selectionWrapper.fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  overflow: hidden;
+  margin: 0;
+  border-radius: 0;
+}
+
+#fullscreenContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#scoreboardCard {
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+/* =========================================
+   COMPACT FULLSCREEN FOR SMALL PHONES
+========================================= */
+@media (max-width: 480px) {
+  #selectionWrapper.fullscreen {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  #selectionWrapper.fullscreen .game-card {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  #selectionWrapper.fullscreen input,
+  #selectionWrapper.fullscreen select,
+  #selectionWrapper.fullscreen button {
+    font-size: 1rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  #selectionWrapper.fullscreen h4 {
+    font-size: 1rem;
+  }
+
+  #selectionWrapper.fullscreen .fs-6 {
+    font-size: 0.9rem;
+  }
+
+  #selectionWrapper.fullscreen .d-flex .border {
+    padding: 0.25rem;
+  }
+
+  #selectionWrapper.fullscreen #potBanner {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+}
+
+/* =====================================
+   WOLF RULES MODAL STYLING
+===================================== */
+#wolfRulesModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 25, 39, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+  animation: fadeIn 0.25s ease-out;
+}
+
+#wolfRulesModal.hidden {
+  display: none !important;
+}
+
+#wolfRulesModal .modal-content {
+  background: #171927;
+  color: white;
+  width: 95%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  border-radius: 18px;
+  border: 2px solid #359447;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  animation: slideUp 0.3s ease-out;
+}
+
+#wolfRulesModal h3 {
+  color: #FAD02E;
+  font-weight: 700;
+}
+
+#wolfRulesModal h5 {
+  color: #FAD02E;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+#wolfRulesModal ul {
+  padding-left: 1.2rem;
+}
+
+#wolfRulesModal li {
+  margin-bottom: 6px;
+}
+
+#wolfRulesModal p {
+  opacity: 0.9;
+}
+
+#wolfRulesModal .btn-secondary {
+  background: #2a2d4a;
+  border: none;
+}
+
+#wolfRulesModal .btn-secondary:hover {
+  background: #359447;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+#wolfRulesBtn {
+  background: #171927;
+  color: #FAD02E;
+  border: 2px solid #359447;
+  border-radius: 12px;
+  padding: 8px 18px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+#wolfRulesBtn:hover {
+  background: #22243a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
