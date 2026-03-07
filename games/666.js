@@ -70,12 +70,14 @@ let currentPot = 0;
 // ---------------------------
 // TIE INPUTS — MUTUALLY EXCLUSIVE
 // ---------------------------
-tieSetPoints.addEventListener("input", () => {
-  tieMultiplier.disabled = tieSetPoints.value !== "";
-});
-tieMultiplier.addEventListener("input", () => {
-  tieSetPoints.disabled = tieMultiplier.value && tieMultiplier.value != 1;
-});
+if (tieSetPoints && tieMultiplier) {
+  tieSetPoints.addEventListener("input", () => {
+    tieMultiplier.disabled = tieSetPoints.value !== "";
+  });
+  tieMultiplier.addEventListener("input", () => {
+    tieSetPoints.disabled = tieMultiplier.value && tieMultiplier.value != 1;
+  });
+}
 
 // ---------------------------
 // PLAYER NAMES
@@ -129,9 +131,13 @@ function recalc() {
     const stake = base;
 
     if (h.result === "push") {
-      if (tieSetPoints.value !== "") carryover += +tieSetPoints.value;
-      else if (tieMultiplier.value) carryover += stake * (+tieMultiplier.value - 1);
-      else carryover += stake;
+      if (tieSetPoints.value !== "") {
+        carryover += +tieSetPoints.value;
+      } else if ((+tieMultiplier.value || 1) > 1) {
+        carryover += stake * ((+tieMultiplier.value || 1) - 1);
+      } else {
+        carryover += stake;
+      }
       return;
     }
 
@@ -150,6 +156,8 @@ function recalc() {
 }
 
 function updatePotDisplay() {
+  if (!potBanner || !potValue) return;
+
   if (currentPot > 0) {
     potValue.textContent = currentPot;
     potBanner.classList.remove("hidden");
@@ -162,13 +170,13 @@ function updatePotDisplay() {
 // RENDER
 // ---------------------------
 function render() {
-  holeTitle.innerText = `Hole ${hole}`;
-  formatLabel.textContent = getFormatForHole(hole);
+  if (holeTitle) holeTitle.innerText = `Hole ${hole}`;
+  if (formatLabel) formatLabel.textContent = getFormatForHole(hole);
 
   if (hole >= 1 && hole <= 18) {
     const { team1, team2 } = getTeamsForHole(hole);
 
-    teamDisplay.innerHTML = `
+    if (teamDisplay) teamDisplay.innerHTML = `
       <div class="gfg-team-row">
         <div class="gfg-team-pill gfg-team-pill--one">
           <div class="fw-bold">Team 1</div>
@@ -181,7 +189,7 @@ function render() {
       </div>
     `;
   } else {
-    teamDisplay.innerHTML = "";
+    if (teamDisplay) teamDisplay.innerHTML = "";
   }
 
   updateTotals();
@@ -223,9 +231,9 @@ function selectResult(result) {
   nextHole();
 }
 
-on(team1WinBtn, "click", () => selectResult("team1"));
-on(team2WinBtn, "click", () => selectResult("team2"));
-on(pushBtn, "click", () => selectResult("push"));
+on(team1WinBtn, "click", (e) => { e.preventDefault(); selectResult("team1"); });
+on(team2WinBtn, "click", (e) => { e.preventDefault(); selectResult("team2"); });
+on(pushBtn, "click", (e) => { e.preventDefault(); selectResult("push"); });
 
 // ---------------------------
 // HOLE NAV
@@ -248,8 +256,8 @@ function nextHole() {
   }
 }
 
-on(prevHoleBtn, "click", prevHole);
-on(nextHoleBtn, "click", nextHole);
+on(prevHoleBtn, "click", (e) => { e.preventDefault(); prevHole(); });
+on(nextHoleBtn, "click", (e) => { e.preventDefault(); nextHole(); });
 
 // ---------------------------
 // RESULTS + SAVE
@@ -270,13 +278,13 @@ function animateMoney(element, start, end, duration = 1200) {
 function hideResultsSummary() {
   const res = document.getElementById("resultsCard666");
   if (res) res.style.display = "none";
-  holeSetupCard.style.display = "block";
-  holeNavCard.style.display = "flex";
+  if (holeSetupCard) holeSetupCard.style.display = "block";
+  if (holeNavCard) holeNavCard.style.display = "flex";
 }
 
 function showResultsSummary() {
-  holeSetupCard.style.display = "none";
-  holeNavCard.style.display = "none";
+  if (holeSetupCard) holeSetupCard.style.display = "none";
+  if (holeNavCard) holeNavCard.style.display = "none";
 
   let resultsCard = document.getElementById("resultsCard666");
   if (!resultsCard) {

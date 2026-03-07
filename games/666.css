@@ -235,3 +235,31 @@ body.fullscreen-active #foot{
   bottom: 0 !important;
   z-index: 10 !important;
 }
+
+/* =========================================
+   POT BANNER (match Wolf behavior)
+========================================= */
+.pot-banner {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: gold;
+  color: black;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px;
+  font-size: 20px;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.25);
+}
+
+.pot-pop {
+  animation: potPop 600ms ease;
+}
+
+@keyframes potPop {
+  0% { transform: scale(.8); }
+  40% { transform: scale(1.25); }
+  70% { transform: scale(.95); }
+  100% { transform: scale(1); }
+}
