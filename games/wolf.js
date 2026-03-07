@@ -7,101 +7,73 @@ const selectionWrapper = document.getElementById("selectionWrapper");
 const body = document.body;
 
 fullscreenBtn?.addEventListener("click", () => {
-  selectionWrapper.classList.toggle("fullscreen");
+  selectionWrapper?.classList.toggle("fullscreen");
   body.classList.toggle("fullscreen-active");
 
-  if (selectionWrapper.classList.contains("fullscreen")) {
+  if (selectionWrapper?.classList.contains("fullscreen")) {
     fullscreenBtn.innerText = "❌ Close Fullscreen";
   } else {
     fullscreenBtn.innerText = "📱 Fullscreen Selection";
   }
 });
 
-
 // =====================================================
 // INPUTS
 // =====================================================
 
-const baseInput = document.getElementById("base"),
-  loneMultInput = document.getElementById("loneMult"),
-  dumpMultInput = document.getElementById("dumpMult"),
-  blindMultInput = document.getElementById("blindMult"),
-  dollarValueInput = document.getElementById("dollarValue"),
+const baseInput = document.getElementById("base");
+const dollarValueInput = document.getElementById("dollarValue");
 
-  loneFixedInput = document.getElementById("loneFixed"),
-  dumpFixedInput = document.getElementById("dumpFixed"),
-  blindFixedInput = document.getElementById("blindFixed"),
+const loneWinPointsInput = document.getElementById("loneWinPoints");
+const loneLosePointsInput = document.getElementById("loneLosePoints");
 
-  loneUseMultiplier = document.getElementById("loneUseMultiplier"),
-  dumpUseMultiplier = document.getElementById("dumpUseMultiplier"),
-  blindUseMultiplier = document.getElementById("blindUseMultiplier"),
+const dumpWinPointsInput = document.getElementById("dumpWinPoints");
+const dumpLosePointsInput = document.getElementById("dumpLosePoints");
 
-  tieUseMultiplier = document.getElementById("tieUseMultiplier"),
-  tieSetPoints = document.getElementById("tieSetPoints"),
-  tieMultiplier = document.getElementById("tieMultiplier"),
+const blindWinPointsInput = document.getElementById("blindWinPoints");
+const blindLosePointsInput = document.getElementById("blindLosePoints");
 
-  potBanner = document.getElementById("potBanner"),
-  potValue = document.getElementById("potValue"),
+const tieSetPointsInput = document.getElementById("tieSetPoints");
 
-  holeSetupSelect = document.getElementById("holeSetupSelect");
+const potBanner = document.getElementById("potBanner");
+const potValue = document.getElementById("potValue");
 
+const holeTitle = document.getElementById("holeTitle");
+const holeSetupSelect = document.getElementById("holeSetupSelect");
+const wolfSelect = document.getElementById("wolfSelect");
 
-// =====================================================
-// TOGGLE ENABLE/DISABLE INPUTS
-// =====================================================
+const holeSetupCard = document.getElementById("holeSetupCard");
+const holeNavCard = document.getElementById("holeNavCard");
 
-function syncToggleInputs() {
-  // Lone
-  if (loneUseMultiplier) {
-    loneMultInput.disabled = !loneUseMultiplier.checked;
-    loneFixedInput.disabled = loneUseMultiplier.checked;
-  }
-  // Dump
-  if (dumpUseMultiplier) {
-    dumpMultInput.disabled = !dumpUseMultiplier.checked;
-    dumpFixedInput.disabled = dumpUseMultiplier.checked;
-  }
-  // Blind
-  if (blindUseMultiplier) {
-    blindMultInput.disabled = !blindUseMultiplier.checked;
-    blindFixedInput.disabled = blindUseMultiplier.checked;
-  }
-  // Tie
-  if (tieUseMultiplier) {
-    tieMultiplier.disabled = !tieUseMultiplier.checked;
-    tieSetPoints.disabled = tieUseMultiplier.checked;
-  }
-}
-
-loneUseMultiplier?.addEventListener("change", () => { syncToggleInputs(); recalc(); });
-dumpUseMultiplier?.addEventListener("change", () => { syncToggleInputs(); recalc(); });
-blindUseMultiplier?.addEventListener("change", () => { syncToggleInputs(); recalc(); });
-tieUseMultiplier?.addEventListener("change", () => { syncToggleInputs(); recalc(); });
-
+const teamBtns = document.getElementById("teamBtns");
+const loneBtns = document.getElementById("loneBtns");
+const dumpBtns = document.getElementById("dumpBtns");
+const blindBtns = document.getElementById("blindBtns");
 
 // =====================================================
 // GAME STATE
 // =====================================================
 
-let hole = 1,
-  players = ["Player 1", "Player 2", "Player 3", "Player 4"],
-  totals = [0, 0, 0, 0],
-  holes = {},
-  currentPot = 0;
-
+let hole = 1;
+let players = ["Player 1", "Player 2", "Player 3", "Player 4"];
+let totals = [0, 0, 0, 0];
+let holes = {};
+let currentPot = 0;
+let currentWolfIndex = 0;
 
 // =====================================================
 // MONEY COUNT ANIMATION
 // =====================================================
 
 function animateMoney(element, start, end, duration = 1200) {
+  if (!element) return;
+
   const range = end - start;
   const startTime = performance.now();
 
   function update(now) {
     const progress = Math.min((now - startTime) / duration, 1);
     const value = start + range * progress;
-
     element.textContent = "$" + value.toFixed(2);
 
     if (progress < 1) requestAnimationFrame(update);
@@ -110,54 +82,100 @@ function animateMoney(element, start, end, duration = 1200) {
   requestAnimationFrame(update);
 }
 
+// =====================================================
+// HELPERS
+// =====================================================
+
+function toNumber(input) {
+  return +(input?.value || 0);
+}
+
+function basePoints() {
+  return toNumber(baseInput);
+}
+
+function teamSplitPoints() {
+  return basePoints() / 2;
+}
+
+function loneWinPoints() {
+  return toNumber(loneWinPointsInput);
+}
+
+function loneLosePoints() {
+  return toNumber(loneLosePointsInput);
+}
+
+function dumpWinPoints() {
+  return toNumber(dumpWinPointsInput);
+}
+
+function dumpLosePoints() {
+  return toNumber(dumpLosePointsInput);
+}
+
+function blindWinPoints() {
+  return toNumber(blindWinPointsInput);
+}
+
+function blindLosePoints() {
+  return toNumber(blindLosePointsInput);
+}
+
+function tieCarryPoints() {
+  return toNumber(tieSetPointsInput);
+}
+
+function H() {
+  return (holes[hole] ??= {
+    wolf: currentWolfIndex,
+    partner: null,
+    mode: null,
+    result: null
+  });
+}
 
 // =====================================================
 // PLAYER NAMES
 // =====================================================
 
-document.querySelectorAll(".player").forEach((i, idx) => {
-  i.oninput = () => {
-    players[idx] = i.value || `Player ${idx + 1}`;
+document.querySelectorAll(".player").forEach((input, idx) => {
+  input.oninput = () => {
+    players[idx] = input.value || `Player ${idx + 1}`;
     render();
     recalc();
   };
 });
 
-
-// =====================================================
-// HOLE DATA
-// =====================================================
-
-function H() {
-  return holes[hole] ??= { wolf: 0, partner: null, mode: null, result: null };
-}
-
-
 // =====================================================
 // RESULT SELECT
 // =====================================================
 
-function selectResult(btn, r) {
-  btn.parentElement.querySelectorAll(".btn").forEach(b => b.classList.remove("selected"));
+function selectResult(btn, result) {
+  btn.parentElement?.querySelectorAll(".btn").forEach(b => b.classList.remove("selected"));
   btn.classList.add("selected");
-  H().result = r;
+
+  H().result = result;
   recalc();
-  if (hole < 18) nextHole();
+
+  if (hole < 18) {
+    nextHole();
+  }
 }
 
-function selectDump(btn) {
+function selectDump() {
   if (H().partner === null) return;
 
   H().mode = "dump";
   H().result = null;
 
-  document.querySelectorAll("#teamBtns .btn, #loneBtns .btn, #dumpBtns .btn, #blindBtns .btn")
+  document
+    .querySelectorAll("#teamBtns .btn, #loneBtns .btn, #dumpBtns .btn, #blindBtns .btn")
     .forEach(b => b.classList.remove("selected"));
 
   updateUI();
   recalc();
 }
-
 
 // =====================================================
 // SHOW RESULT BUTTONS
@@ -166,150 +184,167 @@ function selectDump(btn) {
 function updateUI() {
   const mode = H().mode;
 
-  teamBtns.classList.add("hidden");
-  loneBtns.classList.add("hidden");
-  dumpBtns.classList.add("hidden");
-  blindBtns.classList.add("hidden");
+  teamBtns?.classList.add("hidden");
+  loneBtns?.classList.add("hidden");
+  dumpBtns?.classList.add("hidden");
+  blindBtns?.classList.add("hidden");
 
-  if (mode === "team") teamBtns.classList.remove("hidden");
-  if (mode === "lone") loneBtns.classList.remove("hidden");
-  if (mode === "blind") blindBtns.classList.remove("hidden");
-  if (mode === "dump") dumpBtns.classList.remove("hidden");
+  if (mode === "team") teamBtns?.classList.remove("hidden");
+  if (mode === "lone") loneBtns?.classList.remove("hidden");
+  if (mode === "dump") dumpBtns?.classList.remove("hidden");
+  if (mode === "blind") blindBtns?.classList.remove("hidden");
 }
-
 
 // =====================================================
-// HELPERS FOR NEW RULES
+// POT DISPLAY
 // =====================================================
 
-// base = points per hole
-// perPlayer = base/2 (team winners each get this)
-function perPlayerPoints() {
-  const base = +baseInput.value || 0;
-  return base / 2;
+function updatePotDisplay() {
+  if (!potBanner || !potValue) return;
+
+  if (currentPot > 0) {
+    potValue.textContent = currentPot;
+    potBanner.classList.remove("hidden");
+  } else {
+    potBanner.classList.add("hidden");
+  }
 }
-
-// Get "win points" for lone/blind/dump based on toggle
-function getSoloWinPoints(mode) {
-  const baseUnit = perPlayerPoints(); // 1x unit = base/2
-
-  if (mode === "lone") {
-    if (loneUseMultiplier?.checked) return baseUnit * (+loneMultInput.value || 1);
-    return +loneFixedInput.value || 0;
-  }
-
-  if (mode === "blind") {
-    if (blindUseMultiplier?.checked) return baseUnit * (+blindMultInput.value || 1);
-    return +blindFixedInput.value || 0;
-  }
-
-  if (mode === "dump") {
-    if (dumpUseMultiplier?.checked) return baseUnit * (+dumpMultInput.value || 1);
-    return +dumpFixedInput.value || 0;
-  }
-
-  return 0;
-}
-
-// Tie pot add amount (fixed OR multiplier)
-// - Fixed: add tieSetPoints
-// - Mult: add (base/2) * (tieMultiplier - 1)
-function getTieAddAmount(stakeForHole) {
-  if (tieUseMultiplier?.checked) {
-    const tm = +tieMultiplier.value || 1;
-    return stakeForHole * (tm - 1);
-  }
-  return +tieSetPoints.value || 0;
-}
-
 
 // =====================================================
-// RECALC WITH PUSH POT
+// RECALC
 // =====================================================
 
 function recalc() {
   totals = [0, 0, 0, 0];
   let carryover = 0;
 
-  const orderedHoles = Object.keys(holes).map(n => +n).sort((a, b) => a - b);
+  const orderedHoles = Object.keys(holes)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   orderedHoles.forEach(holeNum => {
     const h = holes[holeNum];
-    if (!h.result) return;
+    if (!h || !h.result) return;
 
-    const per = perPlayerPoints();
+    const allPlayers = [0, 1, 2, 3];
 
-    let stakeForTie = per;
-    if (h.mode === "lone" || h.mode === "blind" || h.mode === "dump") {
-      stakeForTie = getSoloWinPoints(h.mode);
-    }
-
+    // Push / tie
     if (h.result === "push") {
-      if (tieUseMultiplier?.checked) carryover += getTieAddAmount(stakeForTie);
-      else carryover += +tieSetPoints.value || 0;
+      carryover += tieCarryPoints();
       return;
     }
 
     const pot = carryover;
     carryover = 0;
 
-    // TEAM RESULTS
+    // ---------------------------------
+    // TEAM WIN: Wolf + Partner
+    // Base is total amount, split by 2
+    // Pot is split by 2
+    // ---------------------------------
     if (h.result === "wolfTeam") {
-      const potEach = pot / 2;
-      totals[h.wolf] += per + potEach;
-      totals[h.partner] += per + potEach;
+      if (h.partner === null) return;
+
+      const each = teamSplitPoints() + (pot / 2);
+      totals[h.wolf] += each;
+      totals[h.partner] += each;
       return;
     }
 
+    // ---------------------------------
+    // TEAM LOSE: Other 2 players win
+    // Base is total amount, split by 2
+    // Pot is split by 2
+    // ---------------------------------
     if (h.result === "others") {
-      const winners = [];
-      players.forEach((_, i) => {
-        if (i !== h.wolf && i !== h.partner) winners.push(i);
+      const winners = allPlayers.filter(i => i !== h.wolf && i !== h.partner);
+      const each = teamSplitPoints() + (pot / 2);
+
+      winners.forEach(i => {
+        totals[i] += each;
       });
-      const potEach = winners.length ? pot / winners.length : 0;
-      winners.forEach(i => { totals[i] += per + potEach; });
       return;
     }
 
-    // LONE / BLIND RESULTS
-    if (h.result === "loneWin") {
-      const soloAmount = getSoloWinPoints(h.mode === "blind" ? "blind" : "lone");
-      const others = [];
-      players.forEach((_, i) => { if (i !== h.wolf) others.push(i); });
-
-      totals[h.wolf] += (soloAmount * others.length) + pot;
+    // ---------------------------------
+    // LONE WIN
+    // Exact fixed amount to lone wolf
+    // No extra math on configured amount
+    // ---------------------------------
+    if (h.result === "loneWin" && h.mode === "lone") {
+      totals[h.wolf] += loneWinPoints() + pot;
       return;
     }
 
-    if (h.result === "loneLose") {
-      const soloAmount = getSoloWinPoints(h.mode === "blind" ? "blind" : "lone");
-      const winners = [];
-      players.forEach((_, i) => { if (i !== h.wolf) winners.push(i); });
-      const potEach = winners.length ? pot / winners.length : 0;
+    // ---------------------------------
+    // LONE LOSE
+    // Configured amount is TOTAL
+    // Split by 3
+    // Pot is split by 3
+    // ---------------------------------
+    if (h.result === "loneLose" && h.mode === "lone") {
+      const winners = allPlayers.filter(i => i !== h.wolf);
+      const each = (loneLosePoints() / 3) + (pot / 3);
 
-      winners.forEach(i => { totals[i] += soloAmount + potEach; });
+      winners.forEach(i => {
+        totals[i] += each;
+      });
       return;
     }
 
-    // DUMP RESULTS
+    // ---------------------------------
+    // BLIND WIN
+    // Exact fixed amount to blind wolf
+    // ---------------------------------
+    if (h.result === "loneWin" && h.mode === "blind") {
+      totals[h.wolf] += blindWinPoints() + pot;
+      return;
+    }
+
+    // ---------------------------------
+    // BLIND LOSE
+    // Configured amount is TOTAL
+    // Split by 3
+    // Pot is split by 3
+    // ---------------------------------
+    if (h.result === "loneLose" && h.mode === "blind") {
+      const winners = allPlayers.filter(i => i !== h.wolf);
+      const each = (blindLosePoints() / 3) + (pot / 3);
+
+      winners.forEach(i => {
+        totals[i] += each;
+      });
+      return;
+    }
+
+    // ---------------------------------
+    // DUMP WIN
+    // Exact fixed amount to dump player
+    // ---------------------------------
     if (h.result === "dumpWin") {
-      const soloAmount = getSoloWinPoints("dump");
       const dumpPlayer = h.partner;
-      const others = [];
-      players.forEach((_, i) => { if (i !== dumpPlayer) others.push(i); });
+      if (dumpPlayer === null || dumpPlayer === undefined) return;
 
-      totals[dumpPlayer] += (soloAmount * others.length) + pot;
+      totals[dumpPlayer] += dumpWinPoints() + pot;
       return;
     }
 
+    // ---------------------------------
+    // DUMP LOSE
+    // Configured amount is TOTAL
+    // Split by 3
+    // Pot is split by 3
+    // ---------------------------------
     if (h.result === "dumpLose") {
-      const soloAmount = getSoloWinPoints("dump");
-      const losersIndex = h.partner;
-      const winners = [];
-      players.forEach((_, i) => { if (i !== losersIndex) winners.push(i); });
-      const potEach = winners.length ? pot / winners.length : 0;
+      const dumpPlayer = h.partner;
+      if (dumpPlayer === null || dumpPlayer === undefined) return;
 
-      winners.forEach(i => { totals[i] += soloAmount + potEach; });
+      const winners = allPlayers.filter(i => i !== dumpPlayer);
+      const each = (dumpLosePoints() / 3) + (pot / 3);
+
+      winners.forEach(i => {
+        totals[i] += each;
+      });
       return;
     }
   });
@@ -319,30 +354,21 @@ function recalc() {
   updateTotals();
 }
 
-
-// =====================================================
-// POT DISPLAY
-// =====================================================
-
-function updatePotDisplay() {
-  if (currentPot > 0) {
-    potValue.textContent = currentPot;
-    potBanner.classList.remove("hidden");
-  } else {
-    potBanner.classList.add("hidden");
-  }
-}
-
-
 // =====================================================
 // RENDER
 // =====================================================
 
 function render() {
-  holeTitle.innerText = `Hole ${hole}`;
+  if (holeTitle) {
+    holeTitle.innerText = `Hole ${hole}`;
+  }
 
-  wolfSelect.innerHTML = players.map((p, i) => `<option value="${i}">${p}</option>`).join("");
-  wolfSelect.value = H().wolf;
+  if (wolfSelect) {
+    wolfSelect.innerHTML = players
+      .map((p, i) => `<option value="${i}">${p}</option>`)
+      .join("");
+    wolfSelect.value = H().wolf;
+  }
 
   const setupOptions = [`<option value="">-- Select Hole Setup --</option>`];
 
@@ -355,7 +381,9 @@ function render() {
   setupOptions.push(`<option value="lone">Lone Wolf</option>`);
   setupOptions.push(`<option value="blind">Blind Wolf</option>`);
 
-  holeSetupSelect.innerHTML = setupOptions.join("");
+  if (holeSetupSelect) {
+    holeSetupSelect.innerHTML = setupOptions.join("");
+  }
 
   let currentSetupValue = "";
   if ((H().mode === "team" || H().mode === "dump") && H().partner !== null) {
@@ -366,22 +394,28 @@ function render() {
     currentSetupValue = "blind";
   }
 
-  holeSetupSelect.value = currentSetupValue;
+  if (holeSetupSelect) {
+    holeSetupSelect.value = currentSetupValue;
+  }
 
   updateUI();
   updateTotals();
 }
 
-wolfSelect.onchange = () => {
+// =====================================================
+// INPUT EVENTS
+// =====================================================
+
+wolfSelect?.addEventListener("change", () => {
   H().wolf = +wolfSelect.value;
   H().partner = null;
   H().mode = null;
   H().result = null;
   render();
   recalc();
-};
+});
 
-holeSetupSelect.onchange = () => {
+holeSetupSelect?.addEventListener("change", () => {
   const value = holeSetupSelect.value;
 
   H().result = null;
@@ -402,22 +436,23 @@ holeSetupSelect.onchange = () => {
 
   render();
   recalc();
-};
+});
 
-baseInput.oninput =
-  loneMultInput.oninput =
-  dumpMultInput.oninput =
-  blindMultInput.oninput =
-  dollarValueInput.oninput =
-  loneFixedInput.oninput =
-  dumpFixedInput.oninput =
-  blindFixedInput.oninput =
-  tieSetPoints.oninput =
-  tieMultiplier.oninput = () => {
-    syncToggleInputs();
+[
+  baseInput,
+  dollarValueInput,
+  loneWinPointsInput,
+  loneLosePointsInput,
+  dumpWinPointsInput,
+  dumpLosePointsInput,
+  blindWinPointsInput,
+  blindLosePointsInput,
+  tieSetPointsInput
+].forEach(input => {
+  input?.addEventListener("input", () => {
     recalc();
-  };
-
+  });
+});
 
 // =====================================================
 // HOLE NAV
@@ -426,60 +461,69 @@ baseInput.oninput =
 function prevHole() {
   if (hole > 1) {
     hole--;
+    currentWolfIndex = H().wolf ?? 0;
     render();
     recalc();
     hideResultsSummary();
   }
 }
 
-let currentWolfIndex = 0;
-
 function nextHole() {
   if (hole < 19) {
     hole++;
     currentWolfIndex = (currentWolfIndex + 1) % players.length;
+
     H().wolf = currentWolfIndex;
     H().partner = null;
     H().mode = null;
     H().result = null;
+
     render();
     recalc();
-    if (hole === 19) showResultsSummary();
+
+    if (hole === 19) {
+      showResultsSummary();
+    }
   }
 }
-
 
 // =====================================================
 // SCOREBOARD
 // =====================================================
 
 function updateTotals() {
-  const dollar = +dollarValueInput.value || 0;
+  const dollar = toNumber(dollarValueInput);
 
   players.forEach((p, i) => {
-    document.getElementById(`t${i}`).innerText = `${p}: ${totals[i]} pts`;
-    const net = totals[i] * dollar;
+    const scoreEl = document.getElementById(`t${i}`);
     const moneyEl = document.getElementById(`m${i}`);
-    moneyEl.innerText = (net >= 0 ? "+" : "-") + "$" + Math.abs(net).toFixed(2);
-    moneyEl.style.color = net >= 0 ? "#359447" : "#d9534f";
+
+    if (scoreEl) {
+      scoreEl.innerText = `${p}: ${totals[i]} pts`;
+    }
+
+    if (moneyEl) {
+      const net = totals[i] * dollar;
+      moneyEl.innerText = (net >= 0 ? "+" : "-") + "$" + Math.abs(net).toFixed(2);
+      moneyEl.style.color = net >= 0 ? "#359447" : "#d9534f";
+    }
   });
 }
-
 
 // =====================================================
 // RESULTS SCREEN (HOLE 19)
 // =====================================================
 
 function hideResultsSummary() {
-  const res = document.getElementById("resultsCard");
-  if (res) res.style.display = "none";
-  holeSetupCard.style.display = "block";
-  holeNavCard.style.display = "flex";
+  const resultsCard = document.getElementById("resultsCard");
+  if (resultsCard) resultsCard.style.display = "none";
+  if (holeSetupCard) holeSetupCard.style.display = "block";
+  if (holeNavCard) holeNavCard.style.display = "flex";
 }
 
 function showResultsSummary() {
-  holeSetupCard.style.display = "none";
-  holeNavCard.style.display = "none";
+  if (holeSetupCard) holeSetupCard.style.display = "none";
+  if (holeNavCard) holeNavCard.style.display = "none";
 
   let resultsCard = document.getElementById("resultsCard");
 
@@ -487,10 +531,10 @@ function showResultsSummary() {
     resultsCard = document.createElement("div");
     resultsCard.id = "resultsCard";
     resultsCard.className = "card game-card p-4 mb-3 text-center";
-    selectionWrapper.appendChild(resultsCard);
+    selectionWrapper?.appendChild(resultsCard);
   }
 
-  const dollar = +dollarValueInput.value || 0;
+  const dollar = toNumber(dollarValueInput);
   const netMoney = totals.map(t => t * dollar);
   const maxMoney = Math.max(...netMoney);
 
@@ -523,7 +567,8 @@ function showResultsSummary() {
     }
 
     try {
-      await firebase.firestore()
+      await firebase
+        .firestore()
         .collection("users")
         .doc(user.uid)
         .collection("savedGames")
@@ -544,7 +589,6 @@ function showResultsSummary() {
   };
 }
 
-
 // =====================================================
 // CONFETTI
 // =====================================================
@@ -552,7 +596,8 @@ function showResultsSummary() {
 function runConfetti() {
   if (!window.confetti) {
     const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+    script.src =
+      "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
     script.onload = runConfetti;
     document.body.appendChild(script);
     return;
@@ -575,99 +620,68 @@ function runConfetti() {
   (function frame() {
     myConfetti({ particleCount: 6, angle: 60, spread: 60, origin: { x: 0 } });
     myConfetti({ particleCount: 6, angle: 120, spread: 60, origin: { x: 1 } });
-    if (Date.now() < end) requestAnimationFrame(frame);
-    else setTimeout(() => canvas.remove(), 1000);
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    } else {
+      setTimeout(() => canvas.remove(), 1000);
+    }
   })();
 }
 
-
 // =====================================================
-// WOLF RULES MODAL (content)
+// WOLF RULES MODAL CONTENT
 // =====================================================
 
 document.addEventListener("DOMContentLoaded", () => {
-  syncToggleInputs();
-
   const openBtn = document.getElementById("wolfRulesBtn");
   const modal = document.getElementById("wolfRulesModal");
   const closeBtn = document.getElementById("closeWolfRulesBtn");
   const bodyEl = document.getElementById("wolfRulesBody");
 
-  if (!openBtn || !modal || !closeBtn || !bodyEl) return;
+  if (openBtn && modal && closeBtn && bodyEl) {
+    bodyEl.innerHTML = `
+      <h5 class="mt-2">🐺 Wolf – Fixed Points Rules</h5>
 
-bodyEl.innerHTML = `
-<h5 class="mt-2">🐺 Wolf – Full Rules</h5>
+      <p>
+        This version of Wolf uses <strong>fixed point amounts</strong>.
+        There are no multipliers. The only math happens when a total amount
+        needs to be split between multiple winners.
+      </p>
 
-<p>
-Wolf is a 4-player golf betting game where one player becomes the <strong>Wolf</strong> each hole.
-The Wolf decides whether to choose a partner or play the hole alone after watching tee shots.
-Points are awarded based on the outcome of the hole.
-</p>
+      <h5 class="mt-4">Rotation</h5>
+      <ul>
+        <li>The Wolf rotates each hole in order.</li>
+        <li>After Player 4 is the Wolf, the rotation repeats.</li>
+      </ul>
 
-<h5 class="mt-4">Rotation</h5>
-<ul>
-<li>The Wolf rotates each hole in order (Player 1 → Player 2 → Player 3 → Player 4).</li>
-<li>After Player 4 is the Wolf, the rotation repeats.</li>
-</ul>
+      <h5 class="mt-4">Team Holes</h5>
+      <ul>
+        <li><strong>Base Points</strong> is the total value of a team hole.</li>
+        <li>If 2 players win, the Base Points are split by 2.</li>
+      </ul>
 
-<h5 class="mt-4">Points System</h5>
-<ul>
-<li><strong>Points Per Hole</strong> determines the total value of a hole.</li>
-<li>When two players win together (team win), each player receives <strong>Points Per Hole ÷ 2</strong>.</li>
-<li>Example: If the hole value is <strong>6 points</strong>, each winning team member earns <strong>3 points</strong>.</li>
-</ul>
+      <h5 class="mt-4">Lone / Dump / Blind</h5>
+      <ul>
+        <li><strong>Win Points</strong> are exact fixed amounts to the solo winner.</li>
+        <li><strong>Lose Points</strong> are total amounts split by the 3 winners.</li>
+      </ul>
 
-<h5 class="mt-4">Team Play</h5>
-<ul>
-<li>The Wolf watches the other players hit their tee shots.</li>
-<li>The Wolf may choose one player as a <strong>partner</strong>.</li>
-<li>The Wolf and partner play <strong>best ball</strong> against the other two players.</li>
-<li>If the Wolf team wins, each player receives <strong>Points Per Hole ÷ 2</strong>.</li>
-<li>If the other team wins, each of those players receives <strong>Points Per Hole ÷ 2</strong>.</li>
-</ul>
+      <h5 class="mt-4">Push / Tie</h5>
+      <ul>
+        <li>A push adds the Tie Carryover amount into the pot.</li>
+        <li>If a future result has multiple winners, the pot is split among them.</li>
+        <li>Solo fixed wins stay fixed.</li>
+      </ul>
 
-<h5 class="mt-4">Lone Wolf</h5>
-<ul>
-<li>The Wolf may choose to play the hole alone against the other three players.</li>
-<li>If the Wolf wins, they receive the configured Lone amount against all three opponents.</li>
-<li>If the Wolf loses, the other three players each receive the configured Lone amount.</li>
-</ul>
-
-<h5 class="mt-4">Blind Wolf</h5>
-<ul>
-<li>The Wolf declares they are playing alone <strong>before any tee shots are hit</strong>.</li>
-<li>This is riskier and usually pays more.</li>
-<li>If the Wolf wins, they receive the configured Blind amount against all three opponents.</li>
-<li>If the Wolf loses, the other three players each receive the configured Blind amount.</li>
-</ul>
-
-<h5 class="mt-4">Dump</h5>
-<ul>
-<li>If the chosen partner dumps the Wolf, use the <strong>Dump</strong> button.</li>
-<li>The chosen player becomes the Dump player against the other three.</li>
-<li>If Dump wins, the configured Dump amount is awarded against all three opponents.</li>
-<li>If Dump loses, the other three players each receive the configured Dump amount.</li>
-</ul>
-
-<h5 class="mt-4">Push / Tie</h5>
-<ul>
-<li>If the hole is tied, it is recorded as a <strong>Push</strong>.</li>
-<li>The hole value is added to a <strong>carryover pot</strong>.</li>
-<li>The next hole winner receives the pot.</li>
-<li>If a team wins the next hole, the pot is <strong>split between the two winners</strong>.</li>
-<li>If a Lone, Blind, or Dump player wins the next hole, that player receives <strong>the entire pot</strong>.</li>
-<li>If the solo player loses, the pot is <strong>split between the three winners</strong>.</li>
-</ul>
-
-<h5 class="mt-4">End of Game</h5>
-<ul>
-<li>The game is played for <strong>18 holes</strong>.</li>
-<li>Total points are multiplied by <strong>$/Point</strong> to determine winnings.</li>
-<li>The player with the highest total wins the round.</li>
-</ul>
-`;
+      <h5 class="mt-4">End of Game</h5>
+      <ul>
+        <li>The game is played for 18 holes.</li>
+        <li>Total points are multiplied by $/Point to calculate winnings.</li>
+      </ul>
+    `;
+  }
 });
-
 
 // =====================================================
 // INIT
