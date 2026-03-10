@@ -278,15 +278,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const safeText = (v) => (v === null || v === undefined || v === "" ? "—" : String(v));
 
-  const openModal = () => {
-    modal.hidden = false;
-    document.body.classList.add("gfg-no-scroll");
-  };
+const openModal = () => {
+  modal.hidden = false;
+  document.body.classList.add("no-scroll");
+};
 
-  const closeModal = () => {
-    modal.hidden = true;
-    document.body.classList.remove("gfg-no-scroll");
-  };
+const closeModal = () => {
+  modal.hidden = true;
+  document.body.classList.remove("no-scroll");
+};
 
   const getTimestampLabel = (data) => {
     try {

@@ -675,6 +675,38 @@ document.addEventListener("DOMContentLoaded", () => {
         The <strong>Game Logic</strong> section on the page explains <strong>how the app pays out points or money</strong>.
       </div>
     `;
+
+    const open = () => {
+      modal.classList.remove("hidden");
+      document.body.classList.add("no-scroll");
+    };
+
+    const close = () => {
+      modal.classList.add("hidden");
+      document.body.classList.remove("no-scroll");
+    };
+
+    modal.classList.add("hidden");
+
+    openBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      open();
+    });
+
+    closeBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      close();
+    });
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) close();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.classList.contains("hidden")) close();
+    });
   }
 });
 

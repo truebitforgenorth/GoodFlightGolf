@@ -433,12 +433,14 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.classList.remove("hidden");
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("no-scroll");
   };
 
   const close = () => {
     modal.classList.add("hidden");
     modal.classList.remove("is-open");
     modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("no-scroll");
   };
 
   openBtn.addEventListener("click", (e) => {

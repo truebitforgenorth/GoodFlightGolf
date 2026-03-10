@@ -492,37 +492,6 @@
   <script src="wolf.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const modal = document.getElementById("wolfRulesModal");
-      const openBtn = document.getElementById("wolfRulesBtn");
-      const closeBtn = document.getElementById("closeWolfRulesBtn");
-
-      if (!modal || !openBtn || !closeBtn) return;
-
-      // start hidden no matter what
-      modal.classList.add("hidden");
-
-      openBtn.addEventListener("click", () => {
-        modal.classList.remove("hidden");
-      });
-
-      closeBtn.addEventListener("click", () => {
-        modal.classList.add("hidden");
-      });
-
-      // click outside closes
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) modal.classList.add("hidden");
-      });
-
-      // ESC closes
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") modal.classList.add("hidden");
-      });
-    });
-  </script>
-
-  <script>
     // Back to top
     const mybutton = document.getElementById("btn-back-to-top");
 
