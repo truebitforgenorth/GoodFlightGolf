@@ -34,10 +34,23 @@
 /* =====================================================
    BASE
 ===================================================== */
-*{ box-sizing:border-box; }
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+}
 
-html,body{ height:100%; }
-html{ -webkit-text-size-adjust: 100%; }
+html,
+body{
+  width:100%;
+  max-width:100%;
+  min-height:100%;
+  overflow-x:hidden;
+}
+
+html{
+  -webkit-text-size-adjust:100%;
+}
 
 body{
   margin:0;
@@ -47,12 +60,37 @@ body{
   line-height: 1.6;
 }
 
+/* Lock page scroll when modal / fullscreen overlays are open */
+body.no-scroll{
+  overflow:hidden !important;
+  height:100vh;
+  touch-action:none;
+}
+
 /* Bootstrap container consistency */
-.container{ max-width: var(--container); }
+.container{
+  max-width: var(--container);
+}
+
+/* Media safety */
+img,
+video,
+iframe,
+canvas,
+svg{
+  max-width:100%;
+  height:auto;
+}
 
 /* Links */
-a{ text-decoration:none; color:inherit; transition:opacity var(--transition); }
-a:hover{ opacity:0.92; }
+a{
+  text-decoration:none;
+  color:inherit;
+  transition:opacity var(--transition);
+}
+a:hover{
+  opacity:0.92;
+}
 
 /* =====================================================
    NAVBAR (fixed stacking + professional)
@@ -238,6 +276,84 @@ a:hover{ opacity:0.92; }
 .card-body{ padding: 18px; }
 
 /* =====================================================
+   LOCKED FEATURE PREVIEW
+===================================================== */
+.gfg-locked-shell{
+  position: relative;
+  border-radius: 18px;
+}
+
+.gfg-locked-shell.is-locked > .row,
+.gfg-locked-shell.is-locked > .card,
+.gfg-locked-shell.is-locked > section,
+.gfg-locked-shell.is-locked > div.card,
+.gfg-locked-shell.is-locked #clubCalculatorSection,
+.gfg-locked-shell.is-locked #clubDistanceTableCard,
+.gfg-locked-shell.is-locked #handical,
+.gfg-locked-shell.is-locked #handicapChartCard{
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.gfg-lock-overlay{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(10, 12, 18, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 20;
+}
+
+.gfg-lock-card{
+  width: min(460px, 92%);
+  text-align: center;
+  padding: 28px 24px;
+  border-radius: 18px;
+  background: rgba(23, 25, 39, 0.96);
+  color: #fff;
+  border: 2px solid rgba(53,148,71,0.85);
+  box-shadow: 0 22px 50px rgba(0,0,0,0.45);
+}
+
+.gfg-lock-icon{
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.gfg-lock-card h4{
+  margin-bottom: 10px;
+  font-weight: 800;
+  color: #FAD02E;
+}
+
+.gfg-lock-card p{
+  margin-bottom: 18px;
+  color: rgba(255,255,255,0.88);
+}
+
+@media (max-width: 576px){
+  .gfg-lock-card{
+    padding: 22px 18px;
+  }
+
+  .gfg-locked-shell.is-locked > .row,
+  .gfg-locked-shell.is-locked > .card,
+  .gfg-locked-shell.is-locked > section,
+  .gfg-locked-shell.is-locked > div.card,
+  .gfg-locked-shell.is-locked #clubCalculatorSection,
+  .gfg-locked-shell.is-locked #clubDistanceTableCard,
+  .gfg-locked-shell.is-locked #handical,
+  .gfg-locked-shell.is-locked #handicapChartCard{
+    filter: blur(4px);
+  }
+}
+
+/* =====================================================
    WELCOME MESSAGE
 ===================================================== */
 #welcomeMessage{
@@ -307,6 +423,37 @@ a:hover{ opacity:0.92; }
   overflow:hidden;
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
+}
+
+/* =====================================================
+   Weather App
+===================================================== */
+/* Make both columns equal height */
+.equal-height {
+  display: flex;
+  align-items: stretch;
+}
+
+.equal-height > [class*="col-"] {
+  display: flex;
+}
+
+/* Let card fill column */
+.equal-height .card {
+  width: 100%;
+}
+
+/* Weather iframe sizing */
+.weather-embed-wrap {
+  width: 100%;
+  min-height: 655px; /* Adjust if needed */
+}
+
+.weather-embed-wrap iframe {
+  width: 100%;
+  height: 655px;
+  border: 0;
+  display: block;
 }
 
 /* =====================================================
@@ -665,10 +812,10 @@ body.fullscreen-active #foot{
 
 :is(.wolf-page, .gfg-666-page, .gfg-bbb-page)
 #selectionWrapper.fullscreen #scoreboardCard{
-  margin-top: auto !important;
-  position: sticky !important;
-  bottom: 0 !important;
-  z-index: 10 !important;
+  margin-top: 0 !important;
+  position: static !important;
+  bottom: auto !important;
+  z-index: auto !important;
 }
 
 /* -----------------------------------
@@ -690,7 +837,9 @@ body.fullscreen-active #foot{
   }
 
   :is(.wolf-page, .gfg-666-page, .gfg-bbb-page)
-  #selectionWrapper.fullscreen button{
+  #selectionWrapper.fullscreen button,
+  :is(.wolf-page, .gfg-666-page, .gfg-bbb-page)
+  #selectionWrapper.fullscreen .gfg-pill-btn{
     padding: 8px 12px !important;
     font-size: 0.85rem !important;
   }
@@ -915,20 +1064,30 @@ input[type="submit"]{
 
 .gfg-modal{
   position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   padding: 16px;
+  margin: 0;
+  min-height: 100dvh;
 
   background: rgba(23, 25, 39, 0.82);
   backdrop-filter: blur(8px);
 
-  z-index: 26000; /* above navbar + fullscreen */
+  z-index: 26000;
 }
 
 .gfg-modal__panel{
   width: min(760px, 96vw);
-  max-height: 85vh;
+  max-width: 760px;
+  max-height: min(85vh, 85dvh);
+  margin: 0;
   overflow: hidden;
 
   background: #171927;
@@ -1051,6 +1210,14 @@ input[type="submit"]{
 @media (max-width: 480px){
   .gfg-modal__panel{ max-height: 88vh; }
   .gfg-results .gfg-kv{ grid-template-columns: 1fr; }
+}
+
+.gfg-results-actions{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  margin-top:16px;
 }
 
 /* =====================================================

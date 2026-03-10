@@ -40,15 +40,21 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // ================= Auth =================
   auth.onAuthStateChanged(user => {
+    const clubCalculatorSection = document.getElementById("clubCalculatorSection");
+    const loginToUseClubs = document.getElementById("loginToUseClubs");
+    const clubAreaShell = document.getElementById("clubAreaShell");
+
     if (user) {
       currentUser = user;
-      document.getElementById("clubCalculatorSection").classList.remove("d-none");
-      document.getElementById("loginToUseClubs").classList.add("d-none");
+      clubCalculatorSection.classList.remove("d-none");
+      loginToUseClubs.classList.add("d-none");
+      clubAreaShell.classList.remove("is-locked");
       loadOrderedClubs();
     } else {
       currentUser = null;
-      document.getElementById("clubCalculatorSection").classList.add("d-none");
-      document.getElementById("loginToUseClubs").classList.remove("d-none");
+      clubCalculatorSection.classList.remove("d-none");
+      loginToUseClubs.classList.remove("d-none");
+      clubAreaShell.classList.add("is-locked");
       savedClubsList.innerHTML = "";
       updateClubTable({});
     }

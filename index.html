@@ -77,6 +77,35 @@
     </div>
   </nav>
 
+    <!-- Login / Signup Modal -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="loginMessage" style="height: 1.5em;"></div>
+          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+
+          <hr />
+
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
+          <div id="signupMessage" style="height: 1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- HERO PARALLAX (top) -->
   <section class="parallax-section2">
     <div class="parallax-content2">
@@ -266,7 +295,7 @@
       </div>
     </div>
 
-    <!-- FEATURED GAME -->
+    <!-- FEATURED GAME 
     <div class="row">
       <div class="col-md-12">
         <div class="card">
@@ -285,7 +314,7 @@
       </div>
     </div>
 
-    <!-- RECOMMENDED COURSE -->
+     RECOMMENDED COURSE 
     <div class="row">
       <div class="col-md-12">
         <div class="card text-center">
@@ -301,7 +330,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- FEEDBACK -->
     <div class="row justify-content-center">
@@ -326,34 +355,7 @@
     <script src="feedback.js"></script>
   </div>
 
-  <!-- Login / Signup Modal -->
-  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
 
-        <div class="modal-body">
-          <h6>Login</h6>
-          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
-          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
-          <div id="loginMessage" style="height: 1.5em;"></div>
-          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
-
-          <hr />
-
-          <h6>Sign Up</h6>
-          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
-          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
-          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
-          <div id="signupMessage" style="height: 1.5em;"></div>
-          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <footer class="gfg-footer">
     <div class="gfg-footer-container">
@@ -399,7 +401,6 @@
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
   <script src="myscripts.js"></script>
-  <script src="main.js"></script>
   <script src="gfCourseFinder.js"></script>
 
   <script>

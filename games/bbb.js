@@ -14,22 +14,25 @@
 function $(id){ return document.getElementById(id); }
 function on(el, evt, fn){ if(el) el.addEventListener(evt, fn); else console.warn('[BBB] missing element for', evt, el); }
 
-// ---------------------------
-// FULLSCREEN (same approach as Wolf/666)
-// ---------------------------
-const fullscreenBtn = $("fullscreenBtn");
-const selectionWrapper = $("selectionWrapper");
+// =====================================================
+// FULLSCREEN
+// =====================================================
+
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+const selectionWrapper = document.getElementById("selectionWrapper");
 const body = document.body;
 
-on(fullscreenBtn, "click", () => {
-  if (!selectionWrapper) return;
-
-  selectionWrapper.classList.toggle("fullscreen");
+fullscreenBtn?.addEventListener("click", () => {
+  selectionWrapper?.classList.toggle("fullscreen");
   body.classList.toggle("fullscreen-active");
 
-  fullscreenBtn.innerText = selectionWrapper.classList.contains("fullscreen")
-    ? "❌ Close Fullscreen"
-    : "📱 Fullscreen Selection";
+  if (selectionWrapper?.classList.contains("fullscreen")) {
+    body.classList.add("no-scroll");
+    fullscreenBtn.innerText = "❌ Close Fullscreen";
+  } else {
+    body.classList.remove("no-scroll");
+    fullscreenBtn.innerText = "📱 Fullscreen Selection";
+  }
 });
 
 // ---------------------------
@@ -44,6 +47,7 @@ const holeTitle = $("bbbHoleTitle");
 
 const holeSetupCard = $("holeSetupCard");
 const holeNavCard = $("holeNavCard");
+const scoreboardCard = $("scoreboardCard");
 
 const prevHoleBtn = $("prevHoleBtn");
 const nextHoleBtn = $("nextHoleBtn");
@@ -172,6 +176,7 @@ function hideResultsSummary() {
   if (res) res.style.display = "none";
   if (holeSetupCard) holeSetupCard.style.display = "block";
   if (holeNavCard) holeNavCard.style.display = "flex";
+  if (scoreboardCard) scoreboardCard.style.display = "block";
 }
 
 function prevHole() {
@@ -235,6 +240,7 @@ function runConfetti() {
 function showResultsSummary() {
   if (holeSetupCard) holeSetupCard.style.display = "none";
   if (holeNavCard) holeNavCard.style.display = "none";
+  if (scoreboardCard) scoreboardCard.style.display = "none";
 
   let resultsCard = $("resultsCardBBB");
   if (!resultsCard) {
@@ -256,10 +262,15 @@ function showResultsSummary() {
         ${netMoney[i] === maxMoney ? '<span class="ms-2">🏆</span>' : ''}
       </div>
     `).join("")}
-    <a id="saveGameBtn" class="gfg-pill-btn">💾 Save Game Data</a><br>
-    <a href="greenflightgames.html" class="gfg-pill-btn">💸 Back to Games</a>
-    <a href="../index.html" class="gfg-pill-btn" style="margin-top:10px;">🏠 Back to Home</a>
+
+    <div class="gfg-results-actions">
+      <a id="saveGameBtn" class="gfg-pill-btn">💾 Save Game Data</a>
+      <a href="greenflightgames.html" class="gfg-pill-btn">💸 Back to Games</a>
+      <a href="../index.html" class="gfg-pill-btn">🏠 Back to Home</a>
+    </div>
   `;
+
+  resultsCard.style.display = "block";
 
   runConfetti();
 
@@ -314,8 +325,17 @@ function loadGameData(data) {
 
   render();
   recalc();
+
+  if (hole === 19) {
+    showResultsSummary();
+  } else {
+    hideResultsSummary();
+  }
 }
 
+// ---------------------------
+// AUTOLOAD FROM HOME (optional, same sessionStorage key as other games)
+// ---------------------------
 (function autoLoadFromHomePage() {
   try {
     const raw = sessionStorage.getItem("gfg_savedGame");
@@ -354,8 +374,15 @@ document.addEventListener("DOMContentLoaded", () => {
     <p class="mb-0">Tip: You can leave any category blank (—) and fill it later.</p>
   `;
 
-  const open = () => modal.classList.remove("hidden");
-  const close = () => modal.classList.add("hidden");
+  const open = () => {
+    modal.classList.remove("hidden");
+    document.body.classList.add("no-scroll");
+  };
+
+  const close = () => {
+    modal.classList.add("hidden");
+    document.body.classList.remove("no-scroll");
+  };
 
   // Force closed state on boot
   close();

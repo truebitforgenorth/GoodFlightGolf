@@ -11,35 +11,6 @@
   <link rel="stylesheet" href="../main2.css">
   <link rel="stylesheet" href="666.css">
     <style>
-    /* ======================================
-   Slight fullscreen shrink for small phones
-   (about 10%)
-====================================== */
-@media (max-width: 480px){
-
-  #selectionWrapper.fullscreen{
-    padding: 0.75rem !important;
-  }
-
-  #selectionWrapper.fullscreen h2,
-  #selectionWrapper.fullscreen h3,
-  #selectionWrapper.fullscreen h4{
-    font-size: 0.9rem !important;
-  }
-
-  #selectionWrapper.fullscreen button{
-    padding: 8px 12px !important;
-    font-size: 0.85rem !important;
-  }
-
-  #selectionWrapper.fullscreen .card{
-    padding: 0.75rem !important;
-  }
-
-}
-#selectionWrapper.fullscreen{
-  height: 100dvh;   /* dynamic viewport height */
-}
   </style>
 </head>
 
@@ -81,7 +52,11 @@
   <div class="parallax-section2">
     <div class="parallax-content2">
       <h1 class="gfg-hero-title">👹 Six-Six-Six</h1>
-      <p class="gfg-hero-sub">Two teams per hole. Rotating pairings. Track points + payouts.</p>
+      <p class="gfg-hero-sub">Two teams per hole. Rotating pairings every 6 holes. Everyone is a friend, everyone is an enemy. Track points + payouts.</p>
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <a href="greenflightgames.html">
+        <button href="greenflightgames.html" class="gfg-pill-btn">💸 Back to Games Home page</button></a>
+      </div>
     </div>
   </div>
 
@@ -176,10 +151,6 @@
             <div class="col-12">
               <button class="btn btn-warning w-100" id="pushBtn">Push</button>
             </div>
-          </div>
-
-          <div class="small text-muted">
-            Teams rotate automatically by hole (1–6, 7–12, 13–18). Push carries a pot forward.
           </div>
         </div>
 

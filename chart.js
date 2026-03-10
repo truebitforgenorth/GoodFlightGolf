@@ -169,9 +169,12 @@ async function loadHandicapChart() {
 
 // Auth state listener
 firebase.auth().onAuthStateChanged(user => {
+  const handicapAreaShell = document.getElementById('handicapAreaShell');
+
   if (user) {
     handical.classList.remove('d-none');
     loginToUseHandicap.classList.add('d-none');
+    handicapAreaShell.classList.remove('is-locked');
 
     firebase.firestore().collection('users').doc(user.uid).get().then(doc => {
       if (doc.exists && doc.data().handicap !== undefined) {
@@ -183,8 +186,9 @@ firebase.auth().onAuthStateChanged(user => {
 
     loadHandicapChart();
   } else {
-    handical.classList.add('d-none');
+    handical.classList.remove('d-none');
     loginToUseHandicap.classList.remove('d-none');
+    handicapAreaShell.classList.add('is-locked');
     updateSavedHandicapDisplay(null);
   }
 });

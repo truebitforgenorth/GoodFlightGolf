@@ -11,8 +11,10 @@ fullscreenBtn?.addEventListener("click", () => {
   body.classList.toggle("fullscreen-active");
 
   if (selectionWrapper?.classList.contains("fullscreen")) {
+    body.classList.add("no-scroll");
     fullscreenBtn.innerText = "❌ Close Fullscreen";
   } else {
+    body.classList.remove("no-scroll");
     fullscreenBtn.innerText = "📱 Fullscreen Selection";
   }
 });
@@ -370,7 +372,7 @@ function render() {
     wolfSelect.value = H().wolf;
   }
 
-  const setupOptions = [`<option value="">-- Select Hole Setup --</option>`];
+  const setupOptions = [`<option value="">Select Partner/Play</option>`];
 
   players.forEach((p, i) => {
     if (i !== H().wolf) {
@@ -519,11 +521,13 @@ function hideResultsSummary() {
   if (resultsCard) resultsCard.style.display = "none";
   if (holeSetupCard) holeSetupCard.style.display = "block";
   if (holeNavCard) holeNavCard.style.display = "flex";
+  if (scoreboardCard) scoreboardCard.style.display = "block";
 }
 
 function showResultsSummary() {
   if (holeSetupCard) holeSetupCard.style.display = "none";
   if (holeNavCard) holeNavCard.style.display = "none";
+  if (scoreboardCard) scoreboardCard.style.display = "none";
 
   let resultsCard = document.getElementById("resultsCard");
 
@@ -557,36 +561,6 @@ function showResultsSummary() {
   });
 
   runConfetti();
-
-  const saveBtn = document.getElementById("saveGameBtn");
-  saveBtn.onclick = async () => {
-    const user = firebase.auth().currentUser;
-    if (!user) {
-      alert("Please log in to save the game!");
-      return;
-    }
-
-    try {
-      await firebase
-        .firestore()
-        .collection("users")
-        .doc(user.uid)
-        .collection("savedGames")
-        .add({
-          gameType: "wolf",
-          hole,
-          holes,
-          totals,
-          players,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-      alert("Game saved!");
-    } catch (err) {
-      console.error(err);
-      alert("Error saving game.");
-    }
-  };
 }
 
 // =====================================================
@@ -641,44 +615,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (openBtn && modal && closeBtn && bodyEl) {
     bodyEl.innerHTML = `
-      <h5 class="mt-2">🐺 Wolf – Fixed Points Rules</h5>
+      <h5 class="mt-2">🐺 Wolf Rules</h5>
 
       <p>
-        This version of Wolf uses <strong>fixed point amounts</strong>.
-        There are no multipliers. The only math happens when a total amount
-        needs to be split between multiple winners.
+        <strong>Wolf</strong> is a 4-player golf game played over 18 holes.
+        On each hole, one player is designated as the <strong>Wolf</strong>.
+        The Wolf rotates in order so that each player gets an equal number of turns.
       </p>
 
-      <h5 class="mt-4">Rotation</h5>
+      <h5 class="mt-4">Player Rotation</h5>
       <ul>
-        <li>The Wolf rotates each hole in order.</li>
-        <li>After Player 4 is the Wolf, the rotation repeats.</li>
+        <li>One player is the Wolf on each hole.</li>
+        <li>The Wolf rotates hole by hole in order through all 4 players.</li>
+        <li>After Player 4 is the Wolf, the rotation starts over again.</li>
       </ul>
 
-      <h5 class="mt-4">Team Holes</h5>
+      <h5 class="mt-4">How a Hole Works</h5>
+      <ol>
+        <li>All 4 players tee off.</li>
+        <li>After each other player’s drive, the Wolf decides whether to choose that player as a partner.</li>
+        <li>If the Wolf chooses a partner, the hole becomes <strong>2 vs 2</strong>.</li>
+        <li>If the Wolf does not choose any partner, the Wolf plays alone in a <strong>1 vs 3</strong> format.</li>
+      </ol>
+
+      <h5 class="mt-4">Main Play Options</h5>
       <ul>
-        <li><strong>Base Points</strong> is the total value of a team hole.</li>
-        <li>If 2 players win, the Base Points are split by 2.</li>
+        <li><strong>Team Wolf:</strong> The Wolf chooses one partner and plays 2 vs 2.</li>
+        <li><strong>Lone Wolf:</strong> The Wolf passes on all partners and plays 1 vs 3.</li>
+        <li><strong>Blind Wolf:</strong> The Wolf declares before the other players tee off that they will play alone 1 vs 3.</li>
+        <li><strong>Dump:</strong> In this app, Dump is treated as its own scoring mode and payout option.</li>
       </ul>
 
-      <h5 class="mt-4">Lone / Dump / Blind</h5>
+      <h5 class="mt-4">How the Hole is Won</h5>
+      <p>
+        The winning side depends on the scoring format your group is using.
+        Common formats include:
+      </p>
       <ul>
-        <li><strong>Win Points</strong> are exact fixed amounts to the solo winner.</li>
-        <li><strong>Lose Points</strong> are total amounts split by the 3 winners.</li>
+        <li><strong>Best Ball:</strong> The lowest score from each side is compared.</li>
+        <li><strong>Total Score:</strong> The combined team scores are compared.</li>
+        <li><strong>Net Scoring:</strong> Handicaps are applied before determining the winner.</li>
       </ul>
 
       <h5 class="mt-4">Push / Tie</h5>
       <ul>
-        <li>A push adds the Tie Carryover amount into the pot.</li>
-        <li>If a future result has multiple winners, the pot is split among them.</li>
-        <li>Solo fixed wins stay fixed.</li>
+        <li>If both sides tie the hole, the result is a <strong>push</strong>.</li>
+        <li>Depending on your settings, a push may simply end the hole with no winner, or it may create a carryover pot for a later hole.</li>
       </ul>
 
       <h5 class="mt-4">End of Game</h5>
       <ul>
-        <li>The game is played for 18 holes.</li>
-        <li>Total points are multiplied by $/Point to calculate winnings.</li>
+        <li>The round is normally played over 18 holes.</li>
+        <li>Points or money are totaled at the end based on the results of each hole.</li>
+        <li>This app calculates those payouts for you using the values you set.</li>
       </ul>
+
+      <div class="mt-4 p-3 rounded" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10);">
+        <strong>Note:</strong> This modal explains <strong>how Wolf is played</strong>.
+        The <strong>Game Logic</strong> section on the page explains <strong>how the app pays out points or money</strong>.
+      </div>
     `;
   }
 });

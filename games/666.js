@@ -10,20 +10,25 @@
 function $(id){ return document.getElementById(id); }
 function on(el, evt, fn){ if(el) el.addEventListener(evt, fn); else console.warn('[666] missing element for', evt); }
 
-// ---------------------------
-// FULLSCREEN (same as Wolf)
-// ---------------------------
+// =====================================================
+// FULLSCREEN
+// =====================================================
+
 const fullscreenBtn = document.getElementById("fullscreenBtn");
 const selectionWrapper = document.getElementById("selectionWrapper");
 const body = document.body;
 
-on(fullscreenBtn, "click", () => {
-  selectionWrapper.classList.toggle("fullscreen");
+fullscreenBtn?.addEventListener("click", () => {
+  selectionWrapper?.classList.toggle("fullscreen");
   body.classList.toggle("fullscreen-active");
 
-  fullscreenBtn.innerText = selectionWrapper.classList.contains("fullscreen")
-    ? "❌ Close Fullscreen"
-    : "📱 Fullscreen Selection";
+  if (selectionWrapper?.classList.contains("fullscreen")) {
+    body.classList.add("no-scroll");
+    fullscreenBtn.innerText = "❌ Close Fullscreen";
+  } else {
+    body.classList.remove("no-scroll");
+    fullscreenBtn.innerText = "📱 Fullscreen Selection";
+  }
 });
 
 // ---------------------------
@@ -279,11 +284,13 @@ function hideResultsSummary() {
   if (res) res.style.display = "none";
   if (holeSetupCard) holeSetupCard.style.display = "block";
   if (holeNavCard) holeNavCard.style.display = "flex";
+  if (scoreboardCard) scoreboardCard.style.display = "block";
 }
 
 function showResultsSummary() {
   if (holeSetupCard) holeSetupCard.style.display = "none";
   if (holeNavCard) holeNavCard.style.display = "none";
+  if (scoreboardCard) scoreboardCard.style.display = "none";
 
   let resultsCard = document.getElementById("resultsCard666");
   if (!resultsCard) {
@@ -316,41 +323,6 @@ function showResultsSummary() {
   });
 
   runConfetti();
-
-  const saveBtn = document.getElementById("saveGameBtn");
-  if (!saveBtn) return;
-
-  saveBtn.onclick = async () => {
-    const user = firebase.auth().currentUser;
-    if (!user) {
-      alert("Please log in to save the game!");
-      return;
-    }
-
-    try {
-      await firebase.firestore()
-        .collection("users")
-        .doc(user.uid)
-        .collection("savedGames")
-        .add({
-          gameType: "666",
-          hole,
-          holes,
-          totals,
-          players,
-          base: +baseInput.value || 0,
-          dollarValue: +dollarValueInput.value || 0,
-          tieSetPoints: tieSetPoints.value === "" ? null : +tieSetPoints.value,
-          tieMultiplier: +tieMultiplier.value || 1,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-      alert("✅ 666 game saved!");
-    } catch (err) {
-      console.error(err);
-      alert("Error saving 666 game.");
-    }
-  };
 }
 
 // ---------------------------
