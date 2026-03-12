@@ -538,7 +538,7 @@ function showResultsSummary() {
     selectionWrapper?.appendChild(resultsCard);
   }
 
-  const dollar = toNumber(dollarValueInput);
+  const dollar = toNumber(dollarValueInput?.value);
   const netMoney = totals.map(t => t * dollar);
   const maxMoney = Math.max(...netMoney);
 
@@ -561,6 +561,46 @@ function showResultsSummary() {
   });
 
   runConfetti();
+
+  const saveBtn = document.getElementById("saveGameBtn");
+  if (!saveBtn) return;
+
+  saveBtn.onclick = async () => {
+    const user = firebase?.auth?.().currentUser;
+    if (!user) {
+      alert("Please log in to save the game!");
+      return;
+    }
+
+    try {
+      await firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("savedGames")
+        .add({
+          gameType: "wolf",
+          hole,
+          holes,
+          totals,
+          players,
+          base: toNumber(baseInput?.value),
+          dollarValue: toNumber(dollarValueInput?.value),
+          loneWinPoints: toNumber(loneWinPointsInput?.value),
+          loneLosePoints: toNumber(loneLosePointsInput?.value),
+          dumpWinPoints: toNumber(dumpWinPointsInput?.value),
+          dumpLosePoints: toNumber(dumpLosePointsInput?.value),
+          blindWinPoints: toNumber(blindWinPointsInput?.value),
+          blindLosePoints: toNumber(blindLosePointsInput?.value),
+          tieSetPoints: toNumber(tieSetPointsInput?.value),
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+      alert("✅ Wolf game saved!");
+    } catch (err) {
+      console.error(err);
+      alert("Error saving Wolf game.");
+    }
+  };
 }
 
 // =====================================================

@@ -11,8 +11,8 @@
 // ---------------------------
 // SAFETY GUARDS
 // ---------------------------
-function $(id){ return document.getElementById(id); }
-function on(el, evt, fn){ if(el) el.addEventListener(evt, fn); else console.warn('[BBB] missing element for', evt, el); }
+function $(id) { return document.getElementById(id); }
+function on(el, evt, fn) { if (el) el.addEventListener(evt, fn); else console.warn('[BBB] missing element for', evt, el); }
 
 // =====================================================
 // FULLSCREEN
@@ -242,23 +242,24 @@ function showResultsSummary() {
   if (holeNavCard) holeNavCard.style.display = "none";
   if (scoreboardCard) scoreboardCard.style.display = "none";
 
-  let resultsCard = $("resultsCardBBB");
+  let resultsCard = document.getElementById("resultsCard");
+
   if (!resultsCard) {
     resultsCard = document.createElement("div");
-    resultsCard.id = "resultsCardBBB";
+    resultsCard.id = "resultsCard";
     resultsCard.className = "card game-card p-4 mb-3 text-center";
     selectionWrapper?.appendChild(resultsCard);
   }
 
-  const bet = +betInput?.value || 0;
-  const netMoney = totals.map(t => t * bet);
+  const dollar = +dollarValueInput?.value || 0;
+  const netMoney = totals.map(t => t * dollar);
   const maxMoney = Math.max(...netMoney);
 
   resultsCard.innerHTML = `
     <h2>🎉 Game Over! 🎉</h2>
-    ${players.map((_, i) => `
+    ${players.map((p, i) => `
       <div class="d-flex justify-content-center align-items-center my-2 fs-5">
-        <span>${safeName(i)}: ${totals[i]} pts — ${(netMoney[i] >= 0 ? "+" : "-") + "$" + Math.abs(netMoney[i]).toFixed(2)}</span>
+        <span>${p}: ${totals[i]} pts — ${(netMoney[i] >= 0 ? "+" : "-") + "$" + Math.abs(netMoney[i]).toFixed(2)}</span>
         ${netMoney[i] === maxMoney ? '<span class="ms-2">🏆</span>' : ''}
       </div>
     `).join("")}
@@ -274,8 +275,7 @@ function showResultsSummary() {
 
   runConfetti();
 
-  // Save handler (matches Wolf/666 pattern)
-  const saveBtn = $("saveGameBtn");
+  const saveBtn = document.getElementById("saveGameBtn");
   if (!saveBtn) return;
 
   saveBtn.onclick = async () => {

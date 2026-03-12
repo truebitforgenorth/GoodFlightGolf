@@ -323,6 +323,41 @@ function showResultsSummary() {
   });
 
   runConfetti();
+
+  const saveBtn = document.getElementById("saveGameBtn");
+  if (!saveBtn) return;
+
+  saveBtn.onclick = async () => {
+    const user = firebase?.auth?.().currentUser;
+    if (!user) {
+      alert("Please log in to save the game!");
+      return;
+    }
+
+    try {
+      await firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("savedGames")
+        .add({
+          gameType: "666",
+          hole,
+          holes,
+          totals,
+          players,
+          base: +baseInput.value || 0,
+          dollarValue: +dollarValueInput.value || 0,
+          tieSetPoints: tieSetPoints.value !== "" ? +tieSetPoints.value : null,
+          tieMultiplier: +tieMultiplier.value || 1,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+      alert("✅ 666 game saved!");
+    } catch (err) {
+      console.error(err);
+      alert("Error saving 666 game.");
+    }
+  };
 }
 
 // ---------------------------
