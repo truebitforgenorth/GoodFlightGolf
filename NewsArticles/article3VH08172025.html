@@ -36,39 +36,40 @@
     <p>Back to Top</p>
   </button>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="../index.html">GoodFlight<span>Golf</span>⛳</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav fs-5">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.html">Home 🏠</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../main3cal.html">MyFlight 🧮</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="main4news.html">News 🧾</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../games/greenflightgames.html">GoodFlight<span style="color: #fad02e;">Games</span>⛳</a>
-                    </li>
-                    <li>
-                        <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal"
-                            role="button">Login /
-                            Signup</a>
-                        <span id="userEmail" class="btn bg-primary me-3 d-none" style="color: white;"></span>
-                        <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">GoodFlight<span>Golf</span>⛳</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item"><a class="nav-link" href="../index.html">Home </a></li>
+          <li class="nav-item"><a class="nav-link" href="../playerlog.html">MyFlight</a></li>
+          <li class="nav-item"><a class="nav-link" href="NewsArticles/social&news.html">Social/News</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="../games/goodflightgames.html">GoodFlight<span
+                style="color:#fad02e;">Games</span></a>
+          </li>
+
+          <li class="nav-item">
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / Signup
+            </a>
+          </li>
+
+          <li class="nav-item d-flex align-items-center">
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
   <!-- Weather Widget -->
   <div id="ww_e891b459a24b7" v='1.3' loc='auto'
