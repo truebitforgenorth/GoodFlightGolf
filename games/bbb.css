@@ -123,3 +123,15 @@ body.fullscreen-active{ overflow:hidden !important; }
 .gfg-bbb-page #bbbRulesModal .btn-secondary:hover{
   background: #359447;
 }
+
+
+/* =========================================
+   BBB Icon
+========================================= */
+.a666f-hero-icon {
+  width: 300px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.15));
+  border-radius: 25%;
+}

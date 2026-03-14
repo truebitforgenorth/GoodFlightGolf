@@ -263,3 +263,14 @@ body.fullscreen-active #foot{
   70% { transform: scale(.95); }
   100% { transform: scale(1); }
 }
+
+/* =========================================
+   666 Icon
+========================================= */
+.a666f-hero-icon {
+  width: 300px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.15));
+  border-radius: 25%;
+}
