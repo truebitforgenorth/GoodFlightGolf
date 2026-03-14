@@ -3,17 +3,78 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GoodFlightGolf-HomePage Free Golf Handicap Calculator, Shot Tracker & Club Distance Log</title>
-    <link rel="icon" href="photos/GFGlogo.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <title>MyFlight | Golf Handicap Calculator, Club Distance Log & Shot Flight Tools | GoodFlightGolf</title>
+    <meta name="description"
+        content="Use MyFlight by GoodFlightGolf to save club distances by hit percentage, calculate your golf handicap, track handicap progress, and adjust shots for wind and elevation.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="GoodFlightGolf">
+    <meta name="theme-color" content="#359447">
+
+    <link rel="canonical" href="https://goodflightgolf.com/playerlog.html">
+    <link rel="icon" href="photos/GFGlogo.png" type="image/png">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MyFlight | Golf Handicap Calculator, Club Distance Log & Shot Tools">
+    <meta property="og:description"
+        content="Save club distances by hit percentage, calculate handicap, track progress, and adjust golf shots for wind and elevation with MyFlight.">
+    <meta property="og:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
+    <meta property="og:url" content="https://goodflightgolf.com/playerlog.html">
+    <meta property="og:site_name" content="GoodFlightGolf">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MyFlight | Golf Handicap Calculator, Club Distance Log & Shot Tools">
+    <meta name="twitter:description"
+        content="Save club distances by hit percentage, calculate handicap, track progress, and adjust golf shots for wind and elevation with MyFlight.">
+    <meta name="twitter:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="main2.css">
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!--SEO-->
-    <title>Free Golf Handicap Calculator, Shot Tracker & Club Distance Log</title>
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "MyFlight",
+          "url": "https://goodflightgolf.com/playerlog.html",
+          "description": "Golf handicap calculator, club distance log by hit percentage, and shot flight tools.",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "GoodFlightGolf",
+            "url": "https://goodflightgolf.com/"
+          },
+          "about": [
+            { "@type": "Thing", "name": "Golf handicap calculator" },
+            { "@type": "Thing", "name": "Club distance log" },
+            { "@type": "Thing", "name": "Shot flight calculator" }
+          ]
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "MyFlight",
+          "applicationCategory": "SportsApplication",
+          "operatingSystem": "Web",
+          "url": "https://goodflightgolf.com/playerlog.html",
+          "description": "A web-based golf toolkit for handicap calculation, club distance tracking, and shot adjustment.",
+          "publisher": {
+            "@type": "Organization",
+            "name": "GoodFlightGolf",
+            "url": "https://goodflightgolf.com/"
+          }
+        }
+    </script>
 
     <style>
         #clubDistancesTable th:first-child,
@@ -32,44 +93,45 @@
 
 <body class="club-page">
     <!-- Back to top button -->
-    <button type="button" id="btn-back-to-top">
+    <button type="button" id="btn-back-to-top" aria-label="Back to top">
         <p>Back to Top</p>
     </button>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg gfg-navbar">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>⛳</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg gfg-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>⛳</a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
-      </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+            </button>
 
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav fs-5">
-          <li class="nav-item"><a class="nav-link" href="index.html">Home </a></li>
-          <li class="nav-item"><a class="nav-link" href="playerlog.html">MyFlight</a></li>
-          <li class="nav-item"><a class="nav-link" href="NewsArticles/social&news.html">Social/News</a></li>
-          <li class="nav-item">
-            <a class="nav-link" href="games/goodflightgames.html">GoodFlight<span
-                style="color:#fad02e;">Games</span></a>
-          </li>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav fs-5">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home </a></li>
+                    <li class="nav-item"><a class="nav-link" href="playerlog.html">MyFlight</a></li>
+                    <li class="nav-item"><a class="nav-link" href="NewsArticles/social&news.html">Social/News</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="games/goodflightgames.html">GoodFlight<span
+                                style="color:#fad02e;">Games</span></a>
+                    </li>
 
-          <li class="nav-item">
-            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
-              Login / Signup
-            </a>
-          </li>
+                    <li class="nav-item">
+                        <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal"
+                            role="button">
+                            Login / Signup
+                        </a>
+                    </li>
 
-          <li class="nav-item d-flex align-items-center">
-            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
-            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+                    <li class="nav-item d-flex align-items-center">
+                        <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+                        <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     <!-- Login / Signup Modal -->
     <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
@@ -101,18 +163,34 @@
     <section class="parallax-section2">
         <div class="parallax-content2">
             <div style="color: #fad02e;" id="welcomeMessage"></div>
-      <h1 class="gfg-hero-title">
-        <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>⛳
-      </h1>
-      <p class="gfg-hero-sub">Your ultimate companion for on course games, club distance logs, and more!</p>
+            <h1 class="gfg-hero-title">
+                <span class="gfg-green">My</span><span class="gfg-yellow">Flight</span>⛳
+            </h1>
+            <p class="gfg-hero-sub">Track handicap, save club distances by hit percentage, and adjust shots for the elements.</p>
+
             <!-- Logo -->
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="gfg-logo-wrapper">
-                        <img src="photos/GFGlogo.png" alt="GFG Logo" class="gfg-logo-img" />
+                        <img src="photos/GFGlogo.png" alt="GoodFlightGolf logo" class="gfg-logo-img" />
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- SEO INTRO -->
+    <section class="container gfg-section">
+        <div class="card p-4 mb-4">
+            <h2>Golf Handicap Tracking, Club Distance Logs, and Shot Adjustment Tools</h2>
+            <p>
+                MyFlight is the personal golf toolkit inside GoodFlightGolf. Use it to save club distances by hit percentage,
+                calculate and track your handicap over time, and adjust golf shots for wind and elevation.
+            </p>
+            <p>
+                Whether you are building better yardage gaps, monitoring handicap progress, or deciding how to play a shot
+                into the elements, MyFlight helps keep your golf data organized in one place.
+            </p>
         </div>
     </section>
 
@@ -123,14 +201,13 @@
             <div class="icon-box gfg-feature-card">
                 <h1>🏌️</h1>
                 <a href="#clubDistanceWrapper">
-                    <h5>Club Distance Calculator</h5>
+                    <h5>Club Distance Log</h5>
                 </a>
                 <p>
-                    Improve your golf game with our suite of calculators and trackers designed to help you
-                    perform your best on the course.
+                    Save your club distances by hit percentage and build a more reliable yardage chart for every club in your bag.
                 </p>
                 <div class="mt-3 d-flex justify-content-center">
-                    <a class="gfg-pill-btn" href="#clubDistanceWrapper">Open CDC</a>
+                    <a class="gfg-pill-btn" href="#clubDistanceWrapper">Open Club Distances</a>
                 </div>
             </div>
 
@@ -140,12 +217,11 @@
                     <h5>Handicap Calculator</h5>
                 </a>
                 <p>
-                    Play games like Wolf, Six-Six-Six and Bingo · Bango · Bongo and log your scores in real time!
-                    Save your games and see who is the season leader!
+                    Calculate your golf handicap, save results to your profile, and follow your handicap chart over time.
                 </p>
 
                 <div class="mt-3 d-flex justify-content-center">
-                    <a class="gfg-pill-btn" href="#ASDF">Open HandiChart</a>
+                    <a class="gfg-pill-btn" href="#ASDF">Open Handicap</a>
                 </div>
             </div>
 
@@ -155,18 +231,18 @@
                     <h5>Shot Flight Calculator</h5>
                 </a>
                 <p>
-                    Website updates, news articles by our writers, world rankings, and PGA Tour news.
+                    Adjust shots for wind, elevation, and club selection to make smarter decisions during the round.
                 </p>
 
                 <div class="mt-3 d-flex justify-content-center">
-                    <a class="gfg-pill-btn" href="#asdf1">Open ShotCal</a>
+                    <a class="gfg-pill-btn" href="#asdf1">Open Shot Tool</a>
                 </div>
             </div>
 
         </div>
     </section>
 
-    <!--main container-->
+    <!-- main container -->
     <div class="container gfg-section">
 
         <!-- Welcome Card -->
@@ -177,14 +253,14 @@
 
                         <h3 class="card-title">🏌️ Welcome to Your Personal Golf Toolkit ⛳</h3>
                         <p class="card-text">
-                            Improve your golf game with our suite of calculators and trackers designed to help you
-                            perform your best on the course.
+                            Improve your golf game with calculators and trackers designed to help you make better decisions
+                            on the course and keep your golf data organized.
                         </p>
                         <p class="card-text">
-                            <strong><a href="#clubDistanceWrapper">🏌️ Club Distance Calculator</a></strong> – Save your
-                            best distances for each club and organize them in your preferred order.<br>
-                            <strong><a href="#handical">🧮 Handicap Calculator</a></strong> – Track your performance
-                            over time and visualize your progress.<br>
+                            <strong><a href="#clubDistanceWrapper">🏌️ Club Distance Log</a></strong> – Save distance averages for each club at
+                            different hit percentages and organize them in your preferred order.<br>
+                            <strong><a href="#handical">🧮 Handicap Calculator</a></strong> – Calculate your handicap and visualize your progress
+                            over time.<br>
                             <strong><a href="#shotcal">🌬️ Shot Flight Calculator</a></strong> – Adjust your
                             shots based on wind, elevation, and club selection.
                         </p>
@@ -195,7 +271,7 @@
                         </p>
                         <p class="card-text">
                             💬 Have suggestions or find something off? Use the <strong>Feedback Form</strong> to let us
-                            know — we’re always improving!
+                            know — we’re always improving.
                         </p>
                     </div>
                 </div>
@@ -204,225 +280,225 @@
 
         <hr class="my-5">
 
-<!-- Club Distance Calculator -->
-<div class="row d-flex justify-content-center">
-    <div class="col-md-12" id="clubDistanceWrapper">
+        <!-- Club Distance Calculator -->
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-12" id="clubDistanceWrapper">
 
-        <div id="clubAreaShell" class="gfg-locked-shell">
+                <div id="clubAreaShell" class="gfg-locked-shell">
 
-            <!-- Club Distance Calculator -->
-            <section id="clubCalculatorSection" class="card">
-                <div class="card-header">🏌️ Club Distance Calculator</div>
-                <div class="card-body">
+                    <!-- Club Distance Calculator -->
+                    <section id="clubCalculatorSection" class="card">
+                        <div class="card-header">🏌️ Club Distance Calculator</div>
+                        <div class="card-body">
 
-                    <!-- Inputs -->
-                    <div class="row g-3">
-                        <!-- Hit % Selector -->
-                        <div class="col-md-3">
-                            <label for="hitPercentSelect" class="form-label">Hit %</label>
-                            <select id="hitPercentSelect" class="form-select">
-                                <option value="">-- Choose % --</option>
-                                <option value="25">25%</option>
-                                <option value="50">50%</option>
-                                <option value="75">75%</option>
-                                <option value="100">100%</option>
-                            </select>
-                        </div>
+                            <!-- Inputs -->
+                            <div class="row g-3">
+                                <!-- Hit % Selector -->
+                                <div class="col-md-3">
+                                    <label for="hitPercentSelect" class="form-label">Hit %</label>
+                                    <select id="hitPercentSelect" class="form-select">
+                                        <option value="">-- Choose % --</option>
+                                        <option value="25">25%</option>
+                                        <option value="50">50%</option>
+                                        <option value="75">75%</option>
+                                        <option value="100">100%</option>
+                                    </select>
+                                </div>
 
-                        <!-- Club Selector -->
-                        <div class="col-md-3">
-                            <label for="clubSelect" class="form-label">Select Club</label>
-                            <select id="clubSelect" class="form-select">
-                                <option value="">-- Choose a club --</option>
-                                <option>Driver 🚀</option>
-                                <option>Utility Iron 🚀</option>
-                                <option>3 Wood 🪵</option>
-                                <option>5 Wood 🪵</option>
-                                <option>7 Wood 🪵</option>
-                                <option>9 Wood 🪵</option>
-                                <option>3 Hybrid ⛓️</option>
-                                <option>4 Hybrid ⛓️</option>
-                                <option>5 Hybrid ⛓️</option>
-                                <option>2 Iron 🛠️</option>
-                                <option>3 Iron 🛠️</option>
-                                <option>4 Iron 🛠️</option>
-                                <option>5 Iron 🛠️</option>
-                                <option>6 Iron 🛠️</option>
-                                <option>7 Iron 🛠️</option>
-                                <option>8 Iron 🛠️</option>
-                                <option>9 Iron 🛠️</option>
-                                <option>Pitching Wedge</option>
-                                <option>Gap Wedge</option>
-                                <option>Sand Wedge</option>
-                                <option>Lob Wedge</option>
-                            </select>
-                        </div>
+                                <!-- Club Selector -->
+                                <div class="col-md-3">
+                                    <label for="clubSelect" class="form-label">Select Club</label>
+                                    <select id="clubSelect" class="form-select">
+                                        <option value="">-- Choose a club --</option>
+                                        <option>Driver 🚀</option>
+                                        <option>Utility Iron 🚀</option>
+                                        <option>3 Wood 🪵</option>
+                                        <option>5 Wood 🪵</option>
+                                        <option>7 Wood 🪵</option>
+                                        <option>9 Wood 🪵</option>
+                                        <option>3 Hybrid ⛓️</option>
+                                        <option>4 Hybrid ⛓️</option>
+                                        <option>5 Hybrid ⛓️</option>
+                                        <option>2 Iron 🛠️</option>
+                                        <option>3 Iron 🛠️</option>
+                                        <option>4 Iron 🛠️</option>
+                                        <option>5 Iron 🛠️</option>
+                                        <option>6 Iron 🛠️</option>
+                                        <option>7 Iron 🛠️</option>
+                                        <option>8 Iron 🛠️</option>
+                                        <option>9 Iron 🛠️</option>
+                                        <option>Pitching Wedge</option>
+                                        <option>Gap Wedge</option>
+                                        <option>Sand Wedge</option>
+                                        <option>Lob Wedge</option>
+                                    </select>
+                                </div>
 
-                        <!-- Distance Inputs -->
-                        <div class="col-md-2">
-                            <label for="clubDistance1" class="form-label">Hit 1</label>
-                            <input type="number" id="clubDistance1" class="form-control" placeholder="Yards" />
-                        </div>
-                        <div class="col-md-2">
-                            <label for="clubDistance2" class="form-label">Hit 2</label>
-                            <input type="number" id="clubDistance2" class="form-control" placeholder="Yards" />
-                        </div>
-                        <div class="col-md-2">
-                            <label for="clubDistance3" class="form-label">Hit 3</label>
-                            <input type="number" id="clubDistance3" class="form-control" placeholder="Yards" />
-                        </div>
+                                <!-- Distance Inputs -->
+                                <div class="col-md-2">
+                                    <label for="clubDistance1" class="form-label">Hit 1</label>
+                                    <input type="number" id="clubDistance1" class="form-control" placeholder="Yards" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="clubDistance2" class="form-label">Hit 2</label>
+                                    <input type="number" id="clubDistance2" class="form-control" placeholder="Yards" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="clubDistance3" class="form-label">Hit 3</label>
+                                    <input type="number" id="clubDistance3" class="form-control" placeholder="Yards" />
+                                </div>
 
-                        <!-- Save Button -->
-                        <div class="col-md-2 align-items-end">
-                            <button id="saveClubDistance" class="btn btn-primary w-100">Save</button>
-                        </div>
-                    </div>
-
-                    <p class="mt-3" id="averageDistance"></p>
-                    <hr />
-
-                    <!-- Saved Clubs -->
-                    <div class="accordion" id="clubAccordionUnique">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="clubAccordionHeadingUnique">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#clubCollapseUnique" aria-expanded="false"
-                                    aria-controls="clubCollapseUnique">
-                                    <h5>Your Saved Club Distances</h5>
-                                </button>
-                            </h2>
-                            <div id="clubCollapseUnique" class="accordion-collapse collapse"
-                                aria-labelledby="clubAccordionHeadingUnique" data-bs-parent="#clubAccordionUnique">
-                                <div class="accordion-body">
-                                    <p id="mobileInfoMessage" class="text-warning small mt-2"></p>
-                                    <div id="savedClubsList"></div>
+                                <!-- Save Button -->
+                                <div class="col-md-2 align-items-end">
+                                    <button id="saveClubDistance" class="btn btn-primary w-100">Save</button>
                                 </div>
                             </div>
+
+                            <p class="mt-3" id="averageDistance"></p>
+                            <hr />
+
+                            <!-- Saved Clubs -->
+                            <div class="accordion" id="clubAccordionUnique">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="clubAccordionHeadingUnique">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#clubCollapseUnique" aria-expanded="false"
+                                            aria-controls="clubCollapseUnique">
+                                            <h5>Your Saved Club Distances</h5>
+                                        </button>
+                                    </h2>
+                                    <div id="clubCollapseUnique" class="accordion-collapse collapse"
+                                        aria-labelledby="clubAccordionHeadingUnique" data-bs-parent="#clubAccordionUnique">
+                                        <div class="accordion-body">
+                                            <p id="mobileInfoMessage" class="text-warning small mt-2"></p>
+                                            <div id="savedClubsList"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button id="saveClubOrderBtn" class="btn mt-2">💾 Save Club Order</button>
+                            </div>
                         </div>
-                        <button id="saveClubOrderBtn" class="btn mt-2">💾 Save Club Order</button>
+                    </section>
+
+                    <!-- Club Distances Table -->
+                    <div class="card mt-3" id="clubDistanceTableCard">
+                        <div class="card-header">📋 Club Distances Table</div>
+                        <div class="card-body table-responsive">
+                            <table class="table table-bordered table-sm" id="clubDistancesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Club</th>
+                                        <th>25%</th>
+                                        <th>50%</th>
+                                        <th>75%</th>
+                                        <th>100%</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Login overlay for logged-out users -->
+                    <div id="loginToUseClubs" class="gfg-lock-overlay d-none">
+                        <div class="gfg-lock-card">
+                            <div class="gfg-lock-icon">🔒</div>
+                            <h4>Login Required</h4>
+                            <p>
+                                You must be logged in to use the
+                                <strong>Club Distance Calculator</strong>
+                                and view your saved
+                                <strong>Club Distances Table</strong>.
+                            </p>
+                            <button type="button" class="gfg-pill-btn" data-bs-toggle="modal" data-bs-target="#authModal">
+                                Login / Sign Up
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-5">
+        <div id="ASDF"></div>
+
+        <!-- Handicap Section -->
+        <div id="handicapAreaShell" class="gfg-locked-shell">
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Handicap Calculator -->
+                    <div id="handical">
+                        <div class="card">
+                            <div class="card-header">🧮 Handicap Calculator</div>
+                            <div class="card-body">
+                                <form id="handicapForm">
+                                    <!-- Round 1 -->
+                                    <div class="mb-3">
+                                        <div class="form-label">Round 1</div>
+                                        <input type="number" id="score0" class="form-control mb-2" placeholder="Score" required />
+                                        <input type="number" id="rating0" class="form-control mb-2" placeholder="Course Rating" required />
+                                        <input type="number" id="slope0" class="form-control" placeholder="Slope Rating" required />
+                                    </div>
+
+                                    <!-- Round 2 -->
+                                    <div class="mb-3">
+                                        <div class="form-label">Round 2</div>
+                                        <input type="number" id="score1" class="form-control mb-2" placeholder="Score" required />
+                                        <input type="number" id="rating1" class="form-control mb-2" placeholder="Course Rating" required />
+                                        <input type="number" id="slope1" class="form-control" placeholder="Slope Rating" required />
+                                    </div>
+
+                                    <!-- Round 3 -->
+                                    <div class="mb-3">
+                                        <div class="form-label">Round 3</div>
+                                        <input type="number" id="score2" class="form-control mb-2" placeholder="Score" required />
+                                        <input type="number" id="rating2" class="form-control mb-2" placeholder="Course Rating" required />
+                                        <input type="number" id="slope2" class="form-control" placeholder="Slope Rating" required />
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Calculate Handicap</button>
+                                </form>
+
+                                <div id="handicapResult" class="mt-3"></div>
+                                <button id="saveHandicapBtn" class="btn d-none">Save Handicap</button>
+                                <p id="savedHandicapDisplay" class="mt-2 text-info"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </section>
 
-            <!-- Club Distances Table -->
-            <div class="card mt-3" id="clubDistanceTableCard">
-                <div class="card-header">📋 Club Distances Table</div>
-                <div class="card-body table-responsive">
-                    <table class="table table-bordered table-sm" id="clubDistancesTable">
-                        <thead>
-                            <tr>
-                                <th>Club</th>
-                                <th>25%</th>
-                                <th>50%</th>
-                                <th>75%</th>
-                                <th>100%</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <!-- Handicap Chart -->
+                <div class="col-md-6">
+                    <div class="card" id="handicapChartCard">
+                        <div class="card-header">📊 Handicap Chart</div>
+                        <div class="card-body">
+                            <canvas id="handicapChart" width="100%" height="60"></canvas>
+                            <div class="card-text">
+                                <p>*You must be logged in and save handicaps to have the chart show data.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Login overlay for logged-out users -->
-            <div id="loginToUseClubs" class="gfg-lock-overlay d-none">
+            <div id="loginToUseHandicap" class="gfg-lock-overlay d-none">
                 <div class="gfg-lock-card">
                     <div class="gfg-lock-icon">🔒</div>
                     <h4>Login Required</h4>
                     <p>
                         You must be logged in to use the
-                        <strong>Club Distance Calculator</strong>
-                        and view your saved
-                        <strong>Club Distances Table</strong>.
+                        <strong>Handicap Calculator</strong>
+                        and view your
+                        <strong>Handicap Chart</strong>.
                     </p>
                     <button type="button" class="gfg-pill-btn" data-bs-toggle="modal" data-bs-target="#authModal">
                         Login / Sign Up
                     </button>
                 </div>
             </div>
-
         </div>
-    </div>
-</div>
-
-<hr class="my-5">
-<div id="ASDF"></div>
-
-<!-- Handicap Section -->
-<div id="handicapAreaShell" class="gfg-locked-shell">
-    <div class="row">
-        <div class="col-md-6">
-            <!-- Handicap Calculator -->
-            <div id="handical">
-                <div class="card">
-                    <div class="card-header">🧮 Handicap Calculator</div>
-                    <div class="card-body">
-                        <form id="handicapForm">
-                            <!-- Round 1 -->
-                            <div class="mb-3">
-                                <div class="form-label">Round 1</div>
-                                <input type="number" id="score0" class="form-control mb-2" placeholder="Score" required />
-                                <input type="number" id="rating0" class="form-control mb-2" placeholder="Course Rating" required />
-                                <input type="number" id="slope0" class="form-control" placeholder="Slope Rating" required />
-                            </div>
-
-                            <!-- Round 2 -->
-                            <div class="mb-3">
-                                <div class="form-label">Round 2</div>
-                                <input type="number" id="score1" class="form-control mb-2" placeholder="Score" required />
-                                <input type="number" id="rating1" class="form-control mb-2" placeholder="Course Rating" required />
-                                <input type="number" id="slope1" class="form-control" placeholder="Slope Rating" required />
-                            </div>
-
-                            <!-- Round 3 -->
-                            <div class="mb-3">
-                                <div class="form-label">Round 3</div>
-                                <input type="number" id="score2" class="form-control mb-2" placeholder="Score" required />
-                                <input type="number" id="rating2" class="form-control mb-2" placeholder="Course Rating" required />
-                                <input type="number" id="slope2" class="form-control" placeholder="Slope Rating" required />
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Calculate Handicap</button>
-                        </form>
-
-                        <div id="handicapResult" class="mt-3"></div>
-                        <button id="saveHandicapBtn" class="btn d-none">Save Handicap</button>
-                        <p id="savedHandicapDisplay" class="mt-2 text-info"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Handicap Chart -->
-        <div class="col-md-6">
-            <div class="card" id="handicapChartCard">
-                <div class="card-header">📊 Handicap Chart</div>
-                <div class="card-body">
-                    <canvas id="handicapChart" width="100%" height="60"></canvas>
-                    <div class="card-text">
-                        <p>*You must be logged in and save handicaps to have the chart show data.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Login overlay for logged-out users -->
-    <div id="loginToUseHandicap" class="gfg-lock-overlay d-none">
-        <div class="gfg-lock-card">
-            <div class="gfg-lock-icon">🔒</div>
-            <h4>Login Required</h4>
-            <p>
-                You must be logged in to use the
-                <strong>Handicap Calculator</strong>
-                and view your
-                <strong>Handicap Chart</strong>.
-            </p>
-            <button type="button" class="gfg-pill-btn" data-bs-toggle="modal" data-bs-target="#authModal">
-                Login / Sign Up
-            </button>
-        </div>
-    </div>
-</div>
 
         <hr class="my-5">
 
@@ -438,8 +514,8 @@
         <!-- Flight Calculator & Weather Section -->
         <div class="row equal-height">
             <!-- Shot Flight Calculator -->
-            <div class="col-md-4 ">
-                <div class="card">
+            <div class="col-md-4">
+                <div class="card" id="shotcal">
                     <div class="card-header">🌬️ Shot Flight Calculator</div>
                     <div class="card-body">
                         <p class="card-text">
@@ -501,38 +577,34 @@
                 </div>
             </div>
 
-<!-- Weather App -->
-<div class="col-md-8 d-flex" style="margin-bottom: 20px;">
-    <div class="card flex-fill h-100">
-        <div class="card-header">🌤️ Weather App</div>
-        <div class="card-body">
-            <div class="accordion" id="accordionExample">
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                            Click here to view the weather.
-                        </button>
-                    </h2>
-                    <div id="collapseTwo" class="accordion-collapse collapse show">
-                        <div class="weather-embed-wrap">
-                            <iframe
-                                src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=in&metricTemp=°F&metricWind=mph&zoom=5&overlay=wind&product=ecmwf&level=surface&lat=42.261&lon=-92.549&detailLat=45.123&detailLon=-92.537&marker=true&pressure=true&message=true"
-                                frameborder="0">
-                            </iframe>
+            <!-- Weather App -->
+            <div class="col-md-8 d-flex" style="margin-bottom: 20px;">
+                <div class="card flex-fill h-100">
+                    <div class="card-header">🌤️ Weather App</div>
+                    <div class="card-body">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                        Click here to view the weather.
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse show">
+                                    <div class="weather-embed-wrap">
+                                        <iframe
+                                            src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=in&metricTemp=°F&metricWind=mph&zoom=5&overlay=wind&product=ecmwf&level=surface&lat=42.261&lon=-92.549&detailLat=45.123&detailLon=-92.537&marker=true&pressure=true&message=true"
+                                            frameborder="0">
+                                        </iframe>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<style>
-
-</style>
-
-        <!--feedback-->
         <section id="feedbackSection" class="card">
             <div class="card-header">💬 Feedback & Suggestions</div>
             <div class="card-body">
@@ -548,31 +620,31 @@
             </div>
         </section>
 
-        <!--end container-->
+        <!-- end container -->
     </div>
 
-  <footer class="gfg-footer">
-    <div class="gfg-footer-container">
+    <footer class="gfg-footer">
+        <div class="gfg-footer-container">
 
-      <!-- Logo Section -->
-      <div class="gfg-footer-logo">
-        <a href="https://www.TrueBitForgeNorth.com/"><img src="photos/TBFN1.png" alt="TrueBit Forge North LLC Logo"></a>
-      </div>
+            <!-- Logo Section -->
+            <div class="gfg-footer-logo">
+                <a href="https://www.TrueBitForgeNorth.com/"><img src="photos/TBFN1.png" alt="TrueBit Forge North LLC Logo"></a>
+            </div>
 
-      <!-- Footer Info -->
-      <div class="gfg-footer-content">
-        <p class="gfg-footer-copy">
-          © 2026 GreenFlightGolf. All rights reserved.
-        </p>
+            <!-- Footer Info -->
+            <div class="gfg-footer-content">
+                <p class="gfg-footer-copy">
+                    © 2026 GreenFlightGolf. All rights reserved.
+                </p>
 
-        <p class="gfg-footer-ownership">
-          GreenFlightGolf is owned and operated by
-          <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
-        </p>
-      </div>
+                <p class="gfg-footer-ownership">
+                    GreenFlightGolf is owned and operated by
+                    <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
+                </p>
+            </div>
 
-    </div>
-  </footer>
+        </div>
+    </footer>
 
     <!-- Firebase SDK (compat versions, no modules) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
@@ -590,15 +662,7 @@
         })();
     </script>
 
-    <!-- Your auth script -->
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-    <script>
-        (function () {
-            emailjs.init("CJRVHaDVYa2VCU89T"); // your PUBLIC key
-        })();
-    </script>
-
-    <!--sortable-->
+    <!-- sortable -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
     <script src="myscripts.js"></script>
@@ -607,7 +671,19 @@
     <script src="feedback.js"></script>
     <script src="chart.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Back to top
+        const mybutton = document.getElementById("btn-back-to-top");
+
+        window.addEventListener("scroll", () => {
+            if (!mybutton) return;
+            mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
+        });
+
+        mybutton?.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    </script>
 </body>
 
 </html>

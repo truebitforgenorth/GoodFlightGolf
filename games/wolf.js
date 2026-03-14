@@ -682,8 +682,8 @@ document.addEventListener("DOMContentLoaded", () => {
 <ul>
   <li><strong>Team Wolf:</strong> The Wolf chooses one partner and plays 2 vs 2.</li>
   <li><strong>Lone Wolf:</strong> The Wolf passes on all partners after seeing the drives and plays 1 vs 3.</li>
-  <li><strong>Dump:</strong> This happens when the partner that the wolf has choosen declines them as a playing partner and becomes the new Wolf.</li>
-  <li><strong>Blind Wolf:</strong> The Wolf declares before the other players tee off that they will play alone 1 vs 3.</li>
+  <li><strong>Dump (Optional):</strong> This happens when the partner that the wolf has choosen declines them as a playing partner and becomes the new Wolf.</li>
+  <li><strong>Blind Wolf (Optional):</strong> The Wolf declares before the other players tee off that they will play alone 1 vs 3.</li>
   
 </ul>
 

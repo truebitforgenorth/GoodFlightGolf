@@ -5,22 +5,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-  <title>GoodFlightGolf - Free Golf Handicap Calculator, Shot Tracker & Club Distance Log</title>
+  <title>GoodFlightGolf | Golf Games, Handicap Calculator, Club Distance Log & Shot Tools</title>
   <meta name="description"
-    content="Use GoodFlightGolf to calculate your handicap, track shot flights, and log your club distances — all free and easy to use.">
-  <meta name="keywords"
-    content="golf handicap calculator, shot flight calculator, club distance log, free golf tools, track golf stats">
+    content="GoodFlightGolf gives golfers free tools to track club distances, calculate handicap, score on-course games like Wolf and Sixes, and adjust shots for wind and elevation.">
   <meta name="robots" content="index, follow">
   <meta name="author" content="GoodFlightGolf">
+  <meta name="theme-color" content="#359447">
 
-  <meta property="og:title" content="GoodFlightGolf - Free Handicap & Shot Tools">
+  <link rel="canonical" href="https://goodflightgolf.com/">
+  <link rel="icon" href="photos/GFGlogo.png" type="image/png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="GoodFlightGolf | Golf Games, Handicap Calculator & Club Distance Tools">
   <meta property="og:description"
-    content="Track your handicap, log your club distances, and simulate shots — all for free.">
-  <meta property="og:image" content="https://yourdomain.com/photos/GFGlogo.png">
-  <meta property="og:url" content="https://GoodFlightGolf.com/">
-  <meta name="twitter:card" content="summary_large_image">
+    content="Track handicap, save club distances, play on-course golf games, and use golf shot tools with GoodFlightGolf.">
+  <meta property="og:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
+  <meta property="og:url" content="https://goodflightgolf.com/">
+  <meta property="og:site_name" content="GoodFlightGolf">
 
-  <link rel="icon" href="photos/GFGlogo.png" type="image/x-icon">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GoodFlightGolf | Golf Games, Handicap Calculator & Club Distance Tools">
+  <meta name="twitter:description"
+    content="Track handicap, save club distances, play on-course golf games, and use golf shot tools with GoodFlightGolf.">
+  <meta name="twitter:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -34,6 +43,42 @@
   <!-- MapLibre (load once) -->
   <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "GoodFlightGolf",
+      "url": "https://goodflightgolf.com/",
+      "description": "Golf games, handicap calculator, club distance logs, and golf shot tools.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "GoodFlightGolf",
+        "url": "https://goodflightgolf.com/",
+        "parentOrganization": {
+          "@type": "Organization",
+          "name": "TrueBit Forge North LLC",
+          "url": "https://www.TrueBitForgeNorth.com/"
+        }
+      }
+    }
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GoodFlightGolf",
+      "url": "https://goodflightgolf.com/",
+      "logo": "https://goodflightgolf.com/photos/GFGlogo.png",
+      "parentOrganization": {
+        "@type": "Organization",
+        "name": "TrueBit Forge North LLC",
+        "url": "https://www.TrueBitForgeNorth.com/"
+      }
+    }
+  </script>
 </head>
 
 <body>
@@ -58,7 +103,7 @@
           <li class="nav-item"><a class="nav-link" href="playerlog.html">MyFlight</a></li>
           <li class="nav-item"><a class="nav-link" href="NewsArticles/social&news.html">Social/News</a></li>
           <li class="nav-item">
-            <a class="nav-link" href="games/goodflightgames.html">GoodFlight<span
+            <a class="nav-link" href="games/greenflightgames.html">GoodFlight<span
                 style="color:#fad02e;">Games</span></a>
           </li>
 
@@ -77,7 +122,7 @@
     </div>
   </nav>
 
-    <!-- Login / Signup Modal -->
+  <!-- Login / Signup Modal -->
   <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -113,7 +158,7 @@
       <h1 class="gfg-hero-title">
         <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>⛳
       </h1>
-      <p class="gfg-hero-sub">Your ultimate companion for on course games, club distance logs, and more!</p>
+      <p class="gfg-hero-sub">Golf games, handicap tracking, club distance logs, and shot tools built for real rounds.</p>
       <div class="row justify-content-center">
         <div class="col-md-6">
           <div class="gfg-logo-wrapper">
@@ -122,7 +167,6 @@
         </div>
       </div>
 
-      <!-- Optional: Premium “Wolf-style” button example -->
       <div class="mt-3 d-flex justify-content-center gap-2 flex-wrap">
         <a class="gfg-pill-btn gfg-pill-btn--ghost" href="games/greenflightgames.html">💸 GoodFlight Games</a>
         <a class="gfg-pill-btn" href="main3cal.html">🎯 Go to MyFlight</a>
@@ -134,11 +178,25 @@
     </div>
   </section>
 
+  <!-- SEO INTRO -->
+  <section class="container gfg-section">
+    <div class="card p-4 mb-4">
+      <h2>Golf Tools for Games, Handicap Tracking, Club Distances, and Shot Adjustments</h2>
+      <p>
+        GoodFlightGolf gives golfers practical tools they can actually use on and off the course. Track your handicap,
+        save club distances by percent, score on-course games like Wolf, Sixes, and Bingo Bango Bongo, and use shot tools to adjust
+        for wind and elevation.
+      </p>
+      <p>
+        Whether you are playing with friends, tracking progress over time, or trying to make smarter decisions during a
+        round, GoodFlightGolf brings your golf tools into one place.
+      </p>
+    </div>
+  </section>
+
   <!-- FEATURES -->
   <section class="container gfg-section">
     <div class="feature-icons mt-4" id="features">
-
-
 
       <div class="icon-box gfg-feature-card">
         <h1>⛳</h1>
@@ -146,8 +204,8 @@
           <h5>GoodFlightGames</h5>
         </a>
         <p>
-          Play games on the course games against your friends like Wolf, Six-Six-Six and Bingo · Bango · Bongo and log
-          your scores in real time! Save your games and see who is the season leader!
+          Play on-course golf games with friends like Wolf, Sixes, and Bingo Bango Bongo while tracking scores and payouts in real time.
+          Save completed games and follow season standings.
         </p>
 
         <div class="mt-3 d-flex justify-content-center">
@@ -161,9 +219,8 @@
           <h5>MyFlight</h5>
         </a>
         <p>
-          Log in and save your distances per club. Calculate your HPC and view it on your chart over time.
-          Having trouble in the elements? Calculate your shot against the elements with our BEC (Battle the Elements
-          Calculator).
+          Save your club distances, calculate your handicap, and track your progress over time.
+          Use the Battle the Elements Calculator to adjust shots for wind and elevation.
         </p>
 
         <div class="mt-3 d-flex justify-content-center">
@@ -177,7 +234,7 @@
           <h5>News / Site Updates</h5>
         </a>
         <p>
-          Website updates, news articles by our writers, world rankings, and PGA Tour news.
+          Follow GoodFlightGolf updates, golf articles, rankings, and golf news in one place.
         </p>
 
         <div class="mt-3 d-flex justify-content-center">
@@ -245,9 +302,9 @@
   <!-- SECOND PARALLAX (optional) -->
   <section class="parallax-section">
     <div class="parallax-content">
-      <h1 class="gfg-hero-title">
+      <h2 class="gfg-hero-title">
         <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>⛳
-      </h1>
+      </h2>
       <p class="gfg-hero-sub">Your ultimate golf companion with calculators, charts, and more.</p>
     </div>
   </section>
@@ -293,43 +350,6 @@
         </div>
       </div>
     </div>
-
-    <!-- FEATURED GAME 
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">🎮 Featured Golf Game - WGT Golf</div>
-          <div class="card-body text-center">
-            <p class="card-text">
-              Get into the swing of things with our favorite golf game on PC and your phone. It's free!
-            </p>
-            <video autoplay loop muted playsinline class="w-100 mb-3 rounded">
-              <source src="photos/vid1bird.mp4" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <a href="..." class="gfg-pill-btn">Explore Game</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-     RECOMMENDED COURSE 
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card text-center">
-          <div class="card-header">🏌️‍♂️ Recommended Course</div>
-          <div class="card-body">
-            <p class="card-text">Check out one of our favorite courses to play and improve your game.</p>
-            <div class="ratio ratio-16x9">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11583.873995648255!2d-92.87464559342715!3d44.97275401689594!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x52b2ccbb5788243f%3A0x3c1c3b24ad859193!2sRoyal%20Golf%20Club!5e0!3m2!1sen!2sus!4v1752600702202!5m2!1sen!2sus"
-                style="border:0;" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
 
     <!-- FEEDBACK -->
     <div class="row justify-content-center">
@@ -384,7 +404,6 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 
   <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>

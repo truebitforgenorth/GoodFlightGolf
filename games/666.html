@@ -3,19 +3,61 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Six-Six-Six Game</title>
+  <title>Six-Six-Six Golf Scorekeeper & Rules | Track Teams, Points & Payouts | GoodFlightGolf</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="description"
+    content="Track Six-Six-Six golf scores, rotating teams, points, pushes, and payouts with the GoodFlightGolf 666 scorekeeper. Includes Six-Six-Six rules and live scoring tools.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="GoodFlightGolf">
+  <meta name="theme-color" content="#359447">
+
+  <link rel="canonical" href="https://goodflightgolf.com/games/666.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Six-Six-Six Golf Scorekeeper & Rules | GoodFlightGolf">
+  <meta property="og:description"
+    content="Track Six-Six-Six golf scores, rotating teams, points, pushes, and payouts with GoodFlightGolf.">
+  <meta property="og:url" content="https://goodflightgolf.com/games/666.html">
+  <meta property="og:site_name" content="GoodFlightGolf">
+  <meta property="og:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Six-Six-Six Golf Scorekeeper & Rules | GoodFlightGolf">
+  <meta name="twitter:description"
+    content="Track Six-Six-Six golf scores, rotating teams, points, pushes, and payouts with GoodFlightGolf.">
+  <meta name="twitter:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
 
   <!-- Bootstrap & Main CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../main2.css">
   <link rel="stylesheet" href="666.css">
-    <style>
+  <style>
   </style>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Six-Six-Six Golf Scorekeeper & Rules",
+      "applicationCategory": "SportsApplication",
+      "operatingSystem": "Web",
+      "url": "https://goodflightgolf.com/games/666.html",
+      "description": "A web-based Six-Six-Six golf scorekeeper for tracking rotating teams, points, pushes, and payouts.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "GoodFlightGolf",
+        "url": "https://goodflightgolf.com/"
+      }
+    }
+  </script>
 </head>
 
 <body class="gfg-666-page">
-    <!-- Back to top button -->
+  <!-- Back to top button -->
   <button type="button" id="btn-back-to-top" aria-label="Back to top">
     <p>Back to Top</p>
   </button>
@@ -58,16 +100,29 @@
   <!-- Hero -->
   <div class="parallax-section2">
     <div class="parallax-content2">
-      <h1 class="gfg-hero-title">👹 Six-Six-Six</h1>
-      <p class="gfg-hero-sub">Two teams per hole. Rotating pairings every 6 holes. Everyone is a friend, everyone is an enemy. Track points + payouts.</p>
-            <div class="d-flex justify-content-center gap-2 flex-wrap">
+      <h1 class="gfg-hero-title">Six-Six-Six Golf Scorekeeper & Rules</h1>
+      <p class="gfg-hero-sub">Track rotating teams every 6 holes, keep score live, and manage points and payouts in one place.</p>
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
         <a href="greenflightgames.html">
-        <button href="greenflightgames.html" class="gfg-pill-btn">💸 Back to Games Home page</button></a>
+          <button href="greenflightgames.html" class="gfg-pill-btn">💸 Back to Games Home page</button>
+        </a>
       </div>
     </div>
   </div>
 
   <div class="container my-4">
+
+    <!-- SEO Intro -->
+    <div class="card game-card p-4 mb-3">
+      <h2>Six-Six-Six Golf Scoring, Rotating Teams, and Rules</h2>
+      <p>
+        Use this Six-Six-Six golf scorekeeper to track players, rotating pairings, hole results, points, pushes, and payouts during your round.
+        Six-Six-Six is a four-player golf game where teams change every six holes, creating a format where everyone plays with and against each other.
+      </p>
+      <p>
+        If your group needs a quick refresher on the format while playing, use the <strong>666 Rules</strong> button below.
+      </p>
+    </div>
 
     <!-- Rules Button -->
     <button id="sixesRulesBtn" class="gfg-pill-btn mb-3">📜 666 Rules</button>
@@ -167,33 +222,46 @@
         </div>
 
         <!-- SCOREBOARD (SAME ID AS WOLF) -->
-<div class="card game-card p-2" id="scoreboardCard">
-  <h4 class="text-center fs-6 mb-1">👹 666 Scoreboard</h4>
+        <div class="card game-card p-2" id="scoreboardCard">
+          <h4 class="text-center fs-6 mb-1">👹 666 Scoreboard</h4>
 
-  <div class="d-flex mb-1 text-center">
-    <div class="border rounded p-1 flex-fill me-1">
-      <div class="fw-bold fs-6" id="t0">Player 1: 0 pts</div>
-      <div id="m0" class="fs-6 fw-bold">+$0.00</div>
-    </div>
-    <div class="border rounded p-1 flex-fill ms-1">
-      <div class="fw-bold fs-6" id="t1">Player 2: 0 pts</div>
-      <div id="m1" class="fs-6 fw-bold">+$0.00</div>
-    </div>
-  </div>
+          <div class="d-flex mb-1 text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6" id="t0">Player 1: 0 pts</div>
+              <div id="m0" class="fs-6 fw-bold">+$0.00</div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6" id="t1">Player 2: 0 pts</div>
+              <div id="m1" class="fs-6 fw-bold">+$0.00</div>
+            </div>
+          </div>
 
-  <div class="d-flex text-center">
-    <div class="border rounded p-1 flex-fill me-1">
-      <div class="fw-bold fs-6" id="t2">Player 3: 0 pts</div>
-      <div id="m2" class="fs-6 fw-bold">+$0.00</div>
-    </div>
-    <div class="border rounded p-1 flex-fill ms-1">
-      <div class="fw-bold fs-6" id="t3">Player 4: 0 pts</div>
-      <div id="m3" class="fs-6 fw-bold">+$0.00</div>
-    </div>
-  </div>
-</div>
+          <div class="d-flex text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6" id="t2">Player 3: 0 pts</div>
+              <div id="m2" class="fs-6 fw-bold">+$0.00</div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6" id="t3">Player 4: 0 pts</div>
+              <div id="m3" class="fs-6 fw-bold">+$0.00</div>
+            </div>
+          </div>
+        </div>
 
       </div>
+    </div>
+
+    <!-- Static SEO Support -->
+    <div class="card game-card p-4 mb-3">
+      <h2>How Six-Six-Six Works</h2>
+      <p>
+        Six-Six-Six is a golf game for four players where teams rotate every six holes. Holes 1 through 6 use one pairing,
+        holes 7 through 12 switch partners, and holes 13 through 18 rotate again so that each player partners with every
+        other player during the round.
+      </p>
+      <p>
+        This scorekeeper helps keep the format organized live on the course so your group can focus on the round instead of tracking pairings by hand.
+      </p>
     </div>
 
   </div>
@@ -229,7 +297,7 @@
 
       <!-- Logo Section -->
       <div class="gfg-footer-logo">
-        <a href="https://www.TrueBitForgeNorth.com/"><img src="photos/TBFN1.png" alt="TrueBit Forge North LLC Logo"></a>
+        <a href="https://www.TrueBitForgeNorth.com/"><img src="../photos/TBFN1.png" alt="TrueBit Forge North LLC Logo"></a>
       </div>
 
       <!-- Footer Info -->
@@ -257,6 +325,19 @@
 
   <script src="../myscripts.js"></script>
   <script src="666.js"></script>
+
+  <script>
+    const mybutton = document.getElementById("btn-back-to-top");
+
+    window.addEventListener("scroll", () => {
+      if (!mybutton) return;
+      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
+    });
+
+    mybutton?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
 
 </body>
 </html>

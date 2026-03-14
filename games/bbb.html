@@ -1,9 +1,31 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Bingo Bango Bongo</title>
+  <title>Bingo Bango Bongo Scorekeeper & Rules | GoodFlightGolf</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="description"
+    content="Track Bingo Bango Bongo points, players, and payouts with the GoodFlightGolf BBB scorekeeper. Includes Bingo Bango Bongo rules and live scoring for every hole.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="GoodFlightGolf">
+  <meta name="theme-color" content="#359447">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Bingo Bango Bongo Scorekeeper & Rules | GoodFlightGolf">
+  <meta property="og:description"
+    content="Track Bingo Bango Bongo points, players, and payouts with the GoodFlightGolf BBB scorekeeper.">
+  <meta property="og:site_name" content="GoodFlightGolf">
+  <meta property="og:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bingo Bango Bongo Scorekeeper & Rules | GoodFlightGolf">
+  <meta name="twitter:description"
+    content="Track Bingo Bango Bongo points, players, and payouts with the GoodFlightGolf BBB scorekeeper.">
+  <meta name="twitter:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
 
   <!-- Bootstrap & Main CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -11,10 +33,27 @@
   <link rel="stylesheet" href="bbb.css">
   <style>
   </style>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Bingo Bango Bongo Scorekeeper & Rules",
+      "applicationCategory": "SportsApplication",
+      "operatingSystem": "Web",
+      "description": "A web-based Bingo Bango Bongo golf scorekeeper for tracking points, players, and payouts during a round.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "GoodFlightGolf",
+        "url": "https://goodflightgolf.com/"
+      }
+    }
+  </script>
 </head>
 
 <body class="gfg-bbb-page">
-    <!-- Back to top button -->
+  <!-- Back to top button -->
   <button type="button" id="btn-back-to-top" aria-label="Back to top">
     <p>Back to Top</p>
   </button>
@@ -57,16 +96,30 @@
   <!-- Hero -->
   <div class="parallax-section2">
     <div class="parallax-content2">
-      <h1 class="gfg-hero-title">🪘 Bingo Bango Bongo</h1>
-      <p class="gfg-hero-sub">Track Bingo/Bango/Bongo points + payouts.</p>
-            <div class="d-flex justify-content-center gap-2 flex-wrap">
+      <h1 class="gfg-hero-title">Bingo Bango Bongo Scorekeeper & Rules</h1>
+      <p class="gfg-hero-sub">Track Bingo, Bango, and Bongo points live while keeping players and payouts organized.</p>
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
         <a href="greenflightgames.html">
-        <button href="greenflightgames.html" class="gfg-pill-btn">💸 Back to Games Home page</button></a>
+          <button href="greenflightgames.html" class="gfg-pill-btn">💸 Back to Games Home page</button>
+        </a>
       </div>
     </div>
   </div>
 
   <div class="container my-4">
+
+    <!-- SEO Intro -->
+    <div class="card game-card p-4 mb-3">
+      <h2>Bingo Bango Bongo Scoring, Points, and Rules</h2>
+      <p>
+        Use this Bingo Bango Bongo scorekeeper to track points, players, and payouts during your round. BBB is a golf
+        game that awards one point for being first on the green, one point for being closest to the pin once everyone is
+        on the green, and one point for being first in the hole.
+      </p>
+      <p>
+        If your group needs a quick refresher while playing, use the <strong>BBB Rules</strong> button below.
+      </p>
+    </div>
 
     <!-- Rules Button -->
     <button id="bbbRulesBtn" class="gfg-pill-btn mb-3">📜 BBB Rules</button>
@@ -168,6 +221,19 @@
       </div>
     </div>
 
+    <!-- Static SEO Support -->
+    <div class="card game-card p-4 mb-3">
+      <h2>How Bingo Bango Bongo Works</h2>
+      <p>
+        Bingo Bango Bongo is a golf points game that works especially well for mixed-skill groups because players can
+        earn points in different ways on every hole. Each hole has three available points: Bingo for first on the green,
+        Bango for closest to the pin once all players are on the green, and Bongo for first in the hole.
+      </p>
+      <p>
+        This scorekeeper helps your group keep those point awards organized live on the course without relying on paper notes.
+      </p>
+    </div>
+
   </div>
 
   <!-- Login / Signup Modal -->
@@ -201,7 +267,7 @@
 
       <!-- Logo Section -->
       <div class="gfg-footer-logo">
-        <a href="https://www.TrueBitForgeNorth.com/"><img src="photos/TBFN1.png" alt="TrueBit Forge North LLC Logo"></a>
+        <a href="https://www.TrueBitForgeNorth.com/"><img src="../photos/TBFN1.png" alt="TrueBit Forge North LLC Logo"></a>
       </div>
 
       <!-- Footer Info -->
@@ -229,6 +295,19 @@
 
   <script src="../myscripts.js"></script>
   <script src="bbb.js"></script>
+
+  <script>
+    const mybutton = document.getElementById("btn-back-to-top");
+
+    window.addEventListener("scroll", () => {
+      if (!mybutton) return;
+      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
+    });
+
+    mybutton?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
 
 </body>
 </html>
