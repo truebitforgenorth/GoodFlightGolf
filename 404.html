@@ -847,34 +847,6 @@
       const el = document.getElementById("pillOut");
       if (el) el.textContent = pills[k];
     }, 1900);
-
-    // Subtle 3D tilt on desktop (disabled on touch + reduced motion)
-    (function () {
-      const card = document.getElementById("tiltCard");
-      if (!card) return;
-
-      const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const isTouch = ("ontouchstart" in window) || (navigator.maxTouchPoints > 0);
-      if (prefersReduced || isTouch) return;
-
-      const max = 7; // degrees
-      card.style.transition = "transform 220ms ease";
-
-      function onMove(e) {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width;   // 0..1
-        const y = (e.clientY - r.top) / r.height;   // 0..1
-        const rx = (y - 0.5) * -max;
-        const ry = (x - 0.5) * max;
-        card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
-      }
-      function onLeave() {
-        card.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) translateZ(0)";
-      }
-
-      window.addEventListener("mousemove", onMove, { passive: true });
-      card.addEventListener("mouseleave", onLeave);
-    })();
   </script>
 </body>
 

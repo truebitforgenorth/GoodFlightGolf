@@ -93,34 +93,34 @@
     </div>
   </nav>
 
-<!-- Hero -->
-<section class="parallax-section2">
-  <div class="parallax-content2">
-    <div class="d-flex flex-column align-items-center text-center">
+  <!-- Hero -->
+  <section class="parallax-section2">
+    <div class="parallax-content2">
+      <div class="d-flex flex-column align-items-center text-center">
 
-      <img src="../photos/icons/Bingo-Bango-Bongo-icon1.png"
-           alt="Bingo Bango Bongo Game Icon"
-           class="bbb-hero-icon mb-3">
+        <img src="../photos/icons/Bingo-Bango-Bongo-icon1.png" alt="Bingo Bango Bongo Game Icon"
+          class="bbb-hero-icon mb-3">
 
-      <h1 class="gfg-hero-title">
-        Bingo · Bango · Bongo <br> Scorekeeper & Rules
-      </h1>
+        <h1 class="gfg-hero-title">
+          Bingo · Bango · Bongo <br> Scorekeeper & Rules
+        </h1>
 
-      <p class="gfg-hero-sub bbb-hero-sub">
-        Track Bingo, Bango, and Bongo points live, manage payouts, and keep every hole competitive from tee box to cup.
-      </p>
+        <p class="gfg-hero-sub bbb-hero-sub">
+          Track Bingo, Bango, and Bongo points live, manage payouts, and keep every hole competitive from tee box to
+          cup.
+        </p>
 
-      <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
-        <a href="goodflightgames.html">
-          <button type="button" class="gfg-pill-btn">
-            💸 Back to Games Home page
-          </button>
-        </a>
+        <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+          <a href="goodflightgames.html">
+            <button type="button" class="gfg-pill-btn">
+              💸 Back to Games Home page
+            </button>
+          </a>
+        </div>
+
       </div>
-
     </div>
-  </div>
-</section>
+  </section>
 
 
   <div class="container my-4">
@@ -247,11 +247,31 @@
         Bango for closest to the pin once all players are on the green, and Bongo for first in the hole.
       </p>
       <p>
-        This scorekeeper helps your group keep those point awards organized live on the course without relying on paper notes.
+        This scorekeeper helps your group keep those point awards organized live on the course without relying on paper
+        notes.
       </p>
     </div>
 
   </div>
+
+  <!-- Feedback -->
+  <section class="gfg-section container">
+    <section id="feedbackSection" class="card">
+      <div class="card-header">💬 Feedback & Suggestions</div>
+      <div class="card-body">
+        <form id="feedbackForm">
+          <div class="mb-3">
+            <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
+            <textarea class="form-control" id="feedbackInput" rows="3"
+              placeholder="Type your feedback here..."></textarea>
+          </div>
+          <button type="submit" class="gfg-pill-btn">📨 Submit Feedback</button>
+          <p id="feedbackStatus" class="mt-2"></p>
+        </form>
+      </div>
+    </section>
+    <script src="../feedback.js"></script>
+  </section>
 
   <!-- Login / Signup Modal -->
   <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
@@ -261,20 +281,73 @@
           <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body">
           <h6>Login</h6>
           <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
           <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
-          <div id="loginMessage" style="height: 1.5em;"></div>
           <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+          <div id="loginMessage" style="height: 1.5em;"></div><br>
           <hr />
+
           <h6>Sign Up</h6>
           <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
           <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
           <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
-          <div id="signupMessage" style="height: 1.5em;"></div>
+
           <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" id="signupTosCheckbox">
+            <label class="form-check-label" for="signupTosCheckbox">
+              I agree to the
+              <a style="font-weight: 600; color: green;" href="terms/terms.html" target="_blank">Terms of Service</a>,
+              <a style="font-weight: 600; color: green;" href="terms/privacy.html" target="_blank">Privacy Policy</a>,
+              and
+              <a style="font-weight: 600; color: green;" href="terms/disclaimer.html" target="_blank">Disclaimer</a>.
+            </label>
+          </div>
+          <div id="signupMessage" style="height: 1.5em;"></div><br>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms Guard Modal -->
+  <div id="tosOverlay" class="tos-overlay" style="display: none;">
+    <div class="tos-modal">
+      <div class="tos-header">
+        <h2>GoodFlightGolf Terms of Use</h2>
+        <p>Please review before continuing.</p>
+      </div>
+
+      <div class="tos-body">
+        <p>
+          By continuing, you agree to the
+          <a href="../terms/terms.html" target="_blank">Terms of Service</a>,
+          <a href="../terms/privacy.html" target="_blank">Privacy Policy</a>,
+          and
+          <a href="../terms/disclaimer.html" target="_blank">Disclaimer</a>.
+        </p>
+
+        <p>
+          GoodFlightGolf tools and games are provided for entertainment and informational purposes.
+          By using this page, you agree to use the site responsibly and at your own discretion.
+        </p>
+
+        <div class="form-check mt-3">
+          <input class="form-check-input" type="checkbox" id="tosAgreeCheckbox">
+          <label class="form-check-label" for="tosAgreeCheckbox">
+            I have read and agree to the Terms of Service, Privacy Policy, and Disclaimer.
+          </label>
+        </div>
+
+        <div id="tosMessage" class="tos-message mt-3"></div>
+      </div>
+
+      <div class="tos-footer">
+        <button type="button" id="tosDeclineBtn" class="btn btn-outline-secondary">Decline</button>
+        <button type="button" id="tosAcceptBtn" class="btn btn-success">Agree & Continue</button>
       </div>
     </div>
   </div>
@@ -284,17 +357,18 @@
 
       <!-- Logo Section -->
       <div class="gfg-footer-logo">
-        <a href="https://www.TrueBitForgeNorth.com/"><img src="../photos/TBFN1.png" alt="TrueBit Forge North LLC Logo"></a>
+        <a href="https://www.TrueBitForgeNorth.com/"><img src="../photos/TBFN1.png"
+            alt="TrueBit Forge North LLC Logo"></a>
       </div>
 
       <!-- Footer Info -->
       <div class="gfg-footer-content">
         <p class="gfg-footer-copy">
-          © 2026 GreenFlightGolf. All rights reserved.
+          © 2026 GoodFlightGolf. All rights reserved.
         </p>
 
         <p class="gfg-footer-ownership">
-          GreenFlightGolf is owned and operated by
+          GoodFlightGolf is owned and operated by
           <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
         </p>
       </div>
@@ -312,19 +386,8 @@
 
   <script src="../myscripts.js"></script>
   <script src="bbb.js"></script>
-
-  <script>
-    const mybutton = document.getElementById("btn-back-to-top");
-
-    window.addEventListener("scroll", () => {
-      if (!mybutton) return;
-      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
-    });
-
-    mybutton?.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  </script>
+  <script src="../terms/tos-guard.js"></script>
 
 </body>
+
 </html>

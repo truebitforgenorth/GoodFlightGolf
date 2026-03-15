@@ -122,45 +122,6 @@
     </div>
   </nav>
 
-  <!-- Login / Signup Modal -->
-  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body">
-          <h6>Login</h6>
-          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
-          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
-          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
-          <div id="loginMessage" style="height: 1.5em;"></div><br>
-          <hr />
-
-          <h6>Sign Up</h6>
-          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
-          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
-          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
-          
-          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
-
-          <div class="form-check mt-3">
-            <input class="form-check-input" type="checkbox" id="signupTosCheckbox">
-            <label class="form-check-label" for="signupTosCheckbox">
-              I agree to the
-              <a href="terms/terms.html" target="_blank">Terms of Service</a>,
-              <a href="terms/privacy.html" target="_blank">Privacy Policy</a>, and
-              <a href="terms/disclaimer.html" target="_blank">Disclaimer</a>.
-            </label>
-          </div>
-          <div id="signupMessage" style="height: 1.5em;"></div><br>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- HERO PARALLAX (top) -->
   <section class="parallax-section2">
     <div class="parallax-content2">
@@ -411,6 +372,8 @@
       </div>
     </div>
 
+    
+
     <script src="feedback.js"></script>
   </div>
 
@@ -436,6 +399,45 @@
 
     </div>
   </footer>
+  
+  <!-- Login / Signup Modal -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+          <div id="loginMessage" style="height: 1.5em;"></div><br>
+          <hr />
+
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
+          
+          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" id="signupTosCheckbox">
+            <label  class="form-check-label" for="signupTosCheckbox">
+              I agree to the
+              <a style="font-weight: 600; color: green;" href="terms/terms.html" target="_blank">Terms of Service</a>,
+              <a style="font-weight: 600; color: green;" href="terms/privacy.html" target="_blank">Privacy Policy</a>, and
+              <a style="font-weight: 600; color: green;" href="terms/disclaimer.html" target="_blank">Disclaimer</a>.
+            </label>
+          </div>
+          <div id="signupMessage" style="height: 1.5em;"></div><br>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
@@ -453,25 +455,9 @@
     })();
   </script>
 
-  <!-- Sortable -->
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-
   <script src="myscripts.js"></script>
   <script src="gfCourseFinder.js"></script>
 
-  <script>
-    // Back to top
-    const mybutton = document.getElementById("btn-back-to-top");
-
-    window.addEventListener("scroll", () => {
-      if (!mybutton) return;
-      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
-    });
-
-    mybutton?.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  </script>
 </body>
 
 </html>

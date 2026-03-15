@@ -12,7 +12,7 @@
   <meta name="author" content="GoodFlightGolf">
   <meta name="theme-color" content="#359447">
 
-  <link rel="canonical" href="https://goodflightgolf.com/games/greenflightgames.html">
+  <link rel="canonical" href="https://goodflightgolf.com/games/goodflightgames.html">
   <link rel="icon" href="../photos/GFGlogo.png" type="image/png">
 
   <!-- Open Graph -->
@@ -21,7 +21,7 @@
   <meta property="og:description"
     content="Choose a golf game, track scores, save results, and keep your season going with GoodFlight Games.">
   <meta property="og:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
-  <meta property="og:url" content="https://goodflightgolf.com/games/greenflightgames.html">
+  <meta property="og:url" content="https://goodflightgolf.com/games/goodflightgames.html">
   <meta property="og:site_name" content="GoodFlightGolf">
 
   <!-- Twitter -->
@@ -41,7 +41,7 @@
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "GoodFlight Games",
-      "url": "https://goodflightgolf.com/games/greenflightgames.html",
+      "url": "https://goodflightgolf.com/games/goodflightgames.html",
       "description": "Golf game hub for Wolf, Six-Six-Six, and Bingo Bango Bongo with score tracking and saved results.",
       "isPartOf": {
         "@type": "WebSite",
@@ -56,7 +56,7 @@
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       "name": "GoodFlight Games",
-      "url": "https://goodflightgolf.com/games/greenflightgames.html",
+      "url": "https://goodflightgolf.com/games/goodflightgames.html",
       "hasPart": [
         {
           "@type": "WebPage",
@@ -221,26 +221,22 @@
   </div>
 
   <!-- Feedback -->
-  <section class="gfg-section">
-    <div class="row justify-content-center">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">💬 Feedback & Suggestions</div>
-          <div class="card-body">
-            <form id="feedbackForm">
-              <div class="mb-3">
-                <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
-                <textarea class="form-control" id="feedbackInput" rows="3"
-                  placeholder="Type your feedback here..."></textarea>
-              </div>
-              <button type="submit" class="gfg-pill-btn">📨 Submit Feedback</button>
-              <p id="feedbackStatus" class="mt-2"></p>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script src="../feedback.js"></script>
+  <section class="gfg-section container">
+        <section id="feedbackSection" class="card">
+            <div class="card-header">💬 Feedback & Suggestions</div>
+            <div class="card-body">
+                <form id="feedbackForm">
+                    <div class="mb-3">
+                        <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
+                        <textarea class="form-control" id="feedbackInput" rows="3"
+                            placeholder="Type your feedback here..."></textarea>
+                    </div>
+                    <button type="submit" class="gfg-pill-btn">📨 Submit Feedback</button>
+                    <p id="feedbackStatus" class="mt-2"></p>
+                </form>
+            </div>
+        </section>
+      <script src="../feedback.js"></script>
   </section>
 
   <!-- Login / Signup Modal -->
@@ -251,19 +247,32 @@
           <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body">
           <h6>Login</h6>
           <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
           <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
-          <div id="loginMessage" style="height: 1.5em;"></div>
           <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
+          <div id="loginMessage" style="height: 1.5em;"></div><br>
           <hr />
+
           <h6>Sign Up</h6>
           <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
           <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
           <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
-          <div id="signupMessage" style="height: 1.5em;"></div>
+          
           <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" id="signupTosCheckbox">
+            <label  class="form-check-label" for="signupTosCheckbox">
+              I agree to the
+              <a style="font-weight: 600; color: green;" href="terms/terms.html" target="_blank">Terms of Service</a>,
+              <a style="font-weight: 600; color: green;" href="terms/privacy.html" target="_blank">Privacy Policy</a>, and
+              <a style="font-weight: 600; color: green;" href="terms/disclaimer.html" target="_blank">Disclaimer</a>.
+            </label>
+          </div>
+          <div id="signupMessage" style="height: 1.5em;"></div><br>
         </div>
       </div>
     </div>
@@ -281,11 +290,11 @@
       <!-- Footer Info -->
       <div class="gfg-footer-content">
         <p class="gfg-footer-copy">
-          © 2026 GreenFlightGolf. All rights reserved.
+          © 2026 GoodFlightGolf. All rights reserved.
         </p>
 
         <p class="gfg-footer-ownership">
-          GreenFlightGolf is owned and operated by
+          GoodFlightGolf is owned and operated by
           <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
         </p>
       </div>
@@ -379,7 +388,7 @@
         if (t === "wolf") return "Wolf.html";
         if (t === "666") return "666.html";
         if (t === "bbb") return "bbb.html";
-        return "greenflightgames.html";
+        return "goodflightgames.html";
       };
 
       window.renderWolfDetails = function renderWolfDetails(docId, data) {
@@ -655,20 +664,6 @@
     (function () {
       emailjs.init("CJRVHaDVYa2VCU89T");
     })();
-  </script>
-
-  <script>
-    // Back to top
-    const mybutton = document.getElementById("btn-back-to-top");
-
-    window.addEventListener("scroll", () => {
-      if (!mybutton) return;
-      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
-    });
-
-    mybutton?.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
   </script>
 
 </body>

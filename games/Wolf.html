@@ -33,6 +33,7 @@
 
   <!-- Bootstrap & Main CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
   <link rel="stylesheet" href="../main2.css">
   <link rel="stylesheet" href="wolf.css">
 
@@ -551,26 +552,24 @@
         </p>
       </section>
 
-      <!-- Feedback -->
-      <section class="row justify-content-center">
-        <div class="col-md-12">
-          <div class="card">
+  <!-- Feedback -->
+  <section class="gfg-section container">
+        <section id="feedbackSection" class="card">
             <div class="card-header">💬 Feedback & Suggestions</div>
             <div class="card-body">
-              <form id="feedbackForm">
-                <div class="mb-3">
-                  <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
-                  <textarea class="form-control" id="feedbackInput" rows="3"
-                    placeholder="Type your feedback here..."></textarea>
-                </div>
-                <button type="submit" class="btn">📨 Submit Feedback</button>
-                <p id="feedbackStatus" class="mt-2"></p>
-              </form>
+                <form id="feedbackForm">
+                    <div class="mb-3">
+                        <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
+                        <textarea class="form-control" id="feedbackInput" rows="3"
+                            placeholder="Type your feedback here..."></textarea>
+                    </div>
+                    <button type="submit" class="gfg-pill-btn">📨 Submit Feedback</button>
+                    <p id="feedbackStatus" class="mt-2"></p>
+                </form>
             </div>
-          </div>
-        </div>
-      </section>
+        </section>
       <script src="../feedback.js"></script>
+  </section>
 
     </div>
   </main>
@@ -601,6 +600,45 @@
     </div>
   </div>
 
+<!-- Terms Guard Modal -->
+<div id="tosOverlay" class="tos-overlay" style="display: none;">
+  <div class="tos-modal">
+    <div class="tos-header">
+      <h2>GoodFlightGolf Terms of Use</h2>
+      <p>Please review before continuing.</p>
+    </div>
+
+    <div class="tos-body">
+      <p>
+        By continuing, you agree to the
+        <a href="../terms/terms.html" target="_blank">Terms of Service</a>,
+        <a href="../terms/privacy.html" target="_blank">Privacy Policy</a>,
+        and
+        <a href="../terms/disclaimer.html" target="_blank">Disclaimer</a>.
+      </p>
+
+      <p>
+        GoodFlightGolf tools and games are provided for entertainment and informational purposes.
+        By using this page, you agree to use the site responsibly and at your own discretion.
+      </p>
+
+      <div class="form-check mt-3">
+        <input class="form-check-input" type="checkbox" id="tosAgreeCheckbox">
+        <label class="form-check-label" for="tosAgreeCheckbox">
+          I have read and agree to the Terms of Service, Privacy Policy, and Disclaimer.
+        </label>
+      </div>
+
+      <div id="tosMessage" class="tos-message mt-3"></div>
+    </div>
+
+    <div class="tos-footer">
+      <button type="button" id="tosDeclineBtn" class="btn btn-outline-secondary">Decline</button>
+      <button type="button" id="tosAcceptBtn" class="btn btn-success">Agree & Continue</button>
+    </div>
+  </div>
+</div>
+
   <footer class="gfg-footer">
     <div class="gfg-footer-container">
 
@@ -613,11 +651,11 @@
       <!-- Footer Info -->
       <div class="gfg-footer-content">
         <p class="gfg-footer-copy">
-          © 2026 GreenFlightGolf. All rights reserved.
+          © 2026 GoodFlightGolf. All rights reserved.
         </p>
 
         <p class="gfg-footer-ownership">
-          GreenFlightGolf is owned and operated by
+          GoodFlightGolf is owned and operated by
           <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
         </p>
       </div>
@@ -643,24 +681,12 @@
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
   <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
-  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+
 
   <script src="../myscripts.js"></script>
   <script src="wolf.js"></script>
+  <script src="../terms/tos-guard.js"></script>
 
-  <script>
-    // Back to top
-    const mybutton = document.getElementById("btn-back-to-top");
-
-    window.addEventListener("scroll", () => {
-      if (!mybutton) return;
-      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
-    });
-
-    mybutton?.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  </script>
 
 </body>
 
