@@ -72,52 +72,72 @@ window.db = firebase.firestore();
     });
   }
 
-  // -----------------------------
-  // SIGNUP
-  // -----------------------------
-  if (signupBtn) {
-    signupBtn.addEventListener("click", () => {
-      const usernameInput = document.getElementById("signupUsername");
-      const emailEl = document.getElementById("signupEmail");
-      const passEl = document.getElementById("signupPassword");
+// -----------------------------
+// SIGNUP
+// -----------------------------
+if (signupBtn) {
+  signupBtn.addEventListener("click", () => {
 
-      const email = emailEl ? emailEl.value : "";
-      const password = passEl ? passEl.value : "";
-      const username = usernameInput ? usernameInput.value.trim() : "";
+    const usernameInput = document.getElementById("signupUsername");
+    const emailEl = document.getElementById("signupEmail");
+    const passEl = document.getElementById("signupPassword");
+    const tosCheckbox = document.getElementById("signupTosCheckbox");
 
-      // If the username input exists on this page, require it.
-      if (usernameInput && !username) {
-        if (signupMessageEl) signupMessageEl.textContent = "Please enter a username.";
-        return;
+    const email = emailEl ? emailEl.value : "";
+    const password = passEl ? passEl.value : "";
+    const username = usernameInput ? usernameInput.value.trim() : "";
+
+    // Require username if field exists
+    if (usernameInput && !username) {
+      if (signupMessageEl) signupMessageEl.textContent = "Please enter a username.";
+      return;
+    }
+
+    // 🚨 Require Terms agreement
+    if (!tosCheckbox || !tosCheckbox.checked) {
+      if (signupMessageEl) {
+        signupMessageEl.textContent = "You must agree to the Terms of Service before creating an account.";
       }
+      return;
+    }
 
-      auth.createUserWithEmailAndPassword(email, password)
-        .then((cred) => {
-          // Save username if provided, otherwise save email
-          const nameToSave = username || email;
-          return db.collection("users").doc(cred.user.uid).set({ username: nameToSave });
-        })
-        .then(() => {
-          // Send welcome email only if EmailJS exists
-          if (window.emailjs) {
-            return emailjs.send("service_6j5b7jm", "template_gtko0rj", {
-              to_email: email,
-              to_name: username || email,
-              site_name: "GreenFlightGolf"
-            });
-          }
-        })
-        .then(() => {
-          if (signupMessageEl) signupMessageEl.textContent = "";
-          if (authModal) authModal.hide();
-        })
-        .catch(err => {
-          if (signupMessageEl) signupMessageEl.textContent = err.message;
-          else alert(err.message);
-          console.error("Signup error:", err);
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((cred) => {
+
+        const nameToSave = username || email;
+
+        // 🔐 Save user + legal agreement
+        return db.collection("users").doc(cred.user.uid).set({
+          username: nameToSave,
+          tosAccepted: true,
+          privacyAccepted: true,
+          disclaimerAccepted: true,
+          legalVersion: "2026-03-15",
+          legalAcceptedAt: new Date().toISOString()
         });
-    });
-  }
+      })
+      .then(() => {
+
+        // 📧 Send welcome email (GOODFLIGHTGOLF fixed)
+        if (window.emailjs) {
+          return emailjs.send("service_6j5b7jm", "template_gtko0rj", {
+            to_email: email,
+            to_name: username || email,
+            site_name: "GoodFlightGolf"
+          });
+        }
+      })
+      .then(() => {
+        if (signupMessageEl) signupMessageEl.textContent = "";
+        if (authModal) authModal.hide();
+      })
+      .catch(err => {
+        if (signupMessageEl) signupMessageEl.textContent = err.message;
+        else alert(err.message);
+        console.error("Signup error:", err);
+      });
+  });
+}
 
   // -----------------------------
   // LOGOUT

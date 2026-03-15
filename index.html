@@ -135,17 +135,27 @@
           <h6>Login</h6>
           <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
           <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
-          <div id="loginMessage" style="height: 1.5em;"></div>
           <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
-
+          <div id="loginMessage" style="height: 1.5em;"></div><br>
           <hr />
 
           <h6>Sign Up</h6>
           <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
           <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
           <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
-          <div id="signupMessage" style="height: 1.5em;"></div>
+          
           <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" id="signupTosCheckbox">
+            <label class="form-check-label" for="signupTosCheckbox">
+              I agree to the
+              <a href="terms/terms.html" target="_blank">Terms of Service</a>,
+              <a href="terms/privacy.html" target="_blank">Privacy Policy</a>, and
+              <a href="terms/disclaimer.html" target="_blank">Disclaimer</a>.
+            </label>
+          </div>
+          <div id="signupMessage" style="height: 1.5em;"></div><br>
         </div>
       </div>
     </div>
@@ -158,7 +168,8 @@
       <h1 class="gfg-hero-title">
         <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>⛳
       </h1>
-      <p class="gfg-hero-sub">Golf games, handicap tracking, club distance logs, and shot tools built for real rounds.</p>
+      <p class="gfg-hero-sub">Golf games, handicap tracking, club distance logs, and shot tools built for real rounds.
+      </p>
       <div class="row justify-content-center">
         <div class="col-md-6">
           <div class="gfg-logo-wrapper">
@@ -184,7 +195,8 @@
       <h2>Golf Tools for Games, Handicap Tracking, Club Distances, and Shot Adjustments</h2>
       <p>
         GoodFlightGolf gives golfers practical tools they can actually use on and off the course. Track your handicap,
-        save club distances by percent, score on-course games like Wolf, Sixes, and Bingo Bango Bongo, and use shot tools to adjust
+        save club distances by percent, score on-course games like Wolf, Sixes, and Bingo Bango Bongo, and use shot
+        tools to adjust
         for wind and elevation.
       </p>
       <p>
@@ -200,16 +212,17 @@
 
       <div class="icon-box gfg-feature-card">
         <h1>⛳</h1>
-        <a href="games/greenflightgames.html">
+        <a href="games/goodflightgames.html">
           <h5>GoodFlightGames</h5>
         </a>
         <p>
-          Play on-course golf games with friends like Wolf, Sixes, and Bingo Bango Bongo while tracking scores and payouts in real time.
+          Play on-course golf games with friends like Wolf, Sixes, and Bingo Bango Bongo while tracking scores and
+          payouts in real time.
           Save completed games and follow season standings.
         </p>
 
         <div class="mt-3 d-flex justify-content-center">
-          <a class="gfg-pill-btn" href="games/greenflightgames.html">Open Games</a>
+          <a class="gfg-pill-btn" href="games/goodflightgames.html">Open Games</a>
         </div>
       </div>
 
@@ -310,16 +323,18 @@
   </section>
 
   <div class="container gfg-section">
-    <!-- DID YOU KNOW? -->
+
+    <!-- DID YOU KNOW? CARD -->
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card">
           <div class="card-header">💡 Did You Know?</div>
-          <div class="card-body" id="golfFact">Loading a fun golf fact...</div>
+          <div class="card-body" id="golfFact">
+            Loading a fun golf fact...
+          </div>
         </div>
       </div>
     </div>
-
     <script>
       const facts = [
         "🏌️‍♂️ Golf is the only sport ever played on the Moon — Alan Shepard hit two golf balls during Apollo 14.",
@@ -327,8 +342,33 @@
         "🚀 The longest recorded drive in a golf competition is 515 yards.",
         "🏴‍☠️ The first 18-hole course was established in 1764 at St Andrews in Scotland.",
         "🐯 Tiger Woods made his first hole-in-one when he was just 8 years old.",
-        "📏 A golf ball has 336 dimples on average."
+        "📏 A golf ball has 336 dimples on average.",
+        "🌍 Golf is played in over 200 countries worldwide.",
+        "🎯 The chances of making two holes-in-one in a round are about 1 in 67 million!",
+        "💼 The first professional golfers were caddies who gave lessons to wealthy amateurs.",
+        "💸 The most expensive golf club ever sold was a 1906 putter that went for over $181,000.",
+        "⛰️ The highest golf course in the world is at Yak Golf Course in India — 13,025 feet above sea level.",
+        "📅 Golf has been played since the 15th century.",
+        "🧤 A golfer once used a prosthetic arm to play in the PGA — true story: Tommy McAuliffe.",
+        "🦅 A score of two under par on a single hole is called an eagle. Even rarer? An albatross — three under par!",
+        "🌪️ A tornado once hit a golf course during a tournament in Texas in 1995. No one was hurt.",
+        "🕳️ The largest golf course in the world is Mission Hills in China, with 12 18-hole courses.",
+        "🐊 Some courses in Florida have actual alligator warnings on signs near water hazards.",
+        "👟 The longest golf marathon (most holes played in 24 hours) is 420 holes!",
+        "🎥 Golf was first televised in 1953.",
+        "🌡️ The optimal temperature for a golf ball to perform is around 80°F (27°C).",
+        "🧊 Cold weather reduces ball compression, leading to shorter drives.",
+        "📚 There are over 10,000 books written about golf — from fiction to physics.",
+        "🏛️ Golf was once banned in Scotland in the 1400s — people were skipping military training to play.",
+        "🎮 Golf video games date back to 1978 — one of the first was for the Atari 2600.",
+        "🥇 Golf returned to the Olympics in 2016 after a 112-year absence.",
+        "🤯 Phil Mickelson is right-handed but plays golf left-handed.",
+        "👶 Rory McIlroy hit a 40-yard drive at age 2.",
+        "🌳 Augusta National Golf Club was once a plant nursery — many holes are named after flowers.",
+        "🛫 A golf ball was hit at 211 mph by Kyle Berkshire, the current long drive champion.",
+        "🌑 Night golf is popular in parts of Asia and the Middle East, with fully lit courses."
       ];
+
       document.addEventListener("DOMContentLoaded", () => {
         const fact = facts[Math.floor(Math.random() * facts.length)];
         document.getElementById("golfFact").textContent = fact;
@@ -385,11 +425,11 @@
       <!-- Footer Info -->
       <div class="gfg-footer-content">
         <p class="gfg-footer-copy">
-          © 2026 GreenFlightGolf. All rights reserved.
+          © 2026 GoodFlightGolf. All rights reserved.
         </p>
 
         <p class="gfg-footer-ownership">
-          GreenFlightGolf is owned and operated by
+          GoodFlightGolf is owned and operated by
           <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
         </p>
       </div>
