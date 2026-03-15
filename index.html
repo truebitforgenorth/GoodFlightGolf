@@ -400,44 +400,108 @@
     </div>
   </footer>
   
-  <!-- Login / Signup Modal -->
-  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+<!-- Login / Signup Modal -->
+<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
-        <div class="modal-body">
-          <h6>Login</h6>
-          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
-          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
-          <button id="loginBtn" class="btn btn-primary mb-4">Login</button>
-          <div id="loginMessage" style="height: 1.5em;"></div><br>
-          <hr />
+      <div class="modal-body">
+        <h6>Login</h6>
+        <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+        <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+        <button id="loginBtn" class="btn btn-primary mb-3">Login</button>
+        <div id="loginMessage" style="min-height: 1.5em;"></div>
 
-          <h6>Sign Up</h6>
-          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
-          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
-          <input type="password" id="signupPassword" class="form-control mb-2" placeholder="Password" />
-          
-          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
+        <hr class="my-4" />
 
-          <div class="form-check mt-3">
-            <input class="form-check-input" type="checkbox" id="signupTosCheckbox">
-            <label  class="form-check-label" for="signupTosCheckbox">
-              I agree to the
-              <a style="font-weight: 600; color: green;" href="terms/terms.html" target="_blank">Terms of Service</a>,
-              <a style="font-weight: 600; color: green;" href="terms/privacy.html" target="_blank">Privacy Policy</a>, and
-              <a style="font-weight: 600; color: green;" href="terms/disclaimer.html" target="_blank">Disclaimer</a>.
-            </label>
+        <h6>Sign Up</h6>
+        <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+        <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+        <input type="password" id="signupPassword" class="form-control mb-3" placeholder="Password" />
+
+        <div class="signup-legal-box mb-3">
+          <h6 class="mb-2">Terms of Service, Privacy Policy, and Disclaimer</h6>
+
+          <div class="signup-legal-scroll">
+            <p><strong>Effective Date:</strong> March 15, 2026</p>
+
+            <p>
+              By creating an account on GoodFlightGolf, you agree to these Terms of Service,
+              Privacy Policy, and Disclaimer.
+            </p>
+
+            <p>
+              GoodFlightGolf provides golf-related games, tools, calculators, scorekeeping features,
+              and account-based services for entertainment and informational purposes only.
+            </p>
+
+            <p>
+              You are responsible for the accuracy of the information you provide, maintaining the
+              confidentiality of your login credentials, and all activity that occurs under your account.
+            </p>
+
+            <p>
+              You agree not to misuse the website, attempt unauthorized access, disrupt services,
+              exploit bugs, interfere with other users, or use the platform for unlawful purposes.
+            </p>
+
+            <p>
+              We may collect account details, submitted scores, settings, and limited technical usage
+              information in order to operate, secure, and improve the website.
+            </p>
+
+            <p>
+              We do not sell your personal information. We may use trusted third-party providers for
+              authentication, hosting, databases, email, analytics, maps, and related services needed
+              to run GoodFlightGolf.
+            </p>
+
+            <p>
+              GoodFlightGolf is provided on an “as is” and “as available” basis without guarantees of
+              uninterrupted service, perfect accuracy, or error-free operation.
+            </p>
+
+            <p>
+              Golf tools, scoring systems, calculators, and other features may rely on user input and
+              simplified assumptions, so results may vary in real-world use.
+            </p>
+
+            <p>
+              To the fullest extent permitted by law, GoodFlightGolf and TrueBit Forge North LLC are not
+              liable for damages, losses, or disruptions arising from use of the website or reliance on
+              its content, tools, or outputs.
+            </p>
+
+            <p>
+              We may update these Terms, Privacy Policy, or Disclaimer from time to time. Continued use
+              of GoodFlightGolf after updates become effective constitutes acceptance of the revised terms.
+            </p>
+
+            <p>
+              By checking the box below and creating your account, you acknowledge that you have reviewed
+              and accepted these legal terms.
+            </p>
           </div>
-          <div id="signupMessage" style="height: 1.5em;"></div><br>
         </div>
+
+        <div class="form-check mt-3">
+          <input class="form-check-input" type="checkbox" id="signupTosCheckbox">
+          <label class="form-check-label" for="signupTosCheckbox">
+            I have read and agree to the Terms of Service, Privacy Policy, and Disclaimer.
+          </label>
+        </div>
+
+        <div id="signupMessage" class="mt-3" style="min-height: 1.5em;"></div>
+
+        <button id="signupBtn" class="btn btn-primary mt-3">Sign Up</button>
       </div>
     </div>
   </div>
+</div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
