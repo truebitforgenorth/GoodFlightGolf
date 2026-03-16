@@ -1034,6 +1034,9 @@ body.fullscreen-active #foot {
 /* ==========================================
    Terms Guard Modal
 ========================================== */
+/* ==========================================
+   Terms Guard Modal
+========================================== */
 .tos-overlay {
   position: fixed;
   inset: 0;
@@ -1041,13 +1044,15 @@ body.fullscreen-active #foot {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 12px;
   z-index: 99999;
 }
 
 .tos-modal {
-  width: 100%;
-  max-width: 680px;
+  width: min(680px, 100%);
+  max-height: calc(100dvh - 24px);
+  display: flex;
+  flex-direction: column;
   background: #fff;
   color: #1f2937;
   border-radius: 18px;
@@ -1056,13 +1061,14 @@ body.fullscreen-active #foot {
 }
 
 .tos-header {
-  padding: 22px 24px 12px;
+  flex: 0 0 auto;
+  padding: 18px 20px 12px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .tos-header h2 {
   margin: 0 0 6px;
-  font-size: 1.45rem;
+  font-size: 1.25rem;
   color: #276a36;
 }
 
@@ -1072,7 +1078,10 @@ body.fullscreen-active #foot {
 }
 
 .tos-body {
-  padding: 22px 24px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px 20px;
   line-height: 1.65;
 }
 
@@ -1082,11 +1091,13 @@ body.fullscreen-active #foot {
 }
 
 .tos-footer {
+  flex: 0 0 auto;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  padding: 18px 24px 24px;
+  padding: 16px 20px 20px;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fff;
   flex-wrap: wrap;
 }
 
@@ -1101,46 +1112,10 @@ body.tos-lock {
   overflow: hidden;
 }
 
-@media (max-width: 768px) {
-  .tos-footer {
-    flex-direction: column;
-  }
-
-  .tos-footer .btn {
-    width: 100%;
-  }
-}
-
-.legal-back-container {
-  padding: 20px 20px 0;
-}
-
-.legal-back-btn {
-  background: #359447;
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.legal-back-btn:hover {
-  background: #276a36;
-}
-
-.legal-back-btn {
-  background: none;
-  color: #359447;
-  border: none;
-  font-weight: 700;
-  padding: 0;
-}
-
 .tos-scroll-box {
-  max-height: 300px;
+  max-height: 280px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 16px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
@@ -1158,8 +1133,37 @@ body.tos-lock {
   margin-bottom: 12px;
 }
 
-.tos-scroll-box {
-  max-height: 380px;
+@media (max-width: 768px) {
+  .tos-overlay {
+    padding: 10px;
+    align-items: center;
+  }
+
+  .tos-modal {
+    max-height: calc(100dvh - 20px);
+    border-radius: 16px;
+  }
+
+  .tos-header {
+    padding: 16px 16px 10px;
+  }
+
+  .tos-body {
+    padding: 16px;
+  }
+
+  .tos-footer {
+    padding: 14px 16px 16px;
+    flex-direction: column;
+  }
+
+  .tos-footer .btn {
+    width: 100%;
+  }
+
+  .tos-scroll-box {
+    max-height: 240px;
+  }
 }
 
 .signup-legal-box {
