@@ -669,3 +669,63 @@ input:checked + .slider:before {
     padding: 0.95rem 0.9rem 0.9rem;
   }
 }
+
+/* ==========================================
+   WOLF GUIDE TABLES
+========================================== */
+
+.wolf-guide-table-wrap {
+  margin-top: 1rem;
+}
+
+.wolf-guide-table-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.wolf-guide-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.wolf-guide-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+}
+
+.wolf-guide-table thead {
+  background: linear-gradient(180deg, rgba(53, 148, 71, 0.08) 0%, rgba(250, 208, 46, 0.08) 100%);
+}
+
+.wolf-guide-table th,
+.wolf-guide-table td {
+  padding: 0.9rem 0.85rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  color: #374151;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.wolf-guide-table th {
+  font-weight: 800;
+  color: #1f2937;
+  white-space: nowrap;
+}
+
+.wolf-guide-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.wolf-guide-table tbody tr:hover {
+  background: rgba(53, 148, 71, 0.035);
+}
