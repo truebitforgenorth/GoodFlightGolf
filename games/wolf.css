@@ -2,7 +2,7 @@
    GAME CARD & BUTTONS
 ========================================= */
 .game-card {
-  transition: none !important; /* remove hover animation */
+  transition: none !important;
 }
 
 .mode-group .btn.selected {
@@ -30,12 +30,15 @@
   border: #212529 !important;
 }
 
-.team-win, .lone-win, .dump-win {
+.team-win,
+.lone-win,
+.dump-win {
   background: #359447 !important;
   color: white;
 }
 
-.team-lose, .lone-lose {
+.team-lose,
+.lone-lose {
   background: #d9534f !important;
   color: white;
 }
@@ -63,7 +66,7 @@
   padding: 10px;
   font-size: 20px;
   letter-spacing: 1px;
-  box-shadow: 0 4px 10px rgba(0,0,0,.25);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .25);
 }
 
 .pot-pop {
@@ -71,10 +74,21 @@
 }
 
 @keyframes potPop {
-  0% { transform: scale(.8); }
-  40% { transform: scale(1.25); }
-  70% { transform: scale(.95); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(.8);
+  }
+
+  40% {
+    transform: scale(1.25);
+  }
+
+  70% {
+    transform: scale(.95);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* =========================================
@@ -179,7 +193,7 @@ body.fullscreen-active #foot {
   padding: 1.5rem;
   border-radius: 18px;
   border: 2px solid #359447;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   animation: slideUp 0.3s ease-out;
 }
 
@@ -217,13 +231,25 @@ body.fullscreen-active #foot {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 #wolfRulesBtn {
@@ -239,7 +265,7 @@ body.fullscreen-active #foot {
 #wolfRulesBtn:hover {
   background: #22243a;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 /* =========================================
@@ -249,6 +275,397 @@ body.fullscreen-active #foot {
   width: 300px;
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.15));
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.15));
   border-radius: 25%;
+}
+
+/* =========================================
+   Game Options Toggles
+========================================= */
+.game-options-card {
+  margin-bottom: 1rem;
+}
+
+.game-options-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.option-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.option-row label {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #359447;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+/* =========================================
+   Inline Birdie Question
+========================================= */
+#birdieQuestionWrap {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  background: rgba(53, 148, 71, 0.06);
+}
+
+#birdieQuestionText {
+  font-size: 1rem;
+}
+
+.birdie-question-buttons {
+  display: grid;
+  gap: 0.75rem;
+}
+
+#birdieYes,
+#birdieNo {
+  min-height: 44px;
+}
+
+/* ==========================================
+   WOLF GOLF GUIDE
+   Clean / Premium / Modern
+========================================== */
+
+.wolf-guide-section {
+  padding: 2rem 0 3rem;
+}
+
+.wolf-guide-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.wolf-guide-header {
+  padding: 2rem 1.5rem 1.25rem;
+  background: linear-gradient(180deg, rgba(53, 148, 71, 0.08) 0%, rgba(250, 208, 46, 0.08) 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.wolf-guide-eyebrow {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(53, 148, 71, 0.12);
+  color: #276a36;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wolf-guide-header h2 {
+  margin: 0 0 0.85rem;
+  font-size: clamp(1.7rem, 2vw, 2.3rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #1f2937;
+}
+
+.wolf-guide-intro {
+  margin: 0 0 0.7rem;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #374151;
+  max-width: 900px;
+}
+
+.wolf-guide-subtext {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* ==========================================
+   DETAILS / ACCORDIONS
+========================================== */
+
+.wolf-guide-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  background: #ffffff;
+}
+
+.wolf-guide-item:last-of-type {
+  border-bottom: none;
+}
+
+.wolf-guide-item summary {
+  list-style: none;
+  position: relative;
+  cursor: pointer;
+  padding: 1.2rem 3.5rem 1.2rem 1.5rem;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: #1f2937;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.wolf-guide-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.wolf-guide-item summary:hover {
+  background: rgba(53, 148, 71, 0.04);
+}
+
+.wolf-guide-item summary::after {
+  content: "+";
+  position: absolute;
+  right: 1.35rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(53, 148, 71, 0.1);
+  color: #276a36;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.wolf-guide-item[open] summary {
+  background: rgba(53, 148, 71, 0.05);
+  color: #276a36;
+}
+
+.wolf-guide-item[open] summary::after {
+  content: "–";
+  background: rgba(250, 208, 46, 0.2);
+}
+
+.wolf-guide-content {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.wolf-guide-content p {
+  margin: 0 0 1rem;
+  color: #374151;
+  line-height: 1.8;
+  font-size: 0.98rem;
+}
+
+.wolf-guide-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================
+   CONTENT BLOCKS
+========================================== */
+
+.wolf-guide-list-block,
+.wolf-guide-box,
+.wolf-guide-note {
+  margin-top: 1rem;
+  border-radius: 16px;
+}
+
+.wolf-guide-list-block {
+  padding: 1rem 1rem 0.9rem;
+  background: #f8faf8;
+  border: 1px solid rgba(53, 148, 71, 0.09);
+}
+
+.wolf-guide-box {
+  padding: 1rem 1rem 0.95rem;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.wolf-guide-note {
+  padding: 1rem 1rem 0.95rem;
+  background: rgba(250, 208, 46, 0.12);
+  border: 1px solid rgba(250, 208, 46, 0.35);
+  color: #4b5563;
+  line-height: 1.75;
+  font-size: 0.97rem;
+}
+
+.wolf-guide-list-block h4,
+.wolf-guide-box h4 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.wolf-guide-list-block ul,
+.wolf-guide-box ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.wolf-guide-list-block li,
+.wolf-guide-box li {
+  margin-bottom: 0.65rem;
+  color: #374151;
+  line-height: 1.7;
+  font-size: 0.96rem;
+}
+
+.wolf-guide-list-block li:last-child,
+.wolf-guide-box li:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================
+   GRID
+========================================== */
+
+.wolf-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+.wolf-guide-footer {
+  padding: 1.35rem 1.5rem 1.5rem;
+  background: #f9fafb;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.wolf-guide-footer p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.8;
+  font-size: 0.97rem;
+}
+
+/* ==========================================
+   LINKS / STRONG
+========================================== */
+
+.wolf-guide-card strong {
+  color: #111827;
+  font-weight: 700;
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 991.98px) {
+  .wolf-guide-header {
+    padding: 1.6rem 1.2rem 1.1rem;
+  }
+
+  .wolf-guide-item summary {
+    padding: 1.05rem 3.1rem 1.05rem 1.2rem;
+    font-size: 1rem;
+  }
+
+  .wolf-guide-content {
+    padding: 0 1.2rem 1.2rem;
+  }
+
+  .wolf-guide-footer {
+    padding: 1.15rem 1.2rem 1.25rem;
+  }
+
+  .wolf-guide-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .wolf-guide-section {
+    padding: 1.25rem 0 2rem;
+  }
+
+  .wolf-guide-card {
+    border-radius: 18px;
+  }
+
+  .wolf-guide-header h2 {
+    font-size: 1.45rem;
+  }
+
+  .wolf-guide-intro,
+  .wolf-guide-subtext,
+  .wolf-guide-content p,
+  .wolf-guide-list-block li,
+  .wolf-guide-box li,
+  .wolf-guide-note,
+  .wolf-guide-footer p {
+    font-size: 0.94rem;
+  }
+
+  .wolf-guide-item summary::after {
+    width: 24px;
+    height: 24px;
+    right: 1rem;
+    font-size: 1rem;
+  }
+
+  .wolf-guide-list-block,
+  .wolf-guide-box,
+  .wolf-guide-note {
+    padding: 0.95rem 0.9rem 0.9rem;
+  }
 }

@@ -46,11 +46,25 @@ const wolfSelect = document.getElementById("wolfSelect");
 
 const holeSetupCard = document.getElementById("holeSetupCard");
 const holeNavCard = document.getElementById("holeNavCard");
+const scoreboardCard = document.getElementById("scoreboardCard");
 
 const teamBtns = document.getElementById("teamBtns");
 const loneBtns = document.getElementById("loneBtns");
 const dumpBtns = document.getElementById("dumpBtns");
 const blindBtns = document.getElementById("blindBtns");
+
+const pushBtn = document.getElementById("pushBtn");
+const dumpModeBtn = document.getElementById("dumpModeBtn");
+
+// =====================================================
+// FEATURE TOGGLES
+// =====================================================
+
+const toggleLone = document.getElementById("toggleLone");
+const toggleDump = document.getElementById("toggleDump");
+const toggleBlind = document.getElementById("toggleBlind");
+const toggleCarryover = document.getElementById("toggleCarryover");
+const toggleBirdieDouble = document.getElementById("toggleBirdieDouble");
 
 // =====================================================
 // GAME STATE
@@ -62,6 +76,9 @@ let totals = [0, 0, 0, 0];
 let holes = {};
 let currentPot = 0;
 let currentWolfIndex = 0;
+
+let pendingBirdieResult = null;
+let pendingBirdieMode = null;
 
 // =====================================================
 // MONEY COUNT ANIMATION
@@ -125,7 +142,27 @@ function blindLosePoints() {
 }
 
 function tieCarryPoints() {
-  return toNumber(tieSetPointsInput);
+  return isCarryoverEnabled() ? toNumber(tieSetPointsInput) : 0;
+}
+
+function isLoneEnabled() {
+  return toggleLone ? toggleLone.checked : true;
+}
+
+function isDumpEnabled() {
+  return toggleDump ? toggleDump.checked : true;
+}
+
+function isBlindEnabled() {
+  return toggleBlind ? toggleBlind.checked : true;
+}
+
+function isCarryoverEnabled() {
+  return toggleCarryover ? toggleCarryover.checked : true;
+}
+
+function isBirdieDoubleEnabled() {
+  return toggleBirdieDouble ? toggleBirdieDouble.checked : false;
 }
 
 function H() {
@@ -133,8 +170,132 @@ function H() {
     wolf: currentWolfIndex,
     partner: null,
     mode: null,
-    result: null
+    result: null,
+    birdieDouble: false
   });
+}
+
+function getBirdieMultiplier(h) {
+  return h?.birdieDouble ? 2 : 1;
+}
+
+function resetInvalidModeForCurrentHole() {
+  const h = H();
+
+  if (h.mode === "lone" && !isLoneEnabled()) {
+    h.mode = null;
+    h.partner = null;
+    h.result = null;
+    h.birdieDouble = false;
+  }
+
+  if (h.mode === "blind" && !isBlindEnabled()) {
+    h.mode = null;
+    h.partner = null;
+    h.result = null;
+    h.birdieDouble = false;
+  }
+
+  if (h.mode === "dump" && !isDumpEnabled()) {
+    h.mode = "team";
+    h.result = null;
+    h.birdieDouble = false;
+  }
+}
+
+function syncToggleControlledInputs() {
+  if (loneWinPointsInput) loneWinPointsInput.disabled = !isLoneEnabled();
+  if (loneLosePointsInput) loneLosePointsInput.disabled = !isLoneEnabled();
+
+  if (dumpWinPointsInput) dumpWinPointsInput.disabled = !isDumpEnabled();
+  if (dumpLosePointsInput) dumpLosePointsInput.disabled = !isDumpEnabled();
+
+  if (blindWinPointsInput) blindWinPointsInput.disabled = !isBlindEnabled();
+  if (blindLosePointsInput) blindLosePointsInput.disabled = !isBlindEnabled();
+
+  if (tieSetPointsInput) tieSetPointsInput.disabled = !isCarryoverEnabled();
+}
+
+function clearPendingBirdie() {
+  pendingBirdieResult = null;
+  pendingBirdieMode = null;
+}
+
+function isBirdiePromptActive() {
+  return !!pendingBirdieResult;
+}
+
+function hideAllResultGroups() {
+  teamBtns?.classList.add("hidden");
+  loneBtns?.classList.add("hidden");
+  dumpBtns?.classList.add("hidden");
+  blindBtns?.classList.add("hidden");
+}
+
+function resetResultButtonSelections() {
+  document
+    .querySelectorAll("#teamBtns .btn, #loneBtns .btn, #dumpBtns .btn, #blindBtns .btn, #pushBtn")
+    .forEach(b => b.classList.remove("selected"));
+}
+
+function ensureBirdiePromptContainer() {
+  let wrap = document.getElementById("birdiePromptBtns");
+
+  if (!wrap && holeSetupCard) {
+    wrap = document.createElement("div");
+    wrap.id = "birdiePromptBtns";
+    wrap.className = "d-grid gap-2 hidden";
+    wrap.innerHTML = `
+      <div id="birdiePromptLabel" class="text-center fw-bold mb-2">Birdie Double?</div>
+      <button id="birdieYes" class="btn btn-success" type="button">Yes</button>
+      <button id="birdieNo" class="btn btn-secondary" type="button">No</button>
+    `;
+    blindBtns?.insertAdjacentElement("afterend", wrap);
+
+    document.getElementById("birdieYes")?.addEventListener("click", () => {
+      finalizeBirdiePrompt(true);
+    });
+
+    document.getElementById("birdieNo")?.addEventListener("click", () => {
+      finalizeBirdiePrompt(false);
+    });
+  }
+
+  return wrap;
+}
+
+function showBirdiePrompt() {
+  const wrap = ensureBirdiePromptContainer();
+  if (!wrap) return;
+
+  hideAllResultGroups();
+  pushBtn?.classList.add("hidden");
+  dumpModeBtn?.classList.add("hidden");
+  wrap.classList.remove("hidden");
+}
+
+function hideBirdiePrompt() {
+  const wrap = document.getElementById("birdiePromptBtns");
+  if (wrap) wrap.classList.add("hidden");
+
+  pushBtn?.classList.remove("hidden");
+  dumpModeBtn?.classList.remove("hidden");
+}
+
+function finalizeBirdiePrompt(shouldDouble) {
+  if (!pendingBirdieResult) return;
+
+  H().result = pendingBirdieResult;
+  H().mode = pendingBirdieMode ?? H().mode;
+  H().birdieDouble = !!shouldDouble;
+
+  hideBirdiePrompt();
+  clearPendingBirdie();
+  recalc();
+
+  if (hole < 18) {
+    nextHole();
+  }
 }
 
 // =====================================================
@@ -154,10 +315,37 @@ document.querySelectorAll(".player").forEach((input, idx) => {
 // =====================================================
 
 function selectResult(btn, result) {
-  btn.parentElement?.querySelectorAll(".btn").forEach(b => b.classList.remove("selected"));
+  resetResultButtonSelections();
   btn.classList.add("selected");
 
+  if (result === "push") {
+    hideBirdiePrompt();
+    clearPendingBirdie();
+
+    H().result = "push";
+    H().birdieDouble = false;
+    recalc();
+
+    if (hole < 18) {
+      nextHole();
+    }
+    return;
+  }
+
+  if (isBirdieDoubleEnabled()) {
+    pendingBirdieResult = result;
+    pendingBirdieMode = H().mode;
+    H().result = null;
+    H().birdieDouble = false;
+    showBirdiePrompt();
+    return;
+  }
+
+  hideBirdiePrompt();
+  clearPendingBirdie();
+
   H().result = result;
+  H().birdieDouble = false;
   recalc();
 
   if (hole < 18) {
@@ -166,15 +354,17 @@ function selectResult(btn, result) {
 }
 
 function selectDump() {
+  if (!isDumpEnabled()) return;
   if (H().partner === null) return;
+
+  hideBirdiePrompt();
+  clearPendingBirdie();
 
   H().mode = "dump";
   H().result = null;
+  H().birdieDouble = false;
 
-  document
-    .querySelectorAll("#teamBtns .btn, #loneBtns .btn, #dumpBtns .btn, #blindBtns .btn")
-    .forEach(b => b.classList.remove("selected"));
-
+  resetResultButtonSelections();
   updateUI();
   recalc();
 }
@@ -184,17 +374,30 @@ function selectDump() {
 // =====================================================
 
 function updateUI() {
+  if (isBirdiePromptActive()) {
+    showBirdiePrompt();
+    return;
+  }
+
+  hideBirdiePrompt();
+  hideAllResultGroups();
+
   const mode = H().mode;
 
-  teamBtns?.classList.add("hidden");
-  loneBtns?.classList.add("hidden");
-  dumpBtns?.classList.add("hidden");
-  blindBtns?.classList.add("hidden");
-
   if (mode === "team") teamBtns?.classList.remove("hidden");
-  if (mode === "lone") loneBtns?.classList.remove("hidden");
-  if (mode === "dump") dumpBtns?.classList.remove("hidden");
-  if (mode === "blind") blindBtns?.classList.remove("hidden");
+  if (mode === "lone" && isLoneEnabled()) loneBtns?.classList.remove("hidden");
+  if (mode === "dump" && isDumpEnabled()) dumpBtns?.classList.remove("hidden");
+  if (mode === "blind" && isBlindEnabled()) blindBtns?.classList.remove("hidden");
+
+  if (pushBtn) pushBtn.classList.remove("hidden");
+
+  if (dumpModeBtn) {
+    if (mode === "team" && isDumpEnabled() && H().partner !== null) {
+      dumpModeBtn.classList.remove("hidden");
+    } else {
+      dumpModeBtn.classList.add("hidden");
+    }
+  }
 }
 
 // =====================================================
@@ -229,8 +432,8 @@ function recalc() {
     if (!h || !h.result) return;
 
     const allPlayers = [0, 1, 2, 3];
+    const birdieMultiplier = getBirdieMultiplier(h);
 
-    // Push / tie
     if (h.result === "push") {
       carryover += tieCarryPoints();
       return;
@@ -239,28 +442,21 @@ function recalc() {
     const pot = carryover;
     carryover = 0;
 
-    // ---------------------------------
-    // TEAM WIN: Wolf + Partner
-    // Base is total amount, split by 2
-    // Pot is split by 2
-    // ---------------------------------
     if (h.result === "wolfTeam") {
       if (h.partner === null) return;
 
-      const each = teamSplitPoints() + (pot / 2);
+      const normalEach = teamSplitPoints() * birdieMultiplier;
+      const each = normalEach + (pot / 2);
+
       totals[h.wolf] += each;
       totals[h.partner] += each;
       return;
     }
 
-    // ---------------------------------
-    // TEAM LOSE: Other 2 players win
-    // Base is total amount, split by 2
-    // Pot is split by 2
-    // ---------------------------------
     if (h.result === "others") {
       const winners = allPlayers.filter(i => i !== h.wolf && i !== h.partner);
-      const each = teamSplitPoints() + (pot / 2);
+      const normalEach = teamSplitPoints() * birdieMultiplier;
+      const each = normalEach + (pot / 2);
 
       winners.forEach(i => {
         totals[i] += each;
@@ -268,25 +464,14 @@ function recalc() {
       return;
     }
 
-    // ---------------------------------
-    // LONE WIN
-    // Exact fixed amount to lone wolf
-    // No extra math on configured amount
-    // ---------------------------------
     if (h.result === "loneWin" && h.mode === "lone") {
-      totals[h.wolf] += loneWinPoints() + pot;
+      totals[h.wolf] += (loneWinPoints() * birdieMultiplier) + pot;
       return;
     }
 
-    // ---------------------------------
-    // LONE LOSE
-    // Configured amount is TOTAL
-    // Split by 3
-    // Pot is split by 3
-    // ---------------------------------
     if (h.result === "loneLose" && h.mode === "lone") {
       const winners = allPlayers.filter(i => i !== h.wolf);
-      const each = (loneLosePoints() / 3) + (pot / 3);
+      const each = ((loneLosePoints() * birdieMultiplier) / 3) + (pot / 3);
 
       winners.forEach(i => {
         totals[i] += each;
@@ -294,24 +479,14 @@ function recalc() {
       return;
     }
 
-    // ---------------------------------
-    // BLIND WIN
-    // Exact fixed amount to blind wolf
-    // ---------------------------------
     if (h.result === "loneWin" && h.mode === "blind") {
-      totals[h.wolf] += blindWinPoints() + pot;
+      totals[h.wolf] += (blindWinPoints() * birdieMultiplier) + pot;
       return;
     }
 
-    // ---------------------------------
-    // BLIND LOSE
-    // Configured amount is TOTAL
-    // Split by 3
-    // Pot is split by 3
-    // ---------------------------------
     if (h.result === "loneLose" && h.mode === "blind") {
       const winners = allPlayers.filter(i => i !== h.wolf);
-      const each = (blindLosePoints() / 3) + (pot / 3);
+      const each = ((blindLosePoints() * birdieMultiplier) / 3) + (pot / 3);
 
       winners.forEach(i => {
         totals[i] += each;
@@ -319,30 +494,20 @@ function recalc() {
       return;
     }
 
-    // ---------------------------------
-    // DUMP WIN
-    // Exact fixed amount to dump player
-    // ---------------------------------
     if (h.result === "dumpWin") {
       const dumpPlayer = h.partner;
       if (dumpPlayer === null || dumpPlayer === undefined) return;
 
-      totals[dumpPlayer] += dumpWinPoints() + pot;
+      totals[dumpPlayer] += (dumpWinPoints() * birdieMultiplier) + pot;
       return;
     }
 
-    // ---------------------------------
-    // DUMP LOSE
-    // Configured amount is TOTAL
-    // Split by 3
-    // Pot is split by 3
-    // ---------------------------------
     if (h.result === "dumpLose") {
       const dumpPlayer = h.partner;
       if (dumpPlayer === null || dumpPlayer === undefined) return;
 
       const winners = allPlayers.filter(i => i !== dumpPlayer);
-      const each = (dumpLosePoints() / 3) + (pot / 3);
+      const each = ((dumpLosePoints() * birdieMultiplier) / 3) + (pot / 3);
 
       winners.forEach(i => {
         totals[i] += each;
@@ -361,6 +526,9 @@ function recalc() {
 // =====================================================
 
 function render() {
+  resetInvalidModeForCurrentHole();
+  syncToggleControlledInputs();
+
   if (holeTitle) {
     holeTitle.innerText = `Hole ${hole}`;
   }
@@ -380,8 +548,13 @@ function render() {
     }
   });
 
-  setupOptions.push(`<option value="lone">Lone Wolf</option>`);
-  setupOptions.push(`<option value="blind">Blind Wolf</option>`);
+  if (isLoneEnabled()) {
+    setupOptions.push(`<option value="lone">Lone Wolf</option>`);
+  }
+
+  if (isBlindEnabled()) {
+    setupOptions.push(`<option value="blind">Blind Wolf</option>`);
+  }
 
   if (holeSetupSelect) {
     holeSetupSelect.innerHTML = setupOptions.join("");
@@ -390,9 +563,9 @@ function render() {
   let currentSetupValue = "";
   if ((H().mode === "team" || H().mode === "dump") && H().partner !== null) {
     currentSetupValue = `partner-${H().partner}`;
-  } else if (H().mode === "lone") {
+  } else if (H().mode === "lone" && isLoneEnabled()) {
     currentSetupValue = "lone";
-  } else if (H().mode === "blind") {
+  } else if (H().mode === "blind" && isBlindEnabled()) {
     currentSetupValue = "blind";
   }
 
@@ -409,18 +582,30 @@ function render() {
 // =====================================================
 
 wolfSelect?.addEventListener("change", () => {
+  hideBirdiePrompt();
+  clearPendingBirdie();
+
   H().wolf = +wolfSelect.value;
   H().partner = null;
   H().mode = null;
   H().result = null;
+  H().birdieDouble = false;
+
+  resetResultButtonSelections();
   render();
   recalc();
 });
 
 holeSetupSelect?.addEventListener("change", () => {
+  hideBirdiePrompt();
+  clearPendingBirdie();
+
   const value = holeSetupSelect.value;
 
   H().result = null;
+  H().birdieDouble = false;
+
+  resetResultButtonSelections();
 
   if (!value) {
     H().mode = null;
@@ -428,11 +613,14 @@ holeSetupSelect?.addEventListener("change", () => {
   } else if (value.startsWith("partner-")) {
     H().mode = "team";
     H().partner = +value.split("-")[1];
-  } else if (value === "lone") {
+  } else if (value === "lone" && isLoneEnabled()) {
     H().mode = "lone";
     H().partner = null;
-  } else if (value === "blind") {
+  } else if (value === "blind" && isBlindEnabled()) {
     H().mode = "blind";
+    H().partner = null;
+  } else {
+    H().mode = null;
     H().partner = null;
   }
 
@@ -456,12 +644,26 @@ holeSetupSelect?.addEventListener("change", () => {
   });
 });
 
+[toggleLone, toggleDump, toggleBlind, toggleCarryover, toggleBirdieDouble].forEach(toggle => {
+  toggle?.addEventListener("change", () => {
+    hideBirdiePrompt();
+    clearPendingBirdie();
+    resetInvalidModeForCurrentHole();
+    resetResultButtonSelections();
+    render();
+    recalc();
+  });
+});
+
 // =====================================================
 // HOLE NAV
 // =====================================================
 
 function prevHole() {
   if (hole > 1) {
+    hideBirdiePrompt();
+    clearPendingBirdie();
+
     hole--;
     currentWolfIndex = H().wolf ?? 0;
     render();
@@ -472,6 +674,9 @@ function prevHole() {
 
 function nextHole() {
   if (hole < 19) {
+    hideBirdiePrompt();
+    clearPendingBirdie();
+
     hole++;
     currentWolfIndex = (currentWolfIndex + 1) % players.length;
 
@@ -479,7 +684,9 @@ function nextHole() {
     H().partner = null;
     H().mode = null;
     H().result = null;
+    H().birdieDouble = false;
 
+    resetResultButtonSelections();
     render();
     recalc();
 
@@ -520,7 +727,7 @@ function hideResultsSummary() {
   const resultsCard = document.getElementById("resultsCard");
   if (resultsCard) resultsCard.style.display = "none";
   if (holeSetupCard) holeSetupCard.style.display = "block";
-  if (holeNavCard) holeNavCard.style.display = "flex";
+  if (holeNavCard) holeNavCard.style.display = "block";
   if (scoreboardCard) scoreboardCard.style.display = "block";
 }
 
@@ -538,7 +745,7 @@ function showResultsSummary() {
     selectionWrapper?.appendChild(resultsCard);
   }
 
-  const dollar = toNumber(dollarValueInput?.value);
+  const dollar = toNumber(dollarValueInput);
   const netMoney = totals.map(t => t * dollar);
   const maxMoney = Math.max(...netMoney);
 
@@ -583,15 +790,20 @@ function showResultsSummary() {
           holes,
           totals,
           players,
-          base: toNumber(baseInput?.value),
-          dollarValue: toNumber(dollarValueInput?.value),
-          loneWinPoints: toNumber(loneWinPointsInput?.value),
-          loneLosePoints: toNumber(loneLosePointsInput?.value),
-          dumpWinPoints: toNumber(dumpWinPointsInput?.value),
-          dumpLosePoints: toNumber(dumpLosePointsInput?.value),
-          blindWinPoints: toNumber(blindWinPointsInput?.value),
-          blindLosePoints: toNumber(blindLosePointsInput?.value),
-          tieSetPoints: toNumber(tieSetPointsInput?.value),
+          base: toNumber(baseInput),
+          dollarValue: toNumber(dollarValueInput),
+          loneWinPoints: toNumber(loneWinPointsInput),
+          loneLosePoints: toNumber(loneLosePointsInput),
+          dumpWinPoints: toNumber(dumpWinPointsInput),
+          dumpLosePoints: toNumber(dumpLosePointsInput),
+          blindWinPoints: toNumber(blindWinPointsInput),
+          blindLosePoints: toNumber(blindLosePointsInput),
+          tieSetPoints: toNumber(tieSetPointsInput),
+          loneEnabled: isLoneEnabled(),
+          dumpEnabled: isDumpEnabled(),
+          blindEnabled: isBlindEnabled(),
+          carryoverEnabled: isCarryoverEnabled(),
+          birdieDoubleEnabled: isBirdieDoubleEnabled(),
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
@@ -648,6 +860,8 @@ function runConfetti() {
 // =====================================================
 
 document.addEventListener("DOMContentLoaded", () => {
+  ensureBirdiePromptContainer();
+
   const openBtn = document.getElementById("wolfRulesBtn");
   const modal = document.getElementById("wolfRulesModal");
   const closeBtn = document.getElementById("closeWolfRulesBtn");
@@ -684,7 +898,6 @@ document.addEventListener("DOMContentLoaded", () => {
   <li><strong>Lone Wolf:</strong> The Wolf passes on all partners after seeing the drives and plays 1 vs 3.</li>
   <li><strong>Dump (Optional):</strong> This happens when the partner that the wolf has choosen declines them as a playing partner and becomes the new Wolf.</li>
   <li><strong>Blind Wolf (Optional):</strong> The Wolf declares before the other players tee off that they will play alone 1 vs 3.</li>
-  
 </ul>
 
 <h5 class="mt-4">How the Hole is Won</h5>
@@ -755,5 +968,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // INIT
 // =====================================================
 
+syncToggleControlledInputs();
 render();
 recalc();
+hideBirdiePrompt();
