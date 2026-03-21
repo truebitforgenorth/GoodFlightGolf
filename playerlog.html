@@ -97,41 +97,47 @@
         <p>Back to Top</p>
     </button>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg gfg-navbar">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>⛳</a>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>⛳</a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
-            </button>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
 
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav fs-5">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home </a></li>
-                    <li class="nav-item"><a class="nav-link" href="playerlog.html">MyFlight</a></li>
-                    <li class="nav-item"><a class="nav-link" href="NewsArticles/social&news.html">Social/News</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="games/goodflightgames.html">GoodFlight<span
-                                style="color:#fad02e;">Games</span></a>
-                    </li>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
 
                     <li class="nav-item">
-                        <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal"
-                            role="button">
-                            Login / Signup
-                        </a>
-                    </li>
+            <a class="nav-link" href="games/goodflightgames.html">GoodFlight<span
+                style="color:#fad02e;">Games</span></a>
+          </li>
 
-                    <li class="nav-item d-flex align-items-center">
-                        <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
-                        <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+          <li class="nav-item"><a class="nav-link" href="playerlog.html">My<span
+                style="color:#fad02e;">Flight</span></a></li>
+
+          <li class="nav-item"><a class="nav-link" href="NewsArticles/social&news.html">The Club<span
+                style="color:#fad02e;">house</span></a></li>
+
+
+          <li class="nav-item">
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / <span style="color:#fad02e;">Signup</span>
+            </a>
+          </li>
+
+          <li class="nav-item d-flex align-items-center">
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
     <!-- Parallax Section -->
     <section class="parallax-section2">
@@ -155,16 +161,37 @@
 
     <!-- SEO INTRO -->
     <section class="container gfg-section">
-        <div class="card p-4 mb-4">
-            <h2>Golf Handicap Tracking, Club Distance Logs, and Shot Adjustment Tools</h2>
-            <p>
-                MyFlight is the personal golf toolkit inside GoodFlightGolf. Use it to save club distances by hit percentage,
-                calculate and track your handicap over time, and adjust golf shots for wind and elevation.
-            </p>
-            <p>
-                Whether you are building better yardage gaps, monitoring handicap progress, or deciding how to play a shot
-                into the elements, MyFlight helps keep your golf data organized in one place.
-            </p>
+        <!-- Welcome Card -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card text-center">
+                    <div class="card-body">
+
+                        <h3 class="card-title">🏌️ Welcome to Your Personal Golf Toolkit ⛳</h3>
+                        <p class="card-text">
+                            Improve your golf game with calculators and trackers designed to help you make better decisions
+                            on the course and keep your golf data organized.
+                        </p>
+                        <p class="card-text">
+                            <strong><a href="#clubDistanceWrapper">🏌️ Club Distance Log</a></strong> – Save distance averages for each club at
+                            different hit percentages and organize them in your preferred order.<br>
+                            <strong><a href="#handical">🧮 Handicap Calculator</a></strong> – Calculate your handicap and visualize your progress
+                            over time.<br>
+                            <strong><a href="#shotcal">🌬️ Shot Flight Calculator</a></strong> – Adjust your
+                            shots based on wind, elevation, and club selection.
+                        </p>
+                        <p class="card-text text-warning">
+                            <strong>You must be logged in</strong> to use the Handicap Calculator and Club Distance
+                            Tracker. Your data is securely saved to your profile so you can pick up right where you left
+                            off.
+                        </p>
+                        <p class="card-text">
+                            💬 Have suggestions or find something off? Use the <strong>Feedback Form</strong> to let us
+                            know — we’re always improving.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -218,39 +245,6 @@
 
     <!-- main container -->
     <div class="container gfg-section">
-
-        <!-- Welcome Card -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card text-center">
-                    <div class="card-body">
-
-                        <h3 class="card-title">🏌️ Welcome to Your Personal Golf Toolkit ⛳</h3>
-                        <p class="card-text">
-                            Improve your golf game with calculators and trackers designed to help you make better decisions
-                            on the course and keep your golf data organized.
-                        </p>
-                        <p class="card-text">
-                            <strong><a href="#clubDistanceWrapper">🏌️ Club Distance Log</a></strong> – Save distance averages for each club at
-                            different hit percentages and organize them in your preferred order.<br>
-                            <strong><a href="#handical">🧮 Handicap Calculator</a></strong> – Calculate your handicap and visualize your progress
-                            over time.<br>
-                            <strong><a href="#shotcal">🌬️ Shot Flight Calculator</a></strong> – Adjust your
-                            shots based on wind, elevation, and club selection.
-                        </p>
-                        <p class="card-text text-warning">
-                            <strong>You must be logged in</strong> to use the Handicap Calculator and Club Distance
-                            Tracker. Your data is securely saved to your profile so you can pick up right where you left
-                            off.
-                        </p>
-                        <p class="card-text">
-                            💬 Have suggestions or find something off? Use the <strong>Feedback Form</strong> to let us
-                            know — we’re always improving.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <hr class="my-5">
 
