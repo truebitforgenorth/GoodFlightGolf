@@ -595,6 +595,17 @@
                 width: min(100% - 22px, 1200px);
             }
         }
+
+        body.gfg-about-page .gfg-about-stats--compact {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        body.gfg-about-page .gfg-about-hero-right--simple {
+            min-height: unset;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
     </style>
 </head>
 
@@ -627,62 +638,41 @@
                         <a href="#our-story" class="gfg-about-btn gfg-about-btn-secondary">Explore Our Story</a>
                     </div>
 
-                    <div class="gfg-about-stats">
+                    <div class="gfg-about-stats gfg-about-stats--compact">
                         <div class="gfg-about-stat">
-                            <strong>Performance</strong>
-                            <span>Tools designed to help golfers make smarter decisions and understand their
-                                game.</span>
+                            <strong>Play</strong>
+                            <span>Competitive golf games and formats built to make rounds more fun.</span>
                         </div>
                         <div class="gfg-about-stat">
-                            <strong>Competition</strong>
-                            <span>Game formats and scoring systems that make group rounds more fun and organized.</span>
+                            <strong>Track</strong>
+                            <span>Useful tools that help golfers understand their performance over time.</span>
                         </div>
                         <div class="gfg-about-stat">
-                            <strong>Innovation</strong>
-                            <span>A modern golf platform that blends data, design, and user-friendly features.</span>
-                        </div>
-                        <div class="gfg-about-stat">
-                            <strong>Growth</strong>
-                            <span>A vision that keeps expanding with tools, pages, and experiences for serious
-                                players.</span>
+                            <strong>Improve</strong>
+                            <span>A growing platform focused on smarter decisions and better golf experiences.</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="gfg-about-hero-right">
+                <div class="gfg-about-hero-right gfg-about-hero-right--simple">
                     <div class="gfg-about-panel gfg-about-panel-tall">
                         <div class="gfg-about-metric">
                             <div class="gfg-about-metric-number">01</div>
-                            <div class="gfg-about-metric-label">Precision-driven tools</div>
+                            <div class="gfg-about-metric-label">Built for the modern golfer</div>
                             <p>
-                                From shot calculations to performance-focused features, GoodFlightGolf is built around
-                                useful tools that support real golf decisions.
+                                From games to tracking tools, GoodFlightGolf is designed to make golf more competitive,
+                                organized, and useful.
                             </p>
                         </div>
                     </div>
 
-                    <div class="gfg-about-panel gfg-about-panel-short">
-                        <h3>Competitive by nature</h3>
-                        <p>
-                            Games like Wolf, 666, and other group formats give rounds structure, tension, and energy.
-                        </p>
-                    </div>
-
-                    <div class="gfg-about-panel gfg-about-panel-short">
-                        <h3>Designed to feel premium</h3>
-                        <p>
-                            Clean layouts, sharp styling, and a modern visual identity that reflects the quality of the
-                            brand.
-                        </p>
-                    </div>
-
                     <div class="gfg-about-panel gfg-about-panel-tall">
-                        <h3>Made for the modern golfer</h3>
+                        <h3>What you’ll find here</h3>
                         <ul>
-                            <li>Track performance</li>
-                            <li>Use calculators with purpose</li>
-                            <li>Manage golf games more easily</li>
-                            <li>Turn casual rounds into smarter competition</li>
+                            <li>Interactive golf games</li>
+                            <li>Performance tracking tools</li>
+                            <li>Clean modern design</li>
+                            <li>A platform that keeps growing</li>
                         </ul>
                     </div>
                 </div>
@@ -1027,35 +1017,36 @@
                 </p>
 
                 <div class="gfg-about-cta-actions">
-                    <a href="index.html" class="gfg-about-btn gfg-about-btn-light">Return Home</a>
-                    <a href="labs.html" class="gfg-about-btn gfg-about-btn-gold">Explore More</a>
+                    <a href="../index.html" class="gfg-about-btn gfg-about-btn-light">Return Home</a>
+                    <a href="maintenance.html" class="gfg-about-btn gfg-about-btn-gold">Explore More</a>
                 </div>
             </div>
         </div>
     </section>
 
-  <footer class="gfg-footer">
-    <div class="gfg-footer-container">
+    <footer class="gfg-footer">
+        <div class="gfg-footer-container">
 
-      <!-- Logo Section -->
-      <div class="gfg-footer-logo">
-        <a href="https://www.TrueBitForgeNorth.com/"><img src="../photos/TBFN1.png" alt="TrueBit Forge North LLC Logo"></a>
-      </div>
+            <!-- Logo Section -->
+            <div class="gfg-footer-logo">
+                <a href="https://www.TrueBitForgeNorth.com/"><img src="../photos/TBFN1.png"
+                        alt="TrueBit Forge North LLC Logo"></a>
+            </div>
 
-      <!-- Footer Info -->
-      <div class="gfg-footer-content">
-        <p class="gfg-footer-copy">
-          © 2026 GoodFlightGolf. All rights reserved.
-        </p>
+            <!-- Footer Info -->
+            <div class="gfg-footer-content">
+                <p class="gfg-footer-copy">
+                    © 2026 GoodFlightGolf. All rights reserved.
+                </p>
 
-        <p class="gfg-footer-ownership">
-          GoodFlightGolf is owned and operated by
-          <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
-        </p>
-      </div>
+                <p class="gfg-footer-ownership">
+                    GoodFlightGolf is owned and operated by
+                    <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
+                </p>
+            </div>
 
-    </div>
-  </footer>
+        </div>
+    </footer>
 
 </body>
 

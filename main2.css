@@ -174,6 +174,22 @@ input[type="submit"] {
 }
 
 /* =====================================================
+   GAMES PAGE ICONS
+===================================================== */
+.wolf-hero-icon,
+.a666-hero-icon,
+.bbb-hero-icon {
+  display: block;
+  width: 300px;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.15));
+  border-radius: 25%;
+}
+
+/* =====================================================
    FEATURE ICONS / CARDS
 ===================================================== */
 .feature-icons {
@@ -541,7 +557,6 @@ footer {
   color: var(--yellow);
 }
 
-
 /* =====================================================
    GFG BUTTON SYSTEM
 ===================================================== */
@@ -610,6 +625,12 @@ footer {
 
 .btn-primary:hover {
   background: var(--dark-green);
+}
+
+#homelist {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* =====================================================
@@ -925,22 +946,6 @@ body.fullscreen-active #foot {
 }
 
 /* =====================================================
-   GAMES PAGE ICONS
-===================================================== */
-.wolf-hero-icon,
-.a666-hero-icon,
-.bbb-hero-icon {
-  display: block;
-  width: 300px;
-  height: auto;
-  margin-left: auto;
-  margin-right: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.15));
-  border-radius: 25%;
-}
-
-/* =====================================================
    RESPONSIVE
 ===================================================== */
 @media (min-width: 768px) {
@@ -1030,10 +1035,6 @@ body.fullscreen-active #foot {
   }
 }
 
-
-/* ==========================================
-   Terms Guard Modal
-========================================== */
 /* ==========================================
    Terms Guard Modal
 ========================================== */
@@ -1187,3 +1188,4 @@ body.tos-lock {
   font-size: 0.92rem;
   line-height: 1.6;
 }
+
