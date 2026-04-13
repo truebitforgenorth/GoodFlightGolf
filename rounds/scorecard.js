@@ -202,19 +202,6 @@ const holeSetupCard = $("holeSetupCard");
 const holeNavCard = $("holeNavCard");
 const scoreboardCard = $("scoreboardCard");
 
-const finalCourse = $("finalCourse");
-const finalScore = $("finalScore");
-const finalVsPar = $("finalVsPar");
-const finalPutts = $("finalPutts");
-const finalFir = $("finalFir");
-const finalGir = $("finalGir");
-const finalPenalties = $("finalPenalties");
-const finalBunkers = $("finalBunkers");
-const feedbackInsights = $("feedbackInsights");
-const saveRoundBtn = $("saveRoundBtn");
-const saveRoundStatus = $("saveRoundStatus");
-const startNewRoundBtn = $("startNewRoundBtn");
-
 let currentHole = 1;
 let currentCourseId = "oneka-ridge";
 let holes = {};
@@ -295,14 +282,10 @@ function getCountedHoleNumbers() {
   const all = allHoleNumbers();
 
   if (!resultsCard?.classList.contains("hidden")) {
-    return all.filter(holeNumber => isHoleActive(holeNumber));
+    return all;
   }
 
-  return all.filter(holeNumber => {
-    if (holeNumber < currentHole) return isHoleActive(holeNumber);
-    if (holeNumber === currentHole) return isHoleActive(holeNumber);
-    return false;
-  });
+  return all.filter((holeNumber) => holeNumber <= currentHole);
 }
 
 fullscreenBtn?.addEventListener("click", () => {
@@ -642,11 +625,99 @@ function runConfetti() {
 }
 
 function hideResultsSummary() {
-  resultsCard?.classList.add("hidden");
+  if (resultsCard) {
+    resultsCard.classList.add("hidden");
+    resultsCard.innerHTML = "";
+  }
 
   if (holeSetupCard) holeSetupCard.style.display = "block";
   if (holeNavCard) holeNavCard.style.display = "block";
   if (scoreboardCard) scoreboardCard.style.display = "block";
+}
+
+async function saveRoundToAccount(statusEl) {
+  if (statusEl) statusEl.textContent = "";
+
+  const user = firebase?.auth?.().currentUser;
+  if (!user) {
+    if (statusEl) statusEl.textContent = "Please log in to save your round.";
+    return;
+  }
+
+  const course = getCurrentCourse();
+  const selectedTee = getSelectedTee();
+  const summary = getRoundSummary();
+  const courseName = getCourseDisplayName();
+
+  const handicapDifferential = Number(
+    (((summary.totalStrokes - (selectedTee?.rating || 72)) * 113) / (selectedTee?.slope || 113)).toFixed(1)
+  );
+
+  const roundPayload = {
+    roundType: "scoretracker",
+    courseId: course.id,
+    courseName,
+    city: isCustomCourse() ? "" : course.city,
+    state: isCustomCourse() ? "" : course.state,
+    teeName: selectedTee?.name || "White",
+    teeSlope: selectedTee?.slope || 113,
+    teeRating: selectedTee?.rating || 72,
+    handicapDifferential,
+    isCustomCourse: isCustomCourse(),
+    customCourseName: isCustomCourse() ? (customCourseName?.value?.trim() || "") : "",
+    customTeeName: isCustomCourse() ? (customTeeName?.value || "") : "",
+    customSlopeRating: isCustomCourse() ? (Number(customSlopeRating?.value) || 113) : null,
+    customCourseRating: isCustomCourse() ? (Number(customCourseRating?.value) || 72) : null,
+    roundDate: roundDate?.value || new Date().toISOString().slice(0, 10),
+    roundNotes: roundNotes?.value?.trim() || "",
+    totalScore: summary.totalStrokes,
+    totalPar: summary.totalPar,
+    vsPar: summary.vsPar,
+    totalPutts: summary.totalPutts,
+    firHits: summary.firHits,
+    firChances: summary.firChances,
+    firPct: summary.firPct,
+    girHits: summary.girHits,
+    girPct: summary.girPct,
+    penalties: summary.penalties,
+    bunkers: summary.bunkers,
+    holes: allHoleNumbers().map((holeNumber) => {
+      const holeData = H(holeNumber);
+      const computed = getHoleComputed(holeNumber);
+
+      return {
+        hole: holeNumber,
+        par: computed.par,
+        customPar: holeData.customPar,
+        strokes: holeData.strokes,
+        putts: holeData.putts,
+        drive: holeData.drive || "",
+        approach: holeData.approach || "",
+        bunker: holeData.bunker,
+        penalty: holeData.penalty,
+        fir: computed.fir,
+        gir: computed.gir,
+        threePutt: computed.threePutt,
+        resultLabel: computed.resultLabel,
+        diff: computed.diff,
+        isActive: isHoleActive(holeNumber)
+      };
+    }),
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    await firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("savedRounds")
+      .add(roundPayload);
+
+    if (statusEl) statusEl.textContent = "Round saved to your account!";
+  } catch (error) {
+    console.error(error);
+    if (statusEl) statusEl.textContent = "Error saving round.";
+  }
 }
 
 function showResultsSummary() {
@@ -654,31 +725,106 @@ function showResultsSummary() {
   const courseName = getCourseDisplayName();
   const insights = buildFeedback(summary);
 
-  if (saveRoundStatus) saveRoundStatus.textContent = "";
-
   if (holeSetupCard) holeSetupCard.style.display = "none";
   if (holeNavCard) holeNavCard.style.display = "none";
   if (scoreboardCard) scoreboardCard.style.display = "none";
 
-  resultsCard?.classList.remove("hidden");
+  if (!resultsCard) return;
 
-  if (finalCourse) finalCourse.textContent = courseName;
-  if (finalScore) finalScore.textContent = summary.totalStrokes;
-  if (finalVsPar) finalVsPar.textContent = formatVsPar(summary.vsPar);
-  if (finalPutts) finalPutts.textContent = summary.totalPutts;
-  if (finalFir) finalFir.textContent = `${summary.firHits}/${summary.firChances} (${summary.firPct}%)`;
-  if (finalGir) finalGir.textContent = `${summary.girHits}/${summary.holesCounted || 18} (${summary.girPct}%)`;
-  if (finalPenalties) finalPenalties.textContent = summary.penalties;
-  if (finalBunkers) finalBunkers.textContent = summary.bunkers;
+  resultsCard.className = "card game-card p-4 mb-3";
+  resultsCard.classList.remove("hidden");
+  resultsCard.innerHTML = `
+    <h2 class="text-center mb-3">Round Complete!</h2>
 
-  if (feedbackInsights) {
-    feedbackInsights.innerHTML = insights
-      .map(line => `<div class="insight-line">${line}</div>`)
-      .join("");
+    <div class="row g-3 mb-3">
+      <div class="col-6 col-md-3">
+        <div class="round-finish-pill">
+          <div class="small">Course</div>
+          <div class="fw-bold">${courseName}</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="round-finish-pill">
+          <div class="small">Score</div>
+          <div class="fw-bold">${summary.totalStrokes}</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="round-finish-pill">
+          <div class="small">vs Par</div>
+          <div class="fw-bold">${formatVsPar(summary.vsPar)}</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="round-finish-pill">
+          <div class="small">Putts</div>
+          <div class="fw-bold">${summary.totalPutts}</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="round-finish-pill">
+          <div class="small">FIR</div>
+          <div class="fw-bold">${summary.firHits}/${summary.firChances} (${summary.firPct}%)</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="round-finish-pill">
+          <div class="small">GIR</div>
+          <div class="fw-bold">${summary.girHits}/${summary.holesCounted || 18} (${summary.girPct}%)</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="round-finish-pill">
+          <div class="small">Penalty Strokes</div>
+          <div class="fw-bold">${summary.penalties}</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="round-finish-pill">
+          <div class="small">Bunker Shots</div>
+          <div class="fw-bold">${summary.bunkers}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-3 mb-3 round-feedback-card">
+      <h5 class="mb-2">Round Feedback</h5>
+      <div id="resultsFeedbackInsights">
+        ${insights.map((line) => `<div class="insight-line">${line}</div>`).join("")}
+      </div>
+    </div>
+
+    <div class="round-results-actions">
+      <p class="round-results-actions__title">What do you want to do with this round?</p>
+      <div class="round-results-actions__buttons">
+        <button id="resultsSaveRoundBtn" class="gfg-pill-btn round-results-btn" type="button">Save Round</button>
+        <button id="resultsStartNewRoundBtn" class="gfg-pill-btn round-results-btn" type="button">Start New Round</button>
+        <a href="../playerlog.html" class="gfg-pill-btn round-results-btn">Back to MyFlight</a>
+      </div>
+    </div>
+
+    <div id="resultsSaveRoundStatus" class="text-center mt-3 fw-bold"></div>
+  `;
+
+  const resultsSaveRoundBtn = document.getElementById("resultsSaveRoundBtn");
+  const resultsStartNewRoundBtn = document.getElementById("resultsStartNewRoundBtn");
+  const resultsSaveRoundStatus = document.getElementById("resultsSaveRoundStatus");
+
+  if (resultsStartNewRoundBtn) {
+    resultsStartNewRoundBtn.onclick = () => {
+      if (resultsSaveRoundStatus) resultsSaveRoundStatus.textContent = "";
+      resetRoundForCourse();
+    };
+  }
+
+  if (resultsSaveRoundBtn) {
+    resultsSaveRoundBtn.onclick = async () => {
+      await saveRoundToAccount(resultsSaveRoundStatus);
+    };
   }
 
   runConfetti();
-  resultsCard?.scrollIntoView({ behavior: "smooth", block: "start" });
+  resultsCard.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 courseSelect?.addEventListener("change", () => {
@@ -764,96 +910,6 @@ nextHoleBtn?.addEventListener("click", () => {
     render();
   } else {
     showResultsSummary();
-  }
-});
-
-startNewRoundBtn?.addEventListener("click", () => {
-  if (saveRoundStatus) saveRoundStatus.textContent = "";
-  resetRoundForCourse();
-});
-
-saveRoundBtn?.addEventListener("click", async () => {
-  if (saveRoundStatus) saveRoundStatus.textContent = "";
-
-  const user = firebase?.auth?.().currentUser;
-  if (!user) {
-    if (saveRoundStatus) saveRoundStatus.textContent = "Please log in to save your round.";
-    return;
-  }
-
-  const course = getCurrentCourse();
-  const selectedTee = getSelectedTee();
-  const summary = getRoundSummary();
-  const courseName = getCourseDisplayName();
-
-  const handicapDifferential = Number(
-    (((summary.totalStrokes - (selectedTee?.rating || 72)) * 113) / (selectedTee?.slope || 113)).toFixed(1)
-  );
-
-  const roundPayload = {
-    roundType: "scoretracker",
-    courseId: course.id,
-    courseName,
-    city: isCustomCourse() ? "" : course.city,
-    state: isCustomCourse() ? "" : course.state,
-    teeName: selectedTee?.name || "White",
-    teeSlope: selectedTee?.slope || 113,
-    teeRating: selectedTee?.rating || 72,
-    handicapDifferential,
-    isCustomCourse: isCustomCourse(),
-    customCourseName: isCustomCourse() ? (customCourseName?.value?.trim() || "") : "",
-    customTeeName: isCustomCourse() ? (customTeeName?.value || "") : "",
-    customSlopeRating: isCustomCourse() ? (Number(customSlopeRating?.value) || 113) : null,
-    customCourseRating: isCustomCourse() ? (Number(customCourseRating?.value) || 72) : null,
-    roundDate: roundDate?.value || new Date().toISOString().slice(0, 10),
-    roundNotes: roundNotes?.value?.trim() || "",
-    totalScore: summary.totalStrokes,
-    totalPar: summary.totalPar,
-    vsPar: summary.vsPar,
-    totalPutts: summary.totalPutts,
-    firHits: summary.firHits,
-    firChances: summary.firChances,
-    firPct: summary.firPct,
-    girHits: summary.girHits,
-    girPct: summary.girPct,
-    penalties: summary.penalties,
-    bunkers: summary.bunkers,
-    holes: allHoleNumbers().map(holeNumber => {
-      const holeData = H(holeNumber);
-      const computed = getHoleComputed(holeNumber);
-
-      return {
-        hole: holeNumber,
-        par: computed.par,
-        customPar: holeData.customPar,
-        strokes: holeData.strokes,
-        putts: holeData.putts,
-        drive: holeData.drive || "",
-        approach: holeData.approach || "",
-        bunker: holeData.bunker,
-        penalty: holeData.penalty,
-        fir: computed.fir,
-        gir: computed.gir,
-        threePutt: computed.threePutt,
-        resultLabel: computed.resultLabel,
-        diff: computed.diff,
-        isActive: isHoleActive(holeNumber)
-      };
-    }),
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-
-  try {
-    await firebase.firestore()
-      .collection("users")
-      .doc(user.uid)
-      .collection("savedRounds")
-      .add(roundPayload);
-
-    if (saveRoundStatus) saveRoundStatus.textContent = "Round saved to your account!";
-  } catch (error) {
-    console.error(error);
-    if (saveRoundStatus) saveRoundStatus.textContent = "Error saving round.";
   }
 });
 
