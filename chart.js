@@ -115,56 +115,115 @@ async function loadHandicapChart() {
   const user = firebase.auth().currentUser;
   if (!user) return;
 
-  const historySnap = await firebase.firestore()
-    .collection("users")
-    .doc(user.uid)
-    .collection("handicapHistory")
-    .orderBy("date", "asc")
-    .get();
+  try {
+    const userRef = firebase.firestore().collection("users").doc(user.uid);
 
-  const labels = [];
-  const dataPoints = [];
+    const [historySnap, roundsSnap] = await Promise.all([
+      userRef.collection("handicapHistory").orderBy("date", "asc").get(),
+      userRef.collection("savedRounds").orderBy("roundDate", "asc").get()
+    ]);
 
-  historySnap.forEach(doc => {
-    const data = doc.data();
-    if (data.handicap !== undefined && data.date) {
-      const dateObj = data.date.toDate();
-      labels.push(dateObj.toLocaleDateString());
-      dataPoints.push(data.handicap);
+    const handicapLabels = [];
+    const handicapDataPoints = [];
+
+    historySnap.forEach(doc => {
+      const data = doc.data();
+      if (data.handicap !== undefined && data.date) {
+        const dateObj = data.date.toDate();
+        handicapLabels.push(dateObj.toLocaleDateString());
+        handicapDataPoints.push(data.handicap);
+      }
+    });
+
+    const roundLabels = [];
+    const roundDifferentials = [];
+
+    roundsSnap.forEach(doc => {
+      const data = doc.data();
+      if (typeof data.handicapDifferential === "number" && data.roundDate) {
+        roundLabels.push(data.roundDate);
+        roundDifferentials.push(data.handicapDifferential);
+      }
+    });
+
+    // Merge labels from both sources
+    const allLabels = Array.from(new Set([...handicapLabels, ...roundLabels]));
+
+    const handicapMap = {};
+    handicapLabels.forEach((label, index) => {
+      handicapMap[label] = handicapDataPoints[index];
+    });
+
+    const roundMap = {};
+    roundLabels.forEach((label, index) => {
+      roundMap[label] = roundDifferentials[index];
+    });
+
+    const mergedHandicapData = allLabels.map(label =>
+      handicapMap[label] !== undefined ? handicapMap[label] : null
+    );
+
+    const mergedRoundData = allLabels.map(label =>
+      roundMap[label] !== undefined ? roundMap[label] : null
+    );
+
+    const canvas = document.getElementById("handicapChart");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+
+    if (handicapChartInstance) {
+      handicapChartInstance.destroy();
     }
-  });
 
-  const ctx = document.getElementById("handicapChart").getContext("2d");
-
-  if (handicapChartInstance) {
-    handicapChartInstance.destroy();
-  }
-
-  handicapChartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Handicap Over Time',
-        data: dataPoints,
-        fill: false,
-        borderColor: '#359447',
-        backgroundColor: '#fad02e',
-        tension: 0.2
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: 'Handicap' }
-        },
-        x: {
-          title: { display: true, text: 'Date' }
+    handicapChartInstance = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: allLabels,
+        datasets: [
+          {
+            label: "Saved Handicap",
+            data: mergedHandicapData,
+            fill: false,
+            borderColor: "#359447",
+            backgroundColor: "#359447",
+            tension: 0.2,
+            spanGaps: true
+          },
+          {
+            label: "Round Differential",
+            data: mergedRoundData,
+            fill: false,
+            borderColor: "#fad02e",
+            backgroundColor: "#fad02e",
+            tension: 0.2,
+            spanGaps: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: "Handicap / Differential"
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: "Date"
+            }
+          }
         }
       }
-    }
-  });
+    });
+  } catch (error) {
+    console.error("Error loading handicap chart:", error);
+  }
 }
 
 // Auth state listener
@@ -196,3 +255,4 @@ firebase.auth().onAuthStateChanged(user => {
 // Optional scroll reset
 setTimeout(() => window.scrollTo(0, 0), 1000);
 });
+

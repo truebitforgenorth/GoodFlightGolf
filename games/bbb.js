@@ -266,7 +266,7 @@ function showResultsSummary() {
 
     <div class="gfg-results-actions">
       <a id="saveGameBtn" class="gfg-pill-btn">💾 Save Game Data</a>
-      <a href="greenflightgames.html" class="gfg-pill-btn">💸 Back to Games</a>
+    <a href="goodflightgames.html" class="gfg-pill-btn">💸 Back to Games</a>
       <a href="../index.html" class="gfg-pill-btn">🏠 Back to Home</a>
     </div>
   `;

@@ -313,7 +313,7 @@ function showResultsSummary() {
       </div>
     `).join("")}
     <a id="saveGameBtn" class="gfg-pill-btn">💾 Save Game Data</a><br>
-    <a href="greenflightgames.html" class="gfg-pill-btn">💸 Back to Games</a>
+    <a href="goodflightgames.html" class="gfg-pill-btn">💸 Back to Games</a>
     <a href="../index.html" class="gfg-pill-btn" style="margin-top:10px;">🏠 Back to Home</a>
   `;
 

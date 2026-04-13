@@ -88,9 +88,9 @@
   </button>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <nav class="navbar navbar-expand-lg gfg-navbar">
     <div class="container">
-      <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>⛳</a>
+      <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>&#9971;</a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,27 +99,23 @@
 
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav fs-5">
-
-          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-
           <li class="nav-item">
-            <a class="nav-link" href="games/goodflightgames.html">GoodFlight<span
-                style="color:#fad02e;">Games</span></a>
+            <a class="nav-link" href="rounds/roundtracker.html">The Score<span style="color:#fad02e;">card</span></a>
           </li>
-
-          <li class="nav-item"><a class="nav-link" href="playerlog.html">My<span
-                style="color:#fad02e;">Flight</span></a></li>
-
-          <li class="nav-item"><a class="nav-link" href="NewsArticles/social&news.html">The Club<span
-                style="color:#fad02e;">house</span></a></li>
-
-
+          <li class="nav-item">
+            <a class="nav-link" href="games/goodflightgames.html">GoodFlight<span style="color:#fad02e;">Games</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="playerlog.html">The Locker<span style="color:#fad02e;">Room</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="NewsArticles/social&news.html">The Club<span style="color:#fad02e;">house</span></a>
+          </li>
           <li class="nav-item">
             <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
               Login / <span style="color:#fad02e;">Signup</span>
             </a>
           </li>
-
           <li class="nav-item d-flex align-items-center">
             <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
             <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
@@ -134,10 +130,11 @@
     <div class="parallax-content2">
       <div id="welcomeMessage"></div>
       <h1 class="gfg-hero-title">
-        <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>⛳
+        <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>&#9971;
       </h1>
       <p class="gfg-hero-sub">Golf games, handicap tracking, club distance logs, and shot tools built for real rounds.
       </p>
+      <p class="gfg-hero-sub"><strong>This website is still in beta mode.</strong> New additions and styling may change without warning.</p>
       <div class="row justify-content-center">
         <div class="col-md-6">
           <div class="gfg-logo-wrapper">
@@ -147,14 +144,15 @@
       </div>
 
       <div id="homelist" class="mt-3 d-flex flex-column align-items-center gap-2">
-        <a class="gfg-pill-btn" href="games/goodflightgames.html">💸 GoodFlight Games</a>
-        <a class="gfg-pill-btn" href="playerlog.html">🎯 Go to MyFlight</a>
-        <a class="gfg-pill-btn" href="NewsArticles/social&news.html">🏫 The Clubhouse</a>
+        <a class="gfg-pill-btn" href="games/goodflightgames.html">GoodFlight Games</a>
+        <a class="gfg-pill-btn" href="rounds/roundtracker.html">The Scorecard (Beta)</a>
+        <a class="gfg-pill-btn" href="playerlog.html">The Locker Room</a>
+        <a class="gfg-pill-btn" href="NewsArticles/social&news.html">The Clubhouse</a>
 
         <!--<a class="gfg-pill-btn" href="other/maintenance.html">🛍️ GoodFlight Merch</a>
         <a class="gfg-pill-btn gfg-pill-btn--ghost" href="other/maintenance.html">🧪 GoodFlight Labs</a>-->
 
-        <a class="gfg-pill-btn" href="other/about.html">🏖️ About Us</a>
+        <a class="gfg-pill-btn" href="other/about.html">About Us</a>
       </div>
     </div>
   </section>
@@ -181,7 +179,7 @@
     <div class="feature-icons mt-4" id="features">
 
       <div class="icon-box gfg-feature-card">
-        <h1>💸</h1>
+        <h1>Games</h1>
         <a href="games/goodflightgames.html">
           <h5>GoodFlightGames</h5>
         </a>
@@ -197,9 +195,9 @@
       </div>
 
       <div class="icon-box gfg-feature-card">
-        <h1>🎯</h1>
-        <a href="main3cal.html">
-          <h5>MyFlight</h5>
+        <h1>Locker</h1>
+          <a href="playerlog.html">
+          <h5>The Locker Room</h5>
         </a>
         <p>
           Save your club distances, calculate your handicap, and track your progress over time.
@@ -207,13 +205,13 @@
         </p>
 
         <div class="mt-3 d-flex justify-content-center">
-          <a class="gfg-pill-btn" href="main3cal.html">Open MyFlight</a>
+            <a class="gfg-pill-btn" href="playerlog.html">Open MyFlight</a>
         </div>
       </div>
 
       <div class="icon-box gfg-feature-card">
-        <h1>🏫</h1>
-        <a href="NewsArticles/main4news.html">
+        <h1>News</h1>
+          <a href="NewsArticles/social&news.html">
           <h5>The Clubhouse</h5>
         </a>
         <p>
@@ -232,8 +230,8 @@
 
       <!-- GoodFlight Labs -->
       <div class="icon-box gfg-feature-card">
-        <h1>🏖️</h1>
-        <a href="labs.html">
+        <h1>About</h1>
+        <a href="other/about.html">
           <h5>About Us</h5>
         </a>
         <p>
@@ -249,13 +247,13 @@
 
       <!-- Merch -->
       <div class="icon-box gfg-feature-card">
-        <h1>🛍️</h1>
-        <a href="merch/merch.html">
+        <h1>Merch</h1>
+        <a href="other/maintenance.html">
           <h5>GoodFlight Merch</h5>
           <h5>(Coming Soon!)</h5>
         </a>
         <p>
-          Rep GoodFlightGolf on and off the course — hoodies, hats, polos, and clean gear drops.
+          Rep GoodFlightGolf on and off the course with hoodies, hats, polos, and clean gear drops.
           Build your cart and place orders right on the site.
         </p>
 
@@ -266,8 +264,8 @@
 
       <!-- GoodFlight Labs -->
       <div class="icon-box gfg-feature-card">
-        <h1>🧪</h1>
-        <a href="labs.html">
+        <h1>Labs</h1>
+        <a href="other/maintenance.html">
           <h5>GoodFlight Labs</h5>
           <h5>(Coming Soon!)</h5>
         </a>
@@ -289,7 +287,7 @@
   <section class="parallax-section">
     <div class="parallax-content">
       <h2 class="gfg-hero-title">
-        <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>⛳
+        <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>&#9971;
       </h2>
       <p class="gfg-hero-sub">Your ultimate golf companion with calculators, charts, and more.</p>
     </div>
@@ -311,7 +309,7 @@
     <script>
       const facts = [
         "🏌️‍♂️ Golf is the only sport ever played on the Moon — Alan Shepard hit two golf balls during Apollo 14.",
-        "⛳ The word 'golf' likely comes from the Dutch word 'kolf', meaning 'club'.",
+        "&#9971; The word 'golf' likely comes from the Dutch word 'kolf', meaning 'club'.",
         "🚀 The longest recorded drive in a golf competition is 515 yards.",
         "🏴‍☠️ The first 18-hole course was established in 1764 at St Andrews in Scotland.",
         "🐯 Tiger Woods made his first hole-in-one when he was just 8 years old.",
@@ -352,7 +350,7 @@
     <div class="row justify-content-center">
       <div class="col-md-12">
         <div class="card">
-          <div class="card-header">⛳ Nearby Golf Courses</div>
+          <div class="card-header">&#9971; Nearby Golf Courses</div>
           <div class="card-body">
             <p>Click the button to search for nearby golf courses:</p>
             <button id="gfSearchBtn" class="gfg-pill-btn">Search Nearby Courses</button>
@@ -372,7 +370,7 @@
           <div class="card-body">
             <form id="feedbackForm">
               <div class="mb-3">
-                <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
+                <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠&#9971;</label>
                 <textarea class="form-control" id="feedbackInput" rows="3"
                   placeholder="Type your feedback here..."></textarea>
               </div>
@@ -537,3 +535,7 @@
 </body>
 
 </html>
+
+
+
+

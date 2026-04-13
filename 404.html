@@ -737,9 +737,29 @@
       }
     }
   </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="main2.css">
 </head>
 
 <body>
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>&#9971;</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item"><a class="nav-link" href="rounds/roundtracker.html">The Score<span style="color:#fad02e;">card</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="games/goodflightgames.html">GoodFlight<span style="color:#fad02e;">Games</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="playerlog.html">The Locker<span style="color:#fad02e;">Room</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="NewsArticles/social&news.html">The Club<span style="color:#fad02e;">house</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html">Login / <span style="color:#fad02e;">Signup</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
   <div class="glow"></div>
   <div class="glow2"></div>
   <div class="grid"></div>
@@ -769,7 +789,7 @@
 
           <div class="actions">
             <a class="btn btn-primary" href="index.html">🏠 Back Home</a>
-            <a class="btn btn-ghost" href="games/greenflightgames.html">💸 Go to Games</a>
+          <a class="btn btn-ghost" href="games/goodflightgames.html">💸 Go to Games</a>
             <button class="btn btn-ghost" id="copyUrlBtn" type="button">🔗 Copy URL</button>
           </div>
 
@@ -835,7 +855,7 @@
     window.addEventListener("keydown", (e) => {
       if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
       const key = (e.key || "").toLowerCase();
-      if (key === "g") window.location.href = "games/greenflightgames.html";
+      if (key === "g") window.location.href = "games/goodflightgames.html";
       if (key === "h") window.location.href = "index.html";
     });
 
@@ -848,6 +868,8 @@
       if (el) el.textContent = pills[k];
     }, 1900);
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
+

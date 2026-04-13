@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Round Tracker & Smart Scorecard | GoodFlightGolf</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="description"
+    content="Track your golf round hole by hole with the GoodFlightGolf Round Tracker. Log score, putts, drive result, approach result, bunker, penalty, and save detailed round data to your account.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="GoodFlightGolf">
+  <meta name="theme-color" content="#359447">
+
+  <link rel="canonical" href="https://goodflightgolf.com/rounds/roundtracker.html">
+  <link rel="icon" type="image/png" href="../photos/GFGlogo.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Round Tracker & Smart Scorecard | GoodFlightGolf">
+  <meta property="og:description"
+    content="Log score, putts, drive miss, approach miss, bunker and penalty data hole by hole with GoodFlightGolf.">
+  <meta property="og:url" content="https://goodflightgolf.com/rounds/roundtracker.html">
+  <meta property="og:site_name" content="GoodFlightGolf">
+  <meta property="og:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Round Tracker & Smart Scorecard | GoodFlightGolf">
+  <meta name="twitter:description"
+    content="Track your round with strokes, putts, tee-shot result, approach result, penalties, bunker data and more.">
+  <meta name="twitter:image" content="https://goodflightgolf.com/photos/GFGlogo.png">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../main2.css">
+  <link rel="stylesheet" href="roundtracker.css">
+</head>
+
+<body class="gfg-round-page">
+  <button type="button" id="btn-back-to-top" aria-label="Back to top">
+    <p>Back to Top</p>
+  </button>
+
+  <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">GoodFlight<span>Golf</span>&#9971;</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item">
+            <a class="nav-link" href="../rounds/roundtracker.html">The Score<span style="color:#fad02e;">card</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../games/goodflightgames.html">GoodFlight<span style="color:#fad02e;">Games</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../playerlog.html">The Locker<span style="color:#fad02e;">Room</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../NewsArticles/social&news.html">The Club<span style="color:#fad02e;">house</span></a>
+          </li>
+          <li class="nav-item">
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / <span style="color:#fad02e;">Signup</span>
+            </a>
+          </li>
+          <li class="nav-item d-flex align-items-center">
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="parallax-section2">
+    <div class="parallax-content2">
+      <div id="welcomeMessage"></div>
+
+      <div class="d-flex flex-column align-items-center text-center">
+        <div class="roundtracker-icon-wrap mb-3">Round Tracker &#9971;</div>
+
+        <h1 class="gfg-hero-title">
+          Round Tracker <br>& Smart Scorecard
+        </h1>
+
+        <p class="gfg-hero-sub">
+          Log your round hole by hole, track more than just score, and save the full round to your account.
+        </p>
+
+        <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+          <a href="../playerlog.html">
+            <button type="button" class="gfg-pill-btn">Back to MyFlight</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container my-4">
+    <section class="card game-card p-4 mb-3">
+      <h2>Track Your Golf Round with More Than Just Score</h2>
+      <p>
+        Use the GoodFlightGolf Round Tracker to log score, putts, tee-shot results, approach-shot results,
+        penalties, and bunker shots one hole at a time. The tracker automatically calculates score versus par,
+        fairways hit, greens in regulation, three-putts, and round totals as you play.
+      </p>
+      <p>
+        If your course is not in the list yet, choose <strong>Course Not Listed</strong> and enter the course info
+        yourself.
+      </p>
+    </section>
+
+    <section class="card game-card p-4 mb-3" id="roundSetupCard">
+      <h4>Round Setup</h4>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="small fw-bold mb-1" for="courseSelect">Course</label>
+          <select id="courseSelect" class="form-select"></select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="small fw-bold mb-1" for="roundDate">Date</label>
+          <input id="roundDate" type="date" class="form-control">
+        </div>
+
+        <div class="col-md-6" id="listedTeeWrap">
+          <label class="small fw-bold mb-1" for="teeName">Tees</label>
+          <select id="teeName" class="form-select"></select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="small fw-bold mb-1" for="roundNotes">Round Notes</label>
+          <input id="roundNotes" type="text" class="form-control" placeholder="Optional note">
+        </div>
+      </div>
+
+      <div id="customCourseWrap" class="custom-course-wrap hidden mt-4">
+        <h5 class="mb-3">Custom Course Setup</h5>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="small fw-bold mb-1" for="customCourseName">Course Name</label>
+            <input id="customCourseName" type="text" class="form-control" placeholder="Enter course name">
+          </div>
+
+          <div class="col-md-6">
+            <label class="small fw-bold mb-1" for="customTeeName">Tees</label>
+            <select id="customTeeName" class="form-select">
+              <option value="Black">Black Tees</option>
+              <option value="Blue">Blue Tees</option>
+              <option value="White" selected>White Tees</option>
+              <option value="Gold">Gold Tees</option>
+              <option value="Red">Red Tees</option>
+              <option value="Green">Green Tees</option>
+              <option value="Forward">Forward Tees</option>
+              <option value="Senior">Senior Tees</option>
+              <option value="Junior">Junior Tees</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="small fw-bold mb-1" for="customCourseRating">Course Rating</label>
+            <input id="customCourseRating" type="number" step="0.1" class="form-control" placeholder="69.8">
+          </div>
+
+          <div class="col-md-6">
+            <label class="small fw-bold mb-1" for="customSlopeRating">Slope Rating</label>
+            <input id="customSlopeRating" type="number" class="form-control" placeholder="125">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="selectionWrapper" class="card game-card p-4 mb-3">
+      <div class="mb-3 text-center">
+        <button id="fullscreenBtn" class="btn btn-secondary" type="button">Fullscreen Selection</button>
+      </div>
+
+      <div id="fullscreenContent">
+        <div class="card game-card p-3 mb-3 text-center" id="holeNavCard">
+          <div class="d-flex justify-content-between align-items-center gap-2">
+            <button class="btn btn-secondary" id="prevHoleBtn" type="button">&larr; Back</button>
+
+            <div>
+              <h4 id="holeTitle" class="m-0">Hole 1</h4>
+              <div class="small text-muted" id="holeMeta">Par 4</div>
+            </div>
+
+            <button class="btn btn-secondary" id="nextHoleBtn" type="button">Next &rarr;</button>
+          </div>
+        </div>
+
+        <div class="card game-card p-4 mb-3" id="holeSetupCard">
+          <h4>Hole Setup & Results</h4>
+
+          <div id="customParWrap" class="custom-par-wrap hidden mb-3">
+            <label class="round-section-label mb-2" for="holeParSelect">Hole Par</label>
+            <select id="holeParSelect" class="form-select round-select">
+              <option value="3">Par 3</option>
+              <option value="4">Par 4</option>
+              <option value="5">Par 5</option>
+            </select>
+          </div>
+
+          <div class="round-score-row">
+            <div class="round-counter-card">
+              <div class="round-counter-label">Strokes</div>
+              <div class="round-counter-row">
+                <button class="round-counter-btn" id="strokesMinus" type="button">&minus;</button>`r`n                <div class="round-counter-value" id="strokesValue">4</div>
+                <button class="round-counter-btn" id="strokesPlus" type="button">+</button>
+              </div>
+            </div>
+
+            <div class="round-counter-card">
+              <div class="round-counter-label">Putts</div>
+              <div class="round-counter-row">
+                <button class="round-counter-btn" id="puttsMinus" type="button">&minus;</button>`r`n                <div class="round-counter-value" id="puttsValue">2</div>
+                <button class="round-counter-btn" id="puttsPlus" type="button">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="round-select-row">
+            <div>
+              <label class="round-section-label mb-2" for="driveSelect">Drive Result</label>
+              <select id="driveSelect" class="form-select round-select">
+                <option value="">Select drive result</option>
+                <option value="fairway">Fairway</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="bunker">Drive Bunker</option>
+                <option value="penalty">Drive Penalty</option>
+                <option value="none">No Drive</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="round-section-label mb-2" for="approachSelect">Approach Result</label>
+              <select id="approachSelect" class="form-select round-select">
+                <option value="">Select approach result</option>
+                <option value="green">Green</option>
+                <option value="short">Short</option>
+                <option value="long">Long</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="bunker">Approach Bunker</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="round-tally-row">
+            <div class="round-counter-card">
+              <div class="round-counter-label">Bunker Shots</div>
+              <div class="round-counter-row">
+                <button class="round-counter-btn" id="bunkerMinus" type="button">−</button>
+                <div class="round-counter-value" id="bunkerValue">0</div>
+                <button class="round-counter-btn" id="bunkerPlus" type="button">+</button>
+              </div>
+            </div>
+
+            <div class="round-counter-card">
+              <div class="round-counter-label">Penalty Strokes</div>
+              <div class="round-counter-row">
+                <button class="round-counter-btn" id="penaltyMinus" type="button">−</button>
+                <div class="round-counter-value" id="penaltyValue">0</div>
+                <button class="round-counter-btn" id="penaltyPlus" type="button">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="round-hole-summary mt-4" id="holeSummaryCard">
+            <h5 class="mb-3">Hole Summary</h5>
+            <div class="row g-2">
+              <div class="col-6 col-md-3">
+                <div class="round-stat-pill">
+                  <div class="round-stat-label">Par</div>
+                  <div class="round-stat-value" id="holeParValue">4</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="round-stat-pill">
+                  <div class="round-stat-label">Result</div>
+                  <div class="round-stat-value" id="holeResultValue">Par</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="round-stat-pill">
+                  <div class="round-stat-label">FIR</div>
+                  <div class="round-stat-value" id="holeFirValue">—</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="round-stat-pill">
+                  <div class="round-stat-label">GIR</div>
+                  <div class="round-stat-value" id="holeGirValue">No</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="round-stat-pill">
+                  <div class="round-stat-label">3-Putt</div>
+                  <div class="round-stat-value" id="holeThreePuttValue">No</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="round-stat-pill">
+                  <div class="round-stat-label">Penalty</div>
+                  <div class="round-stat-value" id="holePenaltyValue">0</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="round-stat-pill">
+                  <div class="round-stat-label">Bunker</div>
+                  <div class="round-stat-value" id="holeBunkerValue">0</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="round-stat-pill">
+                  <div class="round-stat-label">Putts</div>
+                  <div class="round-stat-value" id="holePuttsSummaryValue">2</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card game-card p-2" id="scoreboardCard">
+          <h4 class="text-center fs-6 mb-1">📘 Round Summary</h4>
+
+          <div class="d-flex mb-1 text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6">Thru</div>
+              <div id="sumThru" class="fs-6 fw-bold">1</div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6">Total</div>
+              <div id="sumScore" class="fs-6 fw-bold">71</div>
+            </div>
+          </div>
+
+          <div class="d-flex mb-1 text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6">vs Par</div>
+              <div id="sumVsPar" class="fs-6 fw-bold">E</div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6">Putts</div>
+              <div id="sumPutts" class="fs-6 fw-bold">36</div>
+            </div>
+          </div>
+
+          <div class="d-flex text-center">
+            <div class="border rounded p-1 flex-fill me-1">
+              <div class="fw-bold fs-6">FIR</div>
+              <div id="sumFir" class="fs-6 fw-bold">0%</div>
+            </div>
+            <div class="border rounded p-1 flex-fill ms-1">
+              <div class="fw-bold fs-6">GIR</div>
+              <div id="sumGir" class="fs-6 fw-bold">0%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card game-card p-4 mb-3 hidden" id="resultsCard">
+      <h2 class="text-center mb-3">🎉 Round Complete!</h2>
+
+      <div class="row g-3 mb-3">
+        <div class="col-6 col-md-3">
+          <div class="round-finish-pill">
+            <div class="small">Course</div>
+            <div class="fw-bold" id="finalCourse">—</div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="round-finish-pill">
+            <div class="small">Score</div>
+            <div class="fw-bold" id="finalScore">—</div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="round-finish-pill">
+            <div class="small">vs Par</div>
+            <div class="fw-bold" id="finalVsPar">—</div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="round-finish-pill">
+            <div class="small">Putts</div>
+            <div class="fw-bold" id="finalPutts">—</div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="round-finish-pill">
+            <div class="small">FIR</div>
+            <div class="fw-bold" id="finalFir">—</div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="round-finish-pill">
+            <div class="small">GIR</div>
+            <div class="fw-bold" id="finalGir">—</div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="round-finish-pill">
+            <div class="small">Penalty Strokes</div>
+            <div class="fw-bold" id="finalPenalties">—</div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="round-finish-pill">
+            <div class="small">Bunker Shots</div>
+            <div class="fw-bold" id="finalBunkers">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-3 mb-3 round-feedback-card">
+        <h5 class="mb-2">Round Feedback</h5>
+        <div id="feedbackInsights"></div>
+      </div>
+
+      <div class="d-flex flex-wrap justify-content-center gap-2">
+        <button id="saveRoundBtn" class="gfg-pill-btn" type="button">💾 Save Round</button>
+        <button id="startNewRoundBtn" class="gfg-pill-btn" type="button">🔄 Start New Round</button>
+        <a href="../playerlog.html" class="gfg-pill-btn">🎯 Back to MyFlight</a>
+      </div>
+
+      <div id="saveRoundStatus" class="text-center mt-3 fw-bold"></div>
+    </section>
+  </main>
+
+  <section class="gfg-section container">
+    <section id="feedbackSection" class="card">
+      <div class="card-header">💬 Feedback & Suggestions</div>
+      <div class="card-body">
+        <form id="feedbackForm">
+          <div class="mb-3">
+            <label for="feedbackInput" class="form-label">We’d love to hear your ideas! 🧠⛳</label>
+            <textarea class="form-control" id="feedbackInput" rows="3"
+              placeholder="Type your feedback here..."></textarea>
+          </div>
+          <button type="submit" class="gfg-pill-btn">📨 Submit Feedback</button>
+          <p id="feedbackStatus" class="mt-2"></p>
+        </form>
+      </div>
+    </section>
+    <script src="../feedback.js"></script>
+  </section>
+
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <button id="loginBtn" class="btn btn-primary mb-3">Login</button>
+          <div id="loginMessage" style="min-height: 1.5em;"></div>
+
+          <hr class="my-4" />
+
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-3" placeholder="Password" />
+
+          <div class="signup-legal-box mb-3">
+            <h6 class="mb-2">Terms of Service, Privacy Policy, and Disclaimer</h6>
+
+            <div class="signup-legal-scroll">
+              <p><strong>Effective Date:</strong> March 15, 2026</p>
+              <p>By creating an account on GoodFlightGolf, you agree to these Terms of Service, Privacy Policy, and
+                Disclaimer.</p>
+              <p>GoodFlightGolf provides golf-related games, tools, calculators, scorekeeping features, and
+                account-based services for entertainment and informational purposes only.</p>
+              <p>You are responsible for the accuracy of the information you provide, maintaining the confidentiality of
+                your login credentials, and all activity that occurs under your account.</p>
+              <p>You agree not to misuse the website, attempt unauthorized access, disrupt services, exploit bugs,
+                interfere with other users, or use the platform for unlawful purposes.</p>
+              <p>We may collect account details, submitted scores, settings, and limited technical usage information in
+                order to operate, secure, and improve the website.</p>
+              <p>We do not sell your personal information. We may use trusted third-party providers for authentication,
+                hosting, databases, email, analytics, maps, and related services needed to run GoodFlightGolf.</p>
+              <p>GoodFlightGolf is provided on an “as is” and “as available” basis without guarantees of uninterrupted
+                service, perfect accuracy, or error-free operation.</p>
+              <p>Golf tools, scoring systems, calculators, and other features may rely on user input and simplified
+                assumptions, so results may vary in real-world use.</p>
+              <p>To the fullest extent permitted by law, GoodFlightGolf and TrueBit Forge North LLC are not liable for
+                damages, losses, or disruptions arising from use of the website or reliance on its content, tools, or
+                outputs.</p>
+              <p>We may update these Terms, Privacy Policy, or Disclaimer from time to time. Continued use of
+                GoodFlightGolf after updates become effective constitutes acceptance of the revised terms.</p>
+              <p>By checking the box below and creating your account, you acknowledge that you have reviewed and
+                accepted these legal terms.</p>
+            </div>
+          </div>
+
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" id="signupTosCheckbox">
+            <label class="form-check-label" for="signupTosCheckbox">
+              I have read and agree to the Terms of Service, Privacy Policy, and Disclaimer.
+            </label>
+          </div>
+
+          <div id="signupMessage" class="mt-3" style="min-height: 1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary mt-3">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="gfg-footer" id="foot">
+    <div class="gfg-footer-container">
+      <div class="gfg-footer-logo">
+        <a href="https://www.TrueBitForgeNorth.com/"><img src="../photos/TBFN1.png"
+            alt="TrueBit Forge North LLC Logo"></a>
+      </div>
+
+      <div class="gfg-footer-content">
+        <p class="gfg-footer-copy">© 2026 GoodFlightGolf. All rights reserved.</p>
+        <p class="gfg-footer-ownership">
+          GoodFlightGolf is owned and operated by
+          <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../myscripts.js"></script>
+  <script src="roundtracker.js"></script>
+</body>
+
+</html>
+
+
+
