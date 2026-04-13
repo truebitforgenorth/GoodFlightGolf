@@ -381,6 +381,10 @@ input[type="submit"] {
   backdrop-filter: blur(2px);
 }
 
+.gfg-lock-overlay.d-none {
+  display: none !important;
+}
+
 .gfg-lock-card {
   width: min(460px, 92%);
   padding: 28px 24px;
