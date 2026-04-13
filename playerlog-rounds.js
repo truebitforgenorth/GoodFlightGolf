@@ -71,7 +71,7 @@ function renderSavedRounds(rounds) {
     savedRoundsList.innerHTML = `
       <div class="card">
         <div class="card-body">
-          <p class="mb-0">No saved rounds yet. Finish a round in the Round Tracker and save it on the 19th Hole to see it here.</p>
+          <p class="mb-0">No saved rounds yet. Finish a round in The Scorecard and save it at the end of the round to see it here.</p>
         </div>
       </div>
     `;
@@ -90,7 +90,7 @@ function renderSavedRounds(rounds) {
           </div>
           <div class="text-end">
             <div class="small text-muted">Round</div>
-            <div class="fw-bold">${round.roundType === "scoretracker" ? "Round Tracker" : "Saved Round"}</div>
+            <div class="fw-bold">${round.roundType === "scoretracker" ? "The Scorecard" : "Saved Round"}</div>
           </div>
         </div>
 

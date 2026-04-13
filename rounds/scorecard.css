@@ -1,0 +1,387 @@
+.gfg-round-page .game-card {
+  transition: none !important;
+}
+
+.gfg-round-page .hidden {
+  display: none !important;
+}
+
+.gfg-round-hero {
+  min-height: 60vh;
+}
+
+.gfg-round-hero-panel {
+  width: min(760px, 100%);
+}
+
+.gfg-round-page .gfg-hero-title {
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.gfg-round-page .gfg-hero-sub {
+  max-width: 62ch;
+}
+
+.gfg-round-page main.container {
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+}
+
+.gfg-round-page .game-card {
+  border: 1px solid rgba(53, 148, 71, 0.1);
+  box-shadow: 0 16px 36px rgba(53, 148, 71, 0.12);
+}
+
+.gfg-round-page .game-card .form-control,
+.gfg-round-page .game-card .form-select {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.gfg-round-page .game-card .form-control:focus,
+.gfg-round-page .game-card .form-select:focus {
+  border-color: rgba(53, 148, 71, 0.55);
+  box-shadow: 0 0 0 0.2rem rgba(53, 148, 71, 0.18);
+}
+
+.gfg-round-page #roundSetupCard h4,
+.gfg-round-page #holeSetupCard h4,
+.gfg-round-page #resultsCard h2,
+.gfg-round-page #scoreboardCard h4 {
+  font-weight: 900;
+  color: #1f2937;
+}
+
+.gfg-round-page #scoreboardCard {
+  border: 1px solid rgba(53, 148, 71, 0.12);
+  background: linear-gradient(135deg, rgba(53, 148, 71, 0.06), rgba(250, 208, 46, 0.08));
+}
+
+.gfg-round-page #scoreboardCard .border {
+  border-color: rgba(53, 148, 71, 0.16) !important;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.gfg-round-page #feedbackSection {
+  border: 1px solid rgba(53, 148, 71, 0.1);
+  box-shadow: 0 16px 36px rgba(53, 148, 71, 0.12);
+}
+
+.gfg-round-page .gfg-logo-wrapper {
+  max-width: 360px;
+}
+
+/* =========================================
+   ROUND PAGE BUTTONS
+========================================= */
+.gfg-round-page #fullscreenBtn,
+.gfg-round-page #holeNavCard button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: .55rem !important;
+  padding: 12px 18px !important;
+  border: 1px solid rgba(53, 148, 71, 0.55) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, var(--wolf-dark), #111223) !important;
+  color: var(--yellow) !important;
+  font-weight: 800 !important;
+  letter-spacing: .2px !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition), border-color var(--transition) !important;
+  cursor: pointer !important;
+}
+
+.gfg-round-page #fullscreenBtn:hover,
+.gfg-round-page #holeNavCard button:hover {
+  background: linear-gradient(180deg, var(--wolf-dark-2), #14162a) !important;
+  transform: translateY(-2px) !important;
+  border-color: rgba(250, 208, 46, 0.55) !important;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26) !important;
+}
+
+.gfg-round-page #holeNavCard button {
+  padding: 10px 14px !important;
+  font-size: .92rem !important;
+}
+
+/* =========================================
+   HOLE INPUT LAYOUT
+========================================= */
+.round-score-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.round-select-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.round-tally-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.round-counter-card {
+  height: 100%;
+  padding: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.round-counter-label {
+  margin-bottom: 12px;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.round-counter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.round-counter-btn {
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(53, 148, 71, 0.32);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, #f6faf6);
+  color: var(--green);
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 8px 20px rgba(53, 148, 71, 0.1);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.round-counter-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(53, 148, 71, 0.6);
+  box-shadow: 0 12px 28px rgba(53, 148, 71, 0.16);
+}
+
+.round-counter-value {
+  min-width: 76px;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #1f2937;
+}
+
+.round-section-label {
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.round-select {
+  min-height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.round-select:focus {
+  border-color: rgba(53, 148, 71, 0.55);
+  box-shadow: 0 0 0 0.2rem rgba(53, 148, 71, 0.18);
+}
+
+.round-hole-summary {
+  padding: 16px;
+  border: 1px solid rgba(53, 148, 71, 0.12);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(53, 148, 71, 0.05), rgba(250, 208, 46, 0.08));
+}
+
+.round-stat-pill {
+  height: 100%;
+  padding: 12px;
+  border-radius: 16px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.round-stat-label {
+  font-size: .78rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.round-stat-value {
+  margin-top: 4px;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #1f2937;
+}
+
+.round-finish-pill {
+  height: 100%;
+  padding: 14px;
+  text-align: center;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.round-feedback-card {
+  background: linear-gradient(135deg, rgba(53, 148, 71, 0.06), rgba(250, 208, 46, 0.08));
+  border: 1px solid rgba(53, 148, 71, 0.16);
+}
+
+#feedbackInsights .insight-line {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  color: #374151;
+  line-height: 1.65;
+}
+
+#feedbackInsights .insight-line:last-child {
+  border-bottom: none;
+}
+
+body.fullscreen-active .gfg-navbar,
+body.fullscreen-active #foot {
+  display: none !important;
+}
+
+body.fullscreen-active {
+  overflow: hidden !important;
+}
+
+.gfg-round-page #selectionWrapper.fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 20000 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0.75rem !important;
+  border-radius: 0 !important;
+  display: block !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f6faf6 100%) !important;
+}
+
+.gfg-round-page #selectionWrapper.fullscreen #fullscreenContent {
+  display: block !important;
+  overflow: visible !important;
+  min-height: auto !important;
+  padding-bottom: 0 !important;
+}
+
+.gfg-round-page #selectionWrapper.fullscreen #scoreboardCard {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 10 !important;
+  margin-top: 0.75rem !important;
+}
+
+@media (max-width: 767px) {
+  .gfg-round-hero {
+    min-height: 52vh;
+  }
+
+  .round-score-row,
+  .round-select-row,
+  .round-tally-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .gfg-round-page #selectionWrapper.fullscreen {
+    padding: 0.5rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .game-card {
+    padding: 0.65rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen input,
+  .gfg-round-page #selectionWrapper.fullscreen select,
+  .gfg-round-page #selectionWrapper.fullscreen button {
+    font-size: 0.95rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen h4 {
+    font-size: 1rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .round-counter-card,
+  .gfg-round-page #selectionWrapper.fullscreen .round-hole-summary {
+    padding: 0.65rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .round-counter-value {
+    min-width: 44px !important;
+    font-size: 1.15rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .round-counter-btn {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 1.1rem !important;
+    padding: 0 !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .round-stat-pill,
+  .gfg-round-page #selectionWrapper.fullscreen .round-finish-pill {
+    padding: 7px !important;
+    border-radius: 12px !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .round-stat-label {
+    font-size: 0.62rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .round-stat-value {
+    font-size: 0.8rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen #holeNavCard button {
+    min-width: 84px;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen #scoreboardCard {
+    position: static !important;
+  }
+}
+
+.custom-course-wrap {
+  padding: 16px;
+  border: 1px solid rgba(53, 148, 71, 0.12);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(53, 148, 71, 0.05), rgba(250, 208, 46, 0.08));
+}
+
+.custom-par-wrap {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(53, 148, 71, 0.06);
+  border: 1px solid rgba(53, 148, 71, 0.12);
+}
+
+.hidden {
+  display: none !important;
+}
