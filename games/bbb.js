@@ -1,5 +1,5 @@
 ﻿// =====================================================
-// BBB â€” Bingo Â· Bango Â· Bongo (GoodFlight Games)
+// BBB - Bingo Bango Bongo (GoodFlight Games)
 // Page-scoped IDs (BBB-specific) to avoid collisions
 // - Tracks Bingo/Bango/Bongo selections per hole
 // - Totals points per player
@@ -122,7 +122,7 @@ selfPlayerSelect?.addEventListener("change", () => {
 // SELECT OPTIONS + BINDINGS
 // ---------------------------
 function buildSelectOptions() {
-  const base = `<option value="">â€”</option>`;
+  const base = `<option value="">-</option>`;
   const opts = players.map((_, i) => `<option value="${i}">${safeName(i)}</option>`).join("");
   const html = base + opts;
 
@@ -203,7 +203,7 @@ function hideResultsSummary() {
   const res = $("resultsCardBBB");
   if (res) res.style.display = "none";
   if (holeSetupCard) holeSetupCard.style.display = "block";
-  if (holeNavCard) holeNavCard.style.display = "flex";
+  if (holeNavCard) holeNavCard.style.display = "block";
   if (scoreboardCard) scoreboardCard.style.display = "block";
 }
 
@@ -270,25 +270,24 @@ function showResultsSummary() {
   if (holeNavCard) holeNavCard.style.display = "none";
   if (scoreboardCard) scoreboardCard.style.display = "none";
 
-  let resultsCard = document.getElementById("resultsCard");
-
+  let resultsCard = document.getElementById("resultsCardBBB");
   if (!resultsCard) {
     resultsCard = document.createElement("div");
-    resultsCard.id = "resultsCard";
+    resultsCard.id = "resultsCardBBB";
     resultsCard.className = "card game-card p-4 mb-3 text-center";
     selectionWrapper?.appendChild(resultsCard);
   }
 
-  const dollar = +dollarValueInput?.value || 0;
+  const dollar = +betInput?.value || 0;
   const netMoney = totals.map(t => t * dollar);
   const maxMoney = Math.max(...netMoney);
 
   resultsCard.innerHTML = `
-    <h2>ðŸŽ‰ Game Over! ðŸŽ‰</h2>
+    <h2>Game Over!</h2>
     ${players.map((p, i) => `
       <div class="d-flex justify-content-center align-items-center my-2 fs-5">
-        <span>${p}: ${totals[i]} pts â€” ${(netMoney[i] >= 0 ? "+" : "-") + "$" + Math.abs(netMoney[i]).toFixed(2)}</span>
-        ${netMoney[i] === maxMoney ? '<span class="ms-2">ðŸ†</span>' : ''}
+        <span>${p}: ${totals[i]} pts - ${(netMoney[i] >= 0 ? "+" : "-") + "$" + Math.abs(netMoney[i]).toFixed(2)}</span>
+        ${netMoney[i] === maxMoney ? '<span class="ms-2">Winner</span>' : ''}
       </div>
     `).join("")}
 
@@ -338,7 +337,7 @@ function showResultsSummary() {
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-      alert("âœ… BBB game saved!");
+      alert("BBB game saved!");
     } catch (err) {
       console.error(err);
       alert("Error saving BBB game.");
@@ -393,7 +392,7 @@ function loadGameData(data) {
 
     loadGameData(payload.data);
     sessionStorage.removeItem("gfg_savedGame");
-    alert("âœ… Loaded saved BBB game!");
+    alert("Loaded saved BBB game!");
   } catch (e) {
     console.error("BBB Auto-load failed:", e);
   }
@@ -415,7 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <p><strong>Bango</strong> = closest to the pin</p>
     <p><strong>Bongo</strong> = first in the hole</p>
     <p>Each pick is worth <strong>1 point</strong>. Money is <strong>points Ã— bet</strong>.</p>
-    <p class="mb-0">Tip: You can leave any category blank (â€”) and fill it later.</p>
+    <p class="mb-0">Tip: You can leave any category blank (-) and fill it later.</p>
   `;
 
   const open = () => {

@@ -203,7 +203,7 @@ input[type="submit"] {
 
 .gfg-hero-title {
   margin: 0 0 10px;
-  font-size: clamp(2.25rem, 5.2vw, 3.35rem);
+  font-size: clamp(2.45rem, 5.5vw, 3.6rem);
   font-weight: 900;
   letter-spacing: -1px;
   line-height: 1.04;
@@ -506,6 +506,8 @@ input[type="submit"] {
   margin-bottom: 8px;
   color: var(--yellow);
   font-weight: 900;
+  font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+  line-height: 1.15;
 }
 
 /* =====================================================

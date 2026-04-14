@@ -1,5 +1,5 @@
 ﻿// =====================================================
-// 666 â€” uses Wolf IDs so main2.css "wolf-page" styles apply
+// 666 - uses Wolf IDs so main2.css "wolf-page" styles apply
 // Two-team winner buttons + Push pot carryover
 // Hole 19 results + Firestore save + Home-page auto-load
 // =====================================================
@@ -75,7 +75,7 @@ let currentPot = 0;
 let selectedSelfPlayerIndex = null;
 
 // ---------------------------
-// TIE INPUTS â€” MUTUALLY EXCLUSIVE
+// TIE INPUTS - MUTUALLY EXCLUSIVE
 // ---------------------------
 if (tieSetPoints && tieMultiplier) {
   tieSetPoints.addEventListener("input", () => {
@@ -135,9 +135,9 @@ function H() {
 // FORMAT + TEAMS
 // ---------------------------
 function getFormatForHole(h) {
-  if (h >= 1 && h <= 6) return "Best Ball (1â€“6)";
-  if (h >= 7 && h <= 12) return "Total Score (7â€“12)";
-  if (h >= 13 && h <= 18) return "High/Low (13â€“18)";
+  if (h >= 1 && h <= 6) return "Best Ball (1-6)";
+  if (h >= 7 && h <= 12) return "Total Score (7-12)";
+  if (h >= 13 && h <= 18) return "High/Low (13-18)";
   return "Results";
 }
 
@@ -311,7 +311,7 @@ function hideResultsSummary() {
   const res = document.getElementById("resultsCard666");
   if (res) res.style.display = "none";
   if (holeSetupCard) holeSetupCard.style.display = "block";
-  if (holeNavCard) holeNavCard.style.display = "flex";
+  if (holeNavCard) holeNavCard.style.display = "block";
   if (scoreboardCard) scoreboardCard.style.display = "block";
 }
 
@@ -391,7 +391,7 @@ function showResultsSummary() {
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-      alert("âœ… 666 game saved!");
+      alert("666 game saved!");
     } catch (err) {
       console.error(err);
       alert("Error saving 666 game.");
@@ -474,7 +474,7 @@ function loadGameData(data) {
 
     loadGameData(payload.data);
     sessionStorage.removeItem("gfg_savedGame");
-    alert("âœ… Loaded saved 666 game!");
+    alert("Loaded saved 666 game!");
   } catch (e) {
     console.error("666 Auto-load failed:", e);
   }
@@ -494,9 +494,9 @@ document.addEventListener("DOMContentLoaded", () => {
   bodyEl.innerHTML = `
     <h5 class="mt-2">Team Rotations</h5>
     <ul>
-      <li><strong>Holes 1â€“6:</strong> P1 + P2 vs P3 + P4</li>
-      <li><strong>Holes 7â€“12:</strong> P1 + P3 vs P2 + P4</li>
-      <li><strong>Holes 13â€“18:</strong> P1 + P4 vs P2 + P3</li>
+      <li><strong>Holes 1-6:</strong> P1 + P2 vs P3 + P4</li>
+      <li><strong>Holes 7-12:</strong> P1 + P3 vs P2 + P4</li>
+      <li><strong>Holes 13-18:</strong> P1 + P4 vs P2 + P3</li>
     </ul>
     <h5 class="mt-4">This Tracker</h5>
     <p>

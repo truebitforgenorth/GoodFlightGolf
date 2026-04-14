@@ -191,7 +191,7 @@
       <div class="icon-box">
         <a href="bbb.html"><img src="../photos/icons/Bingo-Bango-Bongo-icon1.png" alt="Bingo-Bango-Bongo Game Icon"
           class="bbb-hero-icon mb-3">
-        <h5>Bingo · Bango · Bongo</h5>
+        <h5>Bingo Bango Bongo</h5>
         </a>
         <p>Score Bingo Bango Bongo live and keep track of points for one of the best golf games for mixed-skill groups.
         </p>
@@ -208,7 +208,7 @@
       <div class="gfg-modal__header">
         <div>
           <h3 id="savedGamesTitle" class="m-0">Saved Games</h3>
-          <div id="savedGamesMeta" class="gfg-modal__meta">—</div>
+          <div id="savedGamesMeta" class="gfg-modal__meta">-</div>
         </div>
 
         <button id="closeSavedGamesBtn" class="gfg-modal__close" aria-label="Close">&times;</button>
@@ -304,7 +304,7 @@
             </p>
 
             <p>
-              GoodFlightGolf is provided on an “as is” and “as available” basis without guarantees of
+              GoodFlightGolf is provided on an "as is" and "as available" basis without guarantees of
               uninterrupted service, perfect accuracy, or error-free operation.
             </p>
 
@@ -358,7 +358,7 @@
       <!-- Footer Info -->
       <div class="gfg-footer-content">
         <p class="gfg-footer-copy">
-          © 2026 GoodFlightGolf. All rights reserved.
+          &copy; 2026 GoodFlightGolf. All rights reserved.
         </p>
 
         <p class="gfg-footer-ownership">
@@ -384,7 +384,7 @@
   <!-- Saved Games logic -->
   <script>
     /* ==========================================================
-       SAVED GAMES — HOME MODAL (Wolf + 666 + BBB)
+       SAVED GAMES - HOME MODAL (Wolf + 666 + BBB)
        - Lists all users/{uid}/savedGames
        - Renders details per gameType
        - "Open Game" pushes sessionStorage and redirects
@@ -410,11 +410,11 @@
         meta = document.createElement("div");
         meta.id = "savedGamesMeta";
         meta.className = "gfg-modal__meta";
-        meta.textContent = "—";
+        meta.textContent = "-";
         if (title && title.parentElement) title.parentElement.appendChild(meta);
       }
 
-      const safeText = (v) => (v === null || v === undefined || v === "" ? "—" : String(v));
+      const safeText = (v) => (v === null || v === undefined || v === "" ? "-" : String(v));
 
       const openModal = () => {
         modal.hidden = false;
@@ -432,7 +432,7 @@
           if (data?.timestamp?.seconds) return new Date(data.timestamp.seconds * 1000).toLocaleString();
           if (typeof data?.timestamp === "number") return new Date(data.timestamp).toLocaleString();
         } catch { }
-        return "—";
+        return "-";
       };
 
       const normalizeGameType = (data) => {
@@ -447,7 +447,7 @@
         const t = normalizeGameType(data);
         if (t === "wolf") return "Wolf";
         if (t === "666") return "Six-Six-Six";
-        if (t === "bbb") return "Bingo · Bango · Bongo";
+        if (t === "bbb") return "Bingo Bango Bongo";
         return "Saved Game";
       };
 
@@ -462,7 +462,7 @@
       window.renderWolfDetails = function renderWolfDetails(docId, data) {
         const players = Array.isArray(data.players) ? data.players : [];
         const totals = Array.isArray(data.totals) ? data.totals : [];
-        const hole = data.hole ?? "—";
+        const hole = data.hole ?? "-";
 
         return `
       <div class="gfg-results">
@@ -471,7 +471,7 @@
 
         <div class="gfg-kv"><div class="k">Players</div>
           <div class="v">
-            ${players.length ? players.map((p, i) => `<div>&bull; ${safeText(p)} — ${safeText(totals[i] ?? 0)} pts</div>`).join("") : "—"}
+            ${players.length ? players.map((p, i) => `<div>&bull; ${safeText(p)} - ${safeText(totals[i] ?? 0)} pts</div>`).join("") : "-"}
           </div>
         </div>
 
@@ -488,8 +488,8 @@
       window.renderSixesDetails = function renderSixesDetails(docId, data) {
         const players = Array.isArray(data.players) ? data.players : [];
         const totals = Array.isArray(data.totals) ? data.totals : [];
-        const holeLabel = data.hole ?? data.holePageStart ?? "—";
-        const format = data.format || data.scoringFormat || "—";
+        const holeLabel = data.hole ?? data.holePageStart ?? "-";
+        const format = data.format || data.scoringFormat || "-";
 
         return `
       <div class="gfg-results">
@@ -499,7 +499,7 @@
 
         <div class="gfg-kv"><div class="k">Players</div>
           <div class="v">
-            ${players.length ? players.map((p, i) => `<div>&bull; ${safeText(p)} — ${safeText(totals[i] ?? 0)} pts</div>`).join("") : "—"}
+            ${players.length ? players.map((p, i) => `<div>&bull; ${safeText(p)} - ${safeText(totals[i] ?? 0)} pts</div>`).join("") : "-"}
           </div>
         </div>
 
@@ -516,7 +516,7 @@
       window.renderBBBDetails = function renderBBBDetails(docId, data) {
         const players = Array.isArray(data.players) ? data.players : [];
         const totals = Array.isArray(data.totals) ? data.totals : [];
-        const bet = data.bet ?? "—";
+        const bet = data.bet ?? "-";
 
         const pageStart = data.holePageStart ?? 1;
         const end = Math.min(Number(pageStart) + 3, 18);
@@ -535,14 +535,14 @@
 
         return `
       <div class="gfg-results">
-        <div class="gfg-kv"><div class="k">Game</div><div class="v">Bingo · Bango · Bongo</div></div>
-        <div class="gfg-kv"><div class="k">Page</div><div class="v">Holes ${safeText(pageStart)} – ${safeText(end)}</div></div>
+        <div class="gfg-kv"><div class="k">Game</div><div class="v">Bingo Bango Bongo</div></div>
+        <div class="gfg-kv"><div class="k">Page</div><div class="v">Holes ${safeText(pageStart)} - ${safeText(end)}</div></div>
         <div class="gfg-kv"><div class="k">Bet</div><div class="v">$${safeText(bet)} / point</div></div>
         <div class="gfg-kv"><div class="k">Selections</div><div class="v">${safeText(picks)} picks</div></div>
 
         <div class="gfg-kv"><div class="k">Players</div>
           <div class="v">
-            ${players.length ? players.map((p, i) => `<div>&bull; ${safeText(p)} — ${safeText(totals[i] ?? 0)} pts</div>`).join("") : "—"}
+            ${players.length ? players.map((p, i) => `<div>&bull; ${safeText(p)} - ${safeText(totals[i] ?? 0)} pts</div>`).join("") : "-"}
           </div>
         </div>
 
@@ -675,7 +675,7 @@
 
         if (isOpen) return;
 
-        const docId = item.dataset.docId || "—";
+        const docId = item.dataset.docId || "-";
         details.innerHTML = renderDetails(docId, item.__data || {});
         details.classList.remove("hidden");
         btn.textContent = "Hide";

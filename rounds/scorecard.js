@@ -206,6 +206,27 @@ let currentHole = 1;
 let currentCourseId = "oneka-ridge";
 let holes = {};
 
+function setRoundPrevButtonLabel() {
+  if (!prevHoleBtn) return;
+  prevHoleBtn.innerHTML = `<span class="nav-arrow" aria-hidden="true">&larr;</span><span>Back</span>`;
+}
+
+function setRoundNextButtonLabel(mode = "next") {
+  if (!nextHoleBtn) return;
+
+  if (mode === "finish") {
+    nextHoleBtn.innerHTML = `<span>Finish</span>`;
+    return;
+  }
+
+  if (mode === "results") {
+    nextHoleBtn.innerHTML = `<span>Results</span>`;
+    return;
+  }
+
+  nextHoleBtn.innerHTML = `<span>Next</span><span class="nav-arrow" aria-hidden="true">&rarr;</span>`;
+}
+
 function createHoleData() {
   return {
     strokes: 4,
@@ -576,10 +597,12 @@ function updateScoreboard() {
 }
 
 function render() {
+  setRoundPrevButtonLabel();
+
   if (currentHole === 19) {
     if (holeTitle) holeTitle.textContent = "19th Hole";
     if (holeMeta) holeMeta.textContent = "Round Results";
-    if (nextHoleBtn) nextHoleBtn.textContent = "View Results";
+    setRoundNextButtonLabel("results");
     updateScoreboard();
     return;
   }
@@ -591,9 +614,7 @@ function render() {
   updateHoleSummary();
   updateScoreboard();
 
-  if (nextHoleBtn) {
-    nextHoleBtn.textContent = currentHole < 18 ? "Next >" : "Finish Round";
-  }
+  setRoundNextButtonLabel(currentHole < 18 ? "next" : "finish");
 }
 
 function recalc() {
