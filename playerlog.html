@@ -69,50 +69,56 @@
         <p>Back to Top</p>
     </button>
 
-      <nav class="navbar navbar-expand-lg gfg-navbar">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>&#9971;</a>
+    <nav class="navbar navbar-expand-lg gfg-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>&#9971;</a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
-      </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+            </button>
 
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav fs-5">
-          <li class="nav-item">
-            <a class="nav-link" href="rounds/scorecard.html">The Score<span style="color:#fad02e;">card</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="games/goodflightgames.html">GoodFlight<span style="color:#fad02e;">Games</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="playerlog.html">The Locker<span style="color:#fad02e;">Room</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="NewsArticles/social&news.html">The Club<span style="color:#fad02e;">house</span></a>
-          </li>
-          <li class="nav-item">
-            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
-              Login / <span style="color:#fad02e;">Signup</span>
-            </a>
-          </li>
-          <li class="nav-item d-flex align-items-center">
-            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
-            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav fs-5">
+                    <li class="nav-item">
+                        <a class="nav-link" href="rounds/scorecard.html">The Score<span
+                                style="color:#fad02e;">card</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="games/goodflightgames.html">GoodFlight<span
+                                style="color:#fad02e;">Games</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="playerlog.html">The Locker<span style="color:#fad02e;">Room</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="NewsArticles/social&news.html">The Club<span
+                                style="color:#fad02e;">house</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal"
+                            role="button">
+                            Login / <span style="color:#fad02e;">Signup</span>
+                        </a>
+                    </li>
+                    <li class="nav-item d-flex align-items-center">
+                        <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+                        <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     <section class="parallax-section2">
         <div class="parallax-content2">
             <div style="color: #fad02e;" id="welcomeMessage"></div>
             <h1 class="gfg-hero-title">
-                <span class="gfg-green">The</span><span class="gfg-yellow">Locker Room</span>&#9971;</h1>
+                <span class="gfg-green">The</span><span class="gfg-yellow">Locker Room</span>&#9971;
+            </h1>
             <p class="gfg-hero-sub">
-                Your GoodFlightGolf dashboard for saved rounds, course stats, game history, handicap data, club distances, and utility tools.
+                Your GoodFlightGolf dashboard for saved rounds, course stats, game history, handicap data, club
+                distances, and utility tools.
             </p>
 
             <div class="row justify-content-center">
@@ -190,7 +196,7 @@
                 <p class="gfg-section-sub">Review your saved rounds and course-performance trends.</p>
             </div>
 
-            <div id="playerDataShell" class="gfg-locked-shell is-locked">
+            <div id="playerDataShell" class="gfg-locked-shell is-locked" style="min-height: 500px;">
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <section id="savedRoundsSection" class="h-100">
@@ -222,7 +228,8 @@
                                                     <div class="card-body text-center">
                                                         <h6 class="mb-2">Handicap Preview</h6>
                                                         <div id="handicapPreview" class="fs-3 fw-bold">—</div>
-                                                        <p class="small text-muted mt-2 mb-0">Based on saved round differentials.</p>
+                                                        <p class="small text-muted mt-2 mb-0">Based on saved round
+                                                            differentials.</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -325,7 +332,7 @@
                 <p class="gfg-section-sub">Review total money, total points, and saved game history.</p>
             </div>
 
-            <div id="savedGameDataShell" class="gfg-locked-shell is-locked">
+            <div id="savedGameDataShell" class="gfg-locked-shell is-locked" style="min-height: 500px;">
                 <div class="row g-4">
                     <div class="col-lg-6">
                         <div class="card h-100">
@@ -337,8 +344,10 @@
                                             <div class="card">
                                                 <div class="card-body">
                                                     <h6>Wolf</h6>
-                                                    <p class="mb-1"><strong>Total Money:</strong> <span id="wolfMoneyTotal">—</span></p>
-                                                    <p class="mb-0"><strong>Total Points:</strong> <span id="wolfPointsTotal">—</span></p>
+                                                    <p class="mb-1"><strong>Total Money:</strong> <span
+                                                            id="wolfMoneyTotal">—</span></p>
+                                                    <p class="mb-0"><strong>Total Points:</strong> <span
+                                                            id="wolfPointsTotal">—</span></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -347,8 +356,10 @@
                                             <div class="card">
                                                 <div class="card-body">
                                                     <h6>Sixes</h6>
-                                                    <p class="mb-1"><strong>Total Money:</strong> <span id="sixesMoneyTotal">—</span></p>
-                                                    <p class="mb-0"><strong>Total Points:</strong> <span id="sixesPointsTotal">—</span></p>
+                                                    <p class="mb-1"><strong>Total Money:</strong> <span
+                                                            id="sixesMoneyTotal">—</span></p>
+                                                    <p class="mb-0"><strong>Total Points:</strong> <span
+                                                            id="sixesPointsTotal">—</span></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -357,8 +368,10 @@
                                             <div class="card">
                                                 <div class="card-body">
                                                     <h6>Bingo Bango Bongo</h6>
-                                                    <p class="mb-1"><strong>Total Money:</strong> <span id="bbbMoneyTotal">—</span></p>
-                                                    <p class="mb-0"><strong>Total Points:</strong> <span id="bbbPointsTotal">—</span></p>
+                                                    <p class="mb-1"><strong>Total Money:</strong> <span
+                                                            id="bbbMoneyTotal">—</span></p>
+                                                    <p class="mb-0"><strong>Total Points:</strong> <span
+                                                            id="bbbPointsTotal">—</span></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -376,7 +389,8 @@
                                     <div id="gamesPlayedList">
                                         <div class="card">
                                             <div class="card-body">
-                                                <p class="mb-0">Saved game data will show here once game history is wired in.</p>
+                                                <p class="mb-0">Saved game data will show here once game history is
+                                                    wired in.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -418,23 +432,32 @@
                                     <form id="handicapForm">
                                         <div class="mb-3">
                                             <div class="form-label">Round 1</div>
-                                            <input type="number" id="score0" class="form-control mb-2" placeholder="Score" required />
-                                            <input type="number" id="rating0" class="form-control mb-2" placeholder="Course Rating" required />
-                                            <input type="number" id="slope0" class="form-control" placeholder="Slope Rating" required />
+                                            <input type="number" id="score0" class="form-control mb-2"
+                                                placeholder="Score" required />
+                                            <input type="number" id="rating0" class="form-control mb-2"
+                                                placeholder="Course Rating" required />
+                                            <input type="number" id="slope0" class="form-control"
+                                                placeholder="Slope Rating" required />
                                         </div>
 
                                         <div class="mb-3">
                                             <div class="form-label">Round 2</div>
-                                            <input type="number" id="score1" class="form-control mb-2" placeholder="Score" required />
-                                            <input type="number" id="rating1" class="form-control mb-2" placeholder="Course Rating" required />
-                                            <input type="number" id="slope1" class="form-control" placeholder="Slope Rating" required />
+                                            <input type="number" id="score1" class="form-control mb-2"
+                                                placeholder="Score" required />
+                                            <input type="number" id="rating1" class="form-control mb-2"
+                                                placeholder="Course Rating" required />
+                                            <input type="number" id="slope1" class="form-control"
+                                                placeholder="Slope Rating" required />
                                         </div>
 
                                         <div class="mb-3">
                                             <div class="form-label">Round 3</div>
-                                            <input type="number" id="score2" class="form-control mb-2" placeholder="Score" required />
-                                            <input type="number" id="rating2" class="form-control mb-2" placeholder="Course Rating" required />
-                                            <input type="number" id="slope2" class="form-control" placeholder="Slope Rating" required />
+                                            <input type="number" id="score2" class="form-control mb-2"
+                                                placeholder="Score" required />
+                                            <input type="number" id="rating2" class="form-control mb-2"
+                                                placeholder="Course Rating" required />
+                                            <input type="number" id="slope2" class="form-control"
+                                                placeholder="Slope Rating" required />
                                         </div>
 
                                         <button type="submit" class="btn btn-primary">Calculate Handicap</button>
@@ -454,7 +477,8 @@
                             <div class="card-body">
                                 <canvas id="handicapChart" width="100%" height="60"></canvas>
                                 <div class="card-text">
-                                    <p>*You must be logged in and save handicaps or round-tracker rounds to have the chart show data.</p>
+                                    <p>*You must be logged in and save handicaps or round-tracker rounds to have the
+                                        chart show data.</p>
                                 </div>
                             </div>
                         </div>
@@ -532,15 +556,18 @@
 
                                     <div class="col-md-2">
                                         <label for="clubDistance1" class="form-label">Hit 1</label>
-                                        <input type="number" id="clubDistance1" class="form-control" placeholder="Yards" />
+                                        <input type="number" id="clubDistance1" class="form-control"
+                                            placeholder="Yards" />
                                     </div>
                                     <div class="col-md-2">
                                         <label for="clubDistance2" class="form-label">Hit 2</label>
-                                        <input type="number" id="clubDistance2" class="form-control" placeholder="Yards" />
+                                        <input type="number" id="clubDistance2" class="form-control"
+                                            placeholder="Yards" />
                                     </div>
                                     <div class="col-md-2">
                                         <label for="clubDistance3" class="form-label">Hit 3</label>
-                                        <input type="number" id="clubDistance3" class="form-control" placeholder="Yards" />
+                                        <input type="number" id="clubDistance3" class="form-control"
+                                            placeholder="Yards" />
                                     </div>
 
                                     <div class="col-md-2 align-items-end">
@@ -596,8 +623,10 @@
                             <div class="gfg-lock-card">
                                 <div class="gfg-lock-icon">🔒</div>
                                 <h4>Login Required</h4>
-                                <p>You must be logged in to use the Club Distance Calculator and view your saved Club Distances Table.</p>
-                                <button type="button" class="gfg-pill-btn" data-bs-toggle="modal" data-bs-target="#authModal">
+                                <p>You must be logged in to use the Club Distance Calculator and view your saved Club
+                                    Distances Table.</p>
+                                <button type="button" class="gfg-pill-btn" data-bs-toggle="modal"
+                                    data-bs-target="#authModal">
                                     Login / Sign Up
                                 </button>
                             </div>
@@ -620,7 +649,8 @@
             <div id="asdf1"></div>
             <div id="ww_e891b459a24b7" v='1.3' loc='auto'
                 a='{"t":"responsive","lang":"en","sl_lpl":1,"ids":[],"font":"Arial","sl_ics":"one_a","sl_sot":"fahrenheit","cl_bkg":"#388E3C","cl_font":"#FFFFFF","cl_cloud":"#FFFFFF","cl_persp":"#FFFFFF","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722","cl_odd":"#0000000a"}'>
-                More forecasts: <a href="https://oneweather.org/orlando/30_days/" id="ww_e891b459a24b7_u" target="_blank">30 day weather Orlando</a>
+                More forecasts: <a href="https://oneweather.org/orlando/30_days/" id="ww_e891b459a24b7_u"
+                    target="_blank">30 day weather Orlando</a>
             </div>
             <script async src="https://app3.weatherwidget.org/js/?id=ww_e891b459a24b7"></script>
 
@@ -631,7 +661,8 @@
                         <div class="card-body">
                             <p class="card-text">
                                 <label for="distance1">Base Distance (yards):</label>
-                                <input type="number" id="distance1" class="form-control" placeholder="Enter base distance" />
+                                <input type="number" id="distance1" class="form-control"
+                                    placeholder="Enter base distance" />
                             </p>
                             <p class="card-text">
                                 <label for="club">Select Club:</label>
@@ -659,7 +690,8 @@
                             </p>
                             <p class="card-text">
                                 <label for="windSpeed">Wind Speed (mph):</label>
-                                <input type="number" id="windSpeed" class="form-control" placeholder="Enter wind speed" />
+                                <input type="number" id="windSpeed" class="form-control"
+                                    placeholder="Enter wind speed" />
                             </p>
                             <p class="card-text mb-3">
                                 <label for="windAngle">Wind Angle (degrees):</label>
@@ -680,7 +712,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <button class="gfg-pill-btn mt-auto" onclick="calculateShot()">Calculate Adjusted Shot</button>
+                            <button class="gfg-pill-btn mt-auto" onclick="calculateShot()">Calculate Adjusted
+                                Shot</button>
                             <div id="result" class="mt-3"></div>
                         </div>
                     </div>
@@ -694,7 +727,8 @@
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                            data-bs-target="#collapseTwo" aria-expanded="true"
+                                            aria-controls="collapseTwo">
                                             Click here to view the weather.
                                         </button>
                                     </h2>
@@ -744,7 +778,7 @@
                 </p>
 
                 <p class="gfg-footer-ownership">
-                    GoodFlightGolf is owned and operated by 
+                    GoodFlightGolf is owned and operated by
                     <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
                 </p>
             </div>
@@ -778,17 +812,32 @@
 
                         <div class="signup-legal-scroll">
                             <p><strong>Effective Date:</strong> March 15, 2026</p>
-                            <p>By creating an account on GoodFlightGolf, you agree to these Terms of Service, Privacy Policy, and Disclaimer.</p>
-                            <p>GoodFlightGolf provides golf-related games, tools, calculators, scorekeeping features, and account-based services for entertainment and informational purposes only.</p>
-                            <p>You are responsible for the accuracy of the information you provide, maintaining the confidentiality of your login credentials, and all activity that occurs under your account.</p>
-                            <p>You agree not to misuse the website, attempt unauthorized access, disrupt services, exploit bugs, interfere with other users, or use the platform for unlawful purposes.</p>
-                            <p>We may collect account details, submitted scores, settings, and limited technical usage information in order to operate, secure, and improve the website.</p>
-                            <p>We do not sell your personal information. We may use trusted third-party providers for authentication, hosting, databases, email, analytics, maps, and related services needed to run GoodFlightGolf.</p>
-                            <p>GoodFlightGolf is provided on an “as is” and “as available” basis without guarantees of uninterrupted service, perfect accuracy, or error-free operation.</p>
-                            <p>Golf tools, scoring systems, calculators, and other features may rely on user input and simplified assumptions, so results may vary in real-world use.</p>
-                            <p>To the fullest extent permitted by law, GoodFlightGolf and TrueBit Forge North LLC are not liable for damages, losses, or disruptions arising from use of the website or reliance on its content, tools, or outputs.</p>
-                            <p>We may update these Terms, Privacy Policy, or Disclaimer from time to time. Continued use of GoodFlightGolf after updates become effective constitutes acceptance of the revised terms.</p>
-                            <p>By checking the box below and creating your account, you acknowledge that you have reviewed and accepted these legal terms.</p>
+                            <p>By creating an account on GoodFlightGolf, you agree to these Terms of Service, Privacy
+                                Policy, and Disclaimer.</p>
+                            <p>GoodFlightGolf provides golf-related games, tools, calculators, scorekeeping features,
+                                and account-based services for entertainment and informational purposes only.</p>
+                            <p>You are responsible for the accuracy of the information you provide, maintaining the
+                                confidentiality of your login credentials, and all activity that occurs under your
+                                account.</p>
+                            <p>You agree not to misuse the website, attempt unauthorized access, disrupt services,
+                                exploit bugs, interfere with other users, or use the platform for unlawful purposes.</p>
+                            <p>We may collect account details, submitted scores, settings, and limited technical usage
+                                information in order to operate, secure, and improve the website.</p>
+                            <p>We do not sell your personal information. We may use trusted third-party providers for
+                                authentication, hosting, databases, email, analytics, maps, and related services needed
+                                to run GoodFlightGolf.</p>
+                            <p>GoodFlightGolf is provided on an “as is” and “as available” basis without guarantees of
+                                uninterrupted service, perfect accuracy, or error-free operation.</p>
+                            <p>Golf tools, scoring systems, calculators, and other features may rely on user input and
+                                simplified assumptions, so results may vary in real-world use.</p>
+                            <p>To the fullest extent permitted by law, GoodFlightGolf and TrueBit Forge North LLC are
+                                not liable for damages, losses, or disruptions arising from use of the website or
+                                reliance on its content, tools, or outputs.</p>
+                            <p>We may update these Terms, Privacy Policy, or Disclaimer from time to time. Continued use
+                                of GoodFlightGolf after updates become effective constitutes acceptance of the revised
+                                terms.</p>
+                            <p>By checking the box below and creating your account, you acknowledge that you have
+                                reviewed and accepted these legal terms.</p>
                         </div>
                     </div>
 
@@ -827,15 +876,7 @@
     <script src="feedback.js"></script>
     <script src="chart.js"></script>
     <script src="playerlog-rounds.js"></script>
+
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
