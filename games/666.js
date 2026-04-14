@@ -38,6 +38,7 @@ const baseInput = document.getElementById("base");
 const dollarValueInput = document.getElementById("dollarValue");
 const tieSetPoints = document.getElementById("tieSetPoints");
 const tieMultiplier = document.getElementById("tieMultiplier");
+const selfPlayerSelect = document.getElementById("sixesSelfPlayerSelect");
 const potBanner = document.getElementById("potBanner");
 const potValue = document.getElementById("potValue");
 
@@ -71,6 +72,7 @@ let players = ["Player 1", "Player 2", "Player 3", "Player 4"];
 let totals = [0, 0, 0, 0];
 let holes = {}; // holes[n] = { result: "team1" | "team2" | "push" }
 let currentPot = 0;
+let selectedSelfPlayerIndex = null;
 
 // ---------------------------
 // TIE INPUTS â€” MUTUALLY EXCLUSIVE
@@ -87,12 +89,38 @@ if (tieSetPoints && tieMultiplier) {
 // ---------------------------
 // PLAYER NAMES
 // ---------------------------
+function getSelectedSelfPlayerIndex() {
+  const value = Number(selfPlayerSelect?.value);
+  return Number.isInteger(value) && value >= 0 && value < players.length ? value : null;
+}
+
+function syncSelfPlayerOptions() {
+  if (!selfPlayerSelect) return;
+
+  const previousValue = selfPlayerSelect.value;
+  selfPlayerSelect.innerHTML = `
+    <option value="">Choose your player slot</option>
+    ${players.map((player, idx) => `<option value="${idx}">${player || `Player ${idx + 1}`}</option>`).join("")}
+  `;
+
+  if (previousValue !== "" && Number(previousValue) < players.length) {
+    selfPlayerSelect.value = previousValue;
+  }
+
+  selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
+}
+
 document.querySelectorAll(".player666").forEach((i, idx) => {
   i.oninput = () => {
     players[idx] = i.value || `Player ${idx + 1}`;
+    syncSelfPlayerOptions();
     render();
     recalc();
   };
+});
+
+selfPlayerSelect?.addEventListener("change", () => {
+  selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
 });
 
 function safeName(i) {
@@ -335,6 +363,13 @@ function showResultsSummary() {
       return;
     }
 
+    selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
+    if (selectedSelfPlayerIndex === null) {
+      alert("Please select which player slot is yours before saving.");
+      selfPlayerSelect?.focus();
+      return;
+    }
+
     try {
       await firebase.firestore()
         .collection("users")
@@ -346,6 +381,9 @@ function showResultsSummary() {
           holes,
           totals,
           players,
+          trackedPlayerIndex: selectedSelfPlayerIndex,
+          trackedPlayerName: selectedSelfPlayerIndex !== null ? (players[selectedSelfPlayerIndex] || `Player ${selectedSelfPlayerIndex + 1}`) : null,
+          trackedUserUid: user.uid,
           base: +baseInput.value || 0,
           dollarValue: +dollarValueInput.value || 0,
           tieSetPoints: tieSetPoints.value !== "" ? +tieSetPoints.value : null,
@@ -403,6 +441,7 @@ function loadGameData(data) {
   holes = data?.holes || {};
   totals = data?.totals || [0, 0, 0, 0];
   players = data?.players || ["Player 1", "Player 2", "Player 3", "Player 4"];
+  selectedSelfPlayerIndex = Number.isInteger(data?.trackedPlayerIndex) ? data.trackedPlayerIndex : null;
 
   if (typeof data?.base === "number") baseInput.value = data.base;
   if (typeof data?.dollarValue === "number") dollarValueInput.value = data.dollarValue;
@@ -412,6 +451,11 @@ function loadGameData(data) {
   document.querySelectorAll(".player666").forEach((input, idx) => {
     input.value = players[idx] || `Player ${idx + 1}`;
   });
+
+  syncSelfPlayerOptions();
+  if (selfPlayerSelect && selectedSelfPlayerIndex !== null) {
+    selfPlayerSelect.value = String(selectedSelfPlayerIndex);
+  }
 
   render();
   recalc();
@@ -505,6 +549,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ---------------------------
 render();
 recalc();
+syncSelfPlayerOptions();
 
 window.GFG_666 = { loadGameData };
 

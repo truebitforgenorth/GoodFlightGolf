@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bad+Script&display=swap');
 
 /* =====================================================
@@ -435,6 +435,13 @@ input[type="submit"] {
   border-radius: 18px;
 }
 
+#playerDataSection .gfg-locked-shell,
+#savedGameDataSection .gfg-locked-shell,
+#handicapDataSection .gfg-locked-shell,
+#clubDistanceSection .gfg-locked-shell {
+  margin-top: 12px;
+}
+
 .gfg-locked-shell.is-locked > .row,
 .gfg-locked-shell.is-locked > .card,
 .gfg-locked-shell.is-locked > section,
@@ -833,6 +840,27 @@ footer {
   font-size: .92rem !important;
 }
 
+:is(.wolf-page, .gfg-666-page, .gfg-bbb-page) #holeNavCard .d-flex {
+  gap: 12px !important;
+}
+
+:is(.wolf-page, .gfg-666-page, .gfg-bbb-page) #holeNavCard button,
+:is(.wolf-page, .gfg-666-page, .gfg-bbb-page) #prevHoleBtn,
+:is(.wolf-page, .gfg-666-page, .gfg-bbb-page) #nextHoleBtn {
+  width: 110px !important;
+  min-width: 110px !important;
+  min-height: 56px !important;
+  flex: 0 0 110px !important;
+  white-space: nowrap !important;
+}
+
+:is(.wolf-page, .gfg-666-page, .gfg-bbb-page) #holeNavCard .nav-arrow {
+  font-size: 1.08rem !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+ }
+
 :is(.wolf-page, .gfg-666-page, .gfg-bbb-page) .game-card .form-control,
 :is(.wolf-page, .gfg-666-page, .gfg-bbb-page) .game-card .form-select {
   border: 1px solid rgba(0, 0, 0, 0.10);
@@ -1161,6 +1189,40 @@ body.fullscreen-active #foot {
 }
 
 @media (max-width: 480px) {
+  body:not(.fullscreen-active) {
+    font-size: 0.9rem;
+  }
+
+  body:not(.fullscreen-active) button,
+  body:not(.fullscreen-active) input,
+  body:not(.fullscreen-active) select,
+  body:not(.fullscreen-active) textarea,
+  body:not(.fullscreen-active) .btn,
+  body:not(.fullscreen-active) .gfg-pill-btn,
+  body:not(.fullscreen-active) .form-control,
+  body:not(.fullscreen-active) .form-select,
+  body:not(.fullscreen-active) .card,
+  body:not(.fullscreen-active) .card-body,
+  body:not(.fullscreen-active) .card-header,
+  body:not(.fullscreen-active) p,
+  body:not(.fullscreen-active) li,
+  body:not(.fullscreen-active) label,
+  body:not(.fullscreen-active) span,
+  body:not(.fullscreen-active) a,
+  body:not(.fullscreen-active) h1,
+  body:not(.fullscreen-active) h2,
+  body:not(.fullscreen-active) h3,
+  body:not(.fullscreen-active) h4,
+  body:not(.fullscreen-active) h5,
+  body:not(.fullscreen-active) h6 {
+    font-size: inherit;
+  }
+
+  body:not(.fullscreen-active) .gfg-navbar .navbar-brand {
+    font-size: 1.8rem;
+    line-height: 1.1;
+  }
+
   :is(.wolf-page, .gfg-666-page, .gfg-bbb-page) #selectionWrapper.fullscreen {
     padding: 0.75rem !important;
   }

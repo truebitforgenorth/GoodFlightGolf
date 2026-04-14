@@ -39,6 +39,7 @@ fullscreenBtn?.addEventListener("click", () => {
 // INPUTS (BBB-specific IDs)
 // ---------------------------
 const betInput = $("bbbBet");
+const selfPlayerSelect = $("bbbSelfPlayerSelect");
 
 // ---------------------------
 // UI (some shared IDs, some BBB-specific)
@@ -66,6 +67,7 @@ const mEls = [0, 1, 2, 3].map(i => $(`m${i}`));
 let hole = 1;
 let players = ["Player 1", "Player 2", "Player 3", "Player 4"];
 let totals = [0, 0, 0, 0];
+let selectedSelfPlayerIndex = null;
 
 // holes[n] = { bingo: idx|null, bango: idx|null, bongo: idx|null }
 let holes = {};
@@ -79,15 +81,41 @@ function safeName(i) {
   return players[i] || `Player ${i + 1}`;
 }
 
+function getSelectedSelfPlayerIndex() {
+  const value = Number(selfPlayerSelect?.value);
+  return Number.isInteger(value) && value >= 0 && value < players.length ? value : null;
+}
+
+function syncSelfPlayerOptions() {
+  if (!selfPlayerSelect) return;
+
+  const previousValue = selfPlayerSelect.value;
+  selfPlayerSelect.innerHTML = `
+    <option value="">Choose your player slot</option>
+    ${players.map((player, idx) => `<option value="${idx}">${player || `Player ${idx + 1}`}</option>`).join("")}
+  `;
+
+  if (previousValue !== "" && Number(previousValue) < players.length) {
+    selfPlayerSelect.value = previousValue;
+  }
+
+  selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
+}
+
 // ---------------------------
 // PLAYER NAMES (bbb.html uses .bbb-player)
 // ---------------------------
 document.querySelectorAll(".bbb-player").forEach((input, idx) => {
   input.addEventListener("input", () => {
     players[idx] = input.value || `Player ${idx + 1}`;
+    syncSelfPlayerOptions();
     render();
     recalc();
   });
+});
+
+selfPlayerSelect?.addEventListener("change", () => {
+  selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
 });
 
 // ---------------------------
@@ -285,6 +313,13 @@ function showResultsSummary() {
       return;
     }
 
+    selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
+    if (selectedSelfPlayerIndex === null) {
+      alert("Please select which player slot is yours before saving.");
+      selfPlayerSelect?.focus();
+      return;
+    }
+
     try {
       await firebase.firestore()
         .collection("users")
@@ -296,6 +331,9 @@ function showResultsSummary() {
           holes,
           totals,
           players,
+          trackedPlayerIndex: selectedSelfPlayerIndex,
+          trackedPlayerName: selectedSelfPlayerIndex !== null ? (players[selectedSelfPlayerIndex] || `Player ${selectedSelfPlayerIndex + 1}`) : null,
+          trackedUserUid: user.uid,
           bet: +betInput?.value || 0,
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -316,12 +354,18 @@ function loadGameData(data) {
   holes = data?.holes || {};
   totals = data?.totals || [0, 0, 0, 0];
   players = data?.players || ["Player 1", "Player 2", "Player 3", "Player 4"];
+  selectedSelfPlayerIndex = Number.isInteger(data?.trackedPlayerIndex) ? data.trackedPlayerIndex : null;
 
   if (typeof data?.bet === "number" && betInput) betInput.value = data.bet;
 
   document.querySelectorAll(".bbb-player").forEach((input, idx) => {
     input.value = players[idx] || `Player ${idx + 1}`;
   });
+
+  syncSelfPlayerOptions();
+  if (selfPlayerSelect && selectedSelfPlayerIndex !== null) {
+    selfPlayerSelect.value = String(selectedSelfPlayerIndex);
+  }
 
   render();
   recalc();
@@ -413,6 +457,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ---------------------------
 // INIT
 // ---------------------------
+syncSelfPlayerOptions();
 render();
 recalc();
 

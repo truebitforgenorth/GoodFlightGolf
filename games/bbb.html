@@ -166,6 +166,19 @@
         <div class="col-6"><input class="form-control bbb-player" placeholder="Player 4"></div>
       </div>
 
+      <div class="row g-2 mb-3">
+        <div class="col-12 col-md-6">
+          <label class="small fw-bold" for="bbbSelfPlayerSelect">Select Yourself</label>
+          <select id="bbbSelfPlayerSelect" class="form-select">
+            <option value="">Choose your player slot</option>
+            <option value="0">Player 1</option>
+            <option value="1">Player 2</option>
+            <option value="2">Player 3</option>
+            <option value="3">Player 4</option>
+          </select>
+        </div>
+      </div>
+
       <div class="row g-2">
         <div class="col-6 col-md-3">
           <label class="small fw-bold">Bet per point ($)</label>
@@ -185,9 +198,9 @@
         <!-- Hole Nav -->
         <div class="card game-card p-3 mb-3 text-center" id="holeNavCard">
           <div class="d-flex justify-content-between align-items-center">
-            <button id="prevHoleBtn" class="btn btn-secondary">&larr; Back</button>
+            <button id="prevHoleBtn" class="btn btn-secondary"><span class="nav-arrow" aria-hidden="true">&larr;</span><span>Back</span></button>
             <h4 id="bbbHoleTitle" class="m-0"></h4>
-            <button id="nextHoleBtn" class="btn btn-secondary">Next &rarr;</button>
+            <button id="nextHoleBtn" class="btn btn-secondary"><span>Next</span><span class="nav-arrow" aria-hidden="true">&rarr;</span></button>
           </div>
         </div>
 

@@ -617,6 +617,19 @@ Drop this where you want the unified Wolf guide to appear
           <div class="col-6"><input class="form-control player" placeholder="Player 4"></div>
         </div>
 
+        <div class="row g-2 mb-3">
+          <div class="col-12 col-md-6">
+            <label class="small" for="wolfSelfPlayerSelect">Select Yourself</label>
+            <select id="wolfSelfPlayerSelect" class="form-select">
+              <option value="">Choose your player slot</option>
+              <option value="0">Player 1</option>
+              <option value="1">Player 2</option>
+              <option value="2">Player 3</option>
+              <option value="3">Player 4</option>
+            </select>
+          </div>
+        </div>
+
         <div class="game-options-card">
           <h3>Game Options</h3>
 
@@ -719,9 +732,9 @@ Drop this where you want the unified Wolf guide to appear
           <!-- Hole Nav -->
           <div class="card game-card p-3 mb-3 text-center" id="holeNavCard">
             <div class="d-flex justify-content-between align-items-center">
-              <button class="btn btn-secondary" type="button" onclick="prevHole()">&larr; Back</button>
+              <button class="btn btn-secondary" type="button" onclick="prevHole()"><span class="nav-arrow" aria-hidden="true">&larr;</span><span>Back</span></button>
               <h4 id="holeTitle" class="m-0"></h4>
-              <button class="btn btn-secondary" type="button" onclick="nextHole()">Next &rarr;</button>
+              <button class="btn btn-secondary" type="button" onclick="nextHole()"><span>Next</span><span class="nav-arrow" aria-hidden="true">&rarr;</span></button>
             </div>
           </div>
 

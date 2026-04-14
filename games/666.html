@@ -1,4 +1,4 @@
-<!doctype html>
+Ôªø<!doctype html>
 <html lang="en">
 
 <head>
@@ -170,6 +170,19 @@
         <div class="col-6"><input class="form-control player666" placeholder="Player 4"></div>
       </div>
 
+      <div class="row g-2 mb-3">
+        <div class="col-12 col-md-6">
+          <label class="small" for="sixesSelfPlayerSelect">Select Yourself</label>
+          <select id="sixesSelfPlayerSelect" class="form-select">
+            <option value="">Choose your player slot</option>
+            <option value="0">Player 1</option>
+            <option value="1">Player 2</option>
+            <option value="2">Player 3</option>
+            <option value="3">Player 4</option>
+          </select>
+        </div>
+      </div>
+
       <div class="row g-2">
         <div class="col-6">
           <label class="small">Points Per Player Per Hole</label>
@@ -207,12 +220,12 @@
         <!-- Hole Nav (SAME ID AS WOLF) -->
         <div class="card game-card p-3 mb-3 text-center" id="holeNavCard">
           <div class="d-flex justify-content-between align-items-center">
-            <button class="btn btn-secondary" id="prevHoleBtn">&larr; Back</button>
+            <button class="btn btn-secondary" id="prevHoleBtn"><span class="nav-arrow" aria-hidden="true">&larr;</span><span>Back</span></button>
             <div>
               <h4 id="holeTitle" class="m-0"></h4>
               <div class="small text-muted" id="formatLabel666"></div>
             </div>
-            <button class="btn btn-secondary" id="nextHoleBtn">Next &rarr;</button>
+            <button class="btn btn-secondary" id="nextHoleBtn"><span>Next</span><span class="nav-arrow" aria-hidden="true">&rarr;</span></button>
           </div>
         </div>
 
@@ -366,7 +379,7 @@
             </p>
 
             <p>
-              GoodFlightGolf is provided on an ìas isî and ìas availableî basis without guarantees of
+              GoodFlightGolf is provided on an ‚Äúas is‚Äù and ‚Äúas available‚Äù basis without guarantees of
               uninterrupted service, perfect accuracy, or error-free operation.
             </p>
 
@@ -425,7 +438,7 @@
         <p>You are responsible for providing accurate account information, maintaining the confidentiality of your login credentials, and all activity that occurs through your account. You agree not to impersonate others, create accounts using false information, or interfere with the security of the website.</p>
         <p>You agree not to misuse GoodFlightGolf. This includes attempting unauthorized access, disrupting services, exploiting bugs, uploading malicious code, scraping protected areas, interfering with other users, or using the site for unlawful purposes.</p>
         <p>Some features may allow you to save account information, scores, settings, or other submitted content. You are responsible for the accuracy of the information you provide. We may delete or restrict content that violates these Terms or threatens the integrity of the site.</p>
-        <p>GoodFlightGolf is provided on an ìas isî and ìas availableî basis. We do not guarantee uninterrupted access, accuracy, completeness, or error-free operation. Features may contain bugs, temporary outages, or inaccuracies.</p>
+        <p>GoodFlightGolf is provided on an ‚Äúas is‚Äù and ‚Äúas available‚Äù basis. We do not guarantee uninterrupted access, accuracy, completeness, or error-free operation. Features may contain bugs, temporary outages, or inaccuracies.</p>
         <p>To the fullest extent permitted by law, GoodFlightGolf and TrueBit Forge North LLC are not liable for any direct, indirect, incidental, special, consequential, or punitive damages arising from or related to your use of the website.</p>
         <p>All website content, branding, design elements, graphics, code, copy, and features on GoodFlightGolf are owned by or licensed to TrueBit Forge North LLC unless otherwise stated. You may not reproduce, distribute, or commercially exploit site materials without permission.</p>
         <p>GoodFlightGolf may use third-party tools, libraries, hosting providers, maps, analytics services, or authentication services. We are not responsible for outages, actions, or policies of third-party providers.</p>
@@ -478,7 +491,7 @@
       <!-- Footer Info -->
       <div class="gfg-footer-content">
         <p class="gfg-footer-copy">
-          © 2026 GoodFlightGolf. All rights reserved.
+          ¬© 2026 GoodFlightGolf. All rights reserved.
         </p>
 
         <p class="gfg-footer-ownership">

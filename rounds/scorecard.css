@@ -1,4 +1,4 @@
-.gfg-round-page .game-card {
+﻿.gfg-round-page .game-card {
   transition: none !important;
 }
 
@@ -104,6 +104,27 @@
 .gfg-round-page #holeNavCard button {
   padding: 10px 14px !important;
   font-size: .92rem !important;
+}
+
+.gfg-round-page #holeNavCard .d-flex {
+  gap: 12px !important;
+}
+
+.gfg-round-page #holeNavCard button,
+.gfg-round-page #prevHoleBtn,
+.gfg-round-page #nextHoleBtn {
+  width: 110px !important;
+  min-width: 110px !important;
+  min-height: 56px !important;
+  flex: 0 0 110px !important;
+  white-space: nowrap !important;
+}
+
+.gfg-round-page #holeNavCard .nav-arrow {
+  font-size: 1.08rem !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
 
 /* =========================================
@@ -461,7 +482,10 @@ body.fullscreen-active {
   }
 
   .gfg-round-page #selectionWrapper.fullscreen #holeNavCard button {
-    min-width: 84px;
+    width: 110px !important;
+    min-width: 110px !important;
+    min-height: 56px !important;
+    flex: 0 0 110px !important;
   }
 
   .gfg-round-page #selectionWrapper.fullscreen #scoreboardCard {

@@ -36,6 +36,7 @@ const blindWinPointsInput = document.getElementById("blindWinPoints");
 const blindLosePointsInput = document.getElementById("blindLosePoints");
 
 const tieSetPointsInput = document.getElementById("tieSetPoints");
+const selfPlayerSelect = document.getElementById("wolfSelfPlayerSelect");
 
 const potBanner = document.getElementById("potBanner");
 const potValue = document.getElementById("potValue");
@@ -76,6 +77,7 @@ let totals = [0, 0, 0, 0];
 let holes = {};
 let currentPot = 0;
 let currentWolfIndex = 0;
+let selectedSelfPlayerIndex = null;
 
 let pendingBirdieResult = null;
 let pendingBirdieMode = null;
@@ -115,6 +117,27 @@ function basePoints() {
 
 function teamSplitPoints() {
   return basePoints() / 2;
+}
+
+function getSelectedSelfPlayerIndex() {
+  const value = Number(selfPlayerSelect?.value);
+  return Number.isInteger(value) && value >= 0 && value < players.length ? value : null;
+}
+
+function syncSelfPlayerOptions() {
+  if (!selfPlayerSelect) return;
+
+  const previousValue = selfPlayerSelect.value;
+  selfPlayerSelect.innerHTML = `
+    <option value="">Choose your player slot</option>
+    ${players.map((player, idx) => `<option value="${idx}">${player || `Player ${idx + 1}`}</option>`).join("")}
+  `;
+
+  if (previousValue !== "" && Number(previousValue) < players.length) {
+    selfPlayerSelect.value = previousValue;
+  }
+
+  selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
 }
 
 function loneWinPoints() {
@@ -305,9 +328,14 @@ function finalizeBirdiePrompt(shouldDouble) {
 document.querySelectorAll(".player").forEach((input, idx) => {
   input.oninput = () => {
     players[idx] = input.value || `Player ${idx + 1}`;
+    syncSelfPlayerOptions();
     render();
     recalc();
   };
+});
+
+selfPlayerSelect?.addEventListener("change", () => {
+  selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
 });
 
 // =====================================================
@@ -775,6 +803,13 @@ function showResultsSummary() {
       return;
     }
 
+    selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
+    if (selectedSelfPlayerIndex === null) {
+      alert("Please select which player slot is yours before saving.");
+      selfPlayerSelect?.focus();
+      return;
+    }
+
     try {
       await firebase.firestore()
         .collection("users")
@@ -786,6 +821,9 @@ function showResultsSummary() {
           holes,
           totals,
           players,
+          trackedPlayerIndex: selectedSelfPlayerIndex,
+          trackedPlayerName: selectedSelfPlayerIndex !== null ? (players[selectedSelfPlayerIndex] || `Player ${selectedSelfPlayerIndex + 1}`) : null,
+          trackedUserUid: user.uid,
           base: toNumber(baseInput),
           dollarValue: toNumber(dollarValueInput),
           loneWinPoints: toNumber(loneWinPointsInput),
@@ -965,6 +1003,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // =====================================================
 
 syncToggleControlledInputs();
+syncSelfPlayerOptions();
 render();
 recalc();
 hideBirdiePrompt();

@@ -139,18 +139,37 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function getGameMoneyFromData(game) {
-    const totals = Array.isArray(game?.totals) ? game.totals : [];
-    const sumPoints = totals.reduce((sum, value) => sum + (Number(value) || 0), 0);
+    const points = getTrackedGamePoints(game);
 
     const type = normalizeGameType(game);
 
     if (type === "bbb") {
       const bet = Number(game?.bet) || 0;
-      return sumPoints * bet;
+      return points * bet;
     }
 
     const dollarValue = Number(game?.dollarValue) || 0;
-    return sumPoints * dollarValue;
+    return points * dollarValue;
+  }
+
+  function getTrackedPlayerIndex(game) {
+    const trackedIndex = Number(game?.trackedPlayerIndex);
+    if (Number.isInteger(trackedIndex) && trackedIndex >= 0) {
+      return trackedIndex;
+    }
+
+    return null;
+  }
+
+  function getTrackedGamePoints(game) {
+    const totals = Array.isArray(game?.totals) ? game.totals : [];
+    const trackedIndex = getTrackedPlayerIndex(game);
+
+    if (trackedIndex !== null && trackedIndex < totals.length) {
+      return Number(totals[trackedIndex]) || 0;
+    }
+
+    return totals.reduce((sum, value) => sum + (Number(value) || 0), 0);
   }
 
   function updateSummaryStats(rounds) {
@@ -355,9 +374,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const type = normalizeGameType(game);
       if (!totals[type]) return;
 
-      const points = Array.isArray(game?.totals)
-        ? game.totals.reduce((sum, value) => sum + (Number(value) || 0), 0)
-        : 0;
+      const points = getTrackedGamePoints(game);
 
       const money = getGameMoneyFromData(game);
 
@@ -401,7 +418,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const label = getGameLabel(game);
       const totals = Array.isArray(game?.totals) ? game.totals : [];
       const players = Array.isArray(game?.players) ? game.players : [];
-      const points = totals.reduce((sum, value) => sum + (Number(value) || 0), 0);
+      const points = getTrackedGamePoints(game);
       const money = getGameMoneyFromData(game);
 
       let extraLine = "";
