@@ -210,6 +210,56 @@ input[type="submit"] {
 .gfg-yellow {
   color: var(--yellow);
 }
+/* =========================================
+   LOCKER ROOM SCROLLABLE CARDS
+========================================= */
+
+#savedRoundsSection .card-body,
+#savedGameDataSection .card-body {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#savedRoundsList .card {
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+#savedRoundsList .card-body {
+  padding: 12px 14px;
+}
+
+#savedRoundsList h5 {
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+#savedRoundsList .text-muted.small {
+  font-size: 0.75rem;
+}
+
+#savedRoundsList .fw-bold {
+  font-size: 0.8rem;
+}
+
+#savedRoundsList .border {
+  padding: 6px;
+  border-radius: 8px;
+}
+
+#savedRoundsList .border .small {
+  font-size: 0.65rem;
+}
+
+#savedRoundsList .border .fw-bold {
+  font-size: 0.85rem;
+}
+
+.delete-round-btn {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+}
 
 /* =====================================================
    GAMES PAGE ICONS

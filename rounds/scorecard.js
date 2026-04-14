@@ -576,6 +576,14 @@ function updateScoreboard() {
 }
 
 function render() {
+  if (currentHole === 19) {
+    if (holeTitle) holeTitle.textContent = "19th Hole";
+    if (holeMeta) holeMeta.textContent = "Round Results";
+    if (nextHoleBtn) nextHoleBtn.textContent = "View Results";
+    updateScoreboard();
+    return;
+  }
+
   updateCourseModeUI();
   updateHoleMeta();
   updateCounters();
@@ -734,7 +742,7 @@ function showResultsSummary() {
   resultsCard.className = "card game-card p-4 mb-3";
   resultsCard.classList.remove("hidden");
   resultsCard.innerHTML = `
-    <h2 class="text-center mb-3">Round Complete!</h2>
+    <h2 class="text-center mb-3">🎉 19th Hole - Round Complete! 🎉</h2>
 
     <div class="row g-3 mb-3">
       <div class="col-6 col-md-3">
@@ -908,7 +916,12 @@ nextHoleBtn?.addEventListener("click", () => {
     currentHole += 1;
     hideResultsSummary();
     render();
-  } else {
+    return;
+  }
+
+  if (currentHole === 18) {
+    currentHole = 19;
+    render();
     showResultsSummary();
   }
 });
