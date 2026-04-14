@@ -231,17 +231,98 @@
 
 .round-finish-pill {
   height: 100%;
-  padding: 14px;
+  padding: 18px 14px;
   text-align: center;
-  border-radius: 18px;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
 }
 
 .round-feedback-card {
   background: linear-gradient(135deg, rgba(53, 148, 71, 0.06), rgba(250, 208, 46, 0.08));
   border: 1px solid rgba(53, 148, 71, 0.16);
+}
+
+.round-results-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px;
+  border: 1px solid rgba(53, 148, 71, 0.14);
+  box-shadow: 0 26px 60px rgba(15, 23, 42, 0.14);
+}
+
+.round-results-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 248, 0.94));
+}
+
+.round-results-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.round-results-confetti {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(255, 113, 155, 0.9) 0 4px, transparent 5px),
+    radial-gradient(circle at 24% 10%, rgba(78, 205, 255, 0.9) 0 4px, transparent 5px),
+    radial-gradient(circle at 38% 20%, rgba(165, 109, 255, 0.85) 0 4px, transparent 5px),
+    radial-gradient(circle at 54% 12%, rgba(255, 196, 61, 0.92) 0 4px, transparent 5px),
+    radial-gradient(circle at 68% 18%, rgba(116, 241, 102, 0.82) 0 4px, transparent 5px),
+    radial-gradient(circle at 82% 12%, rgba(255, 144, 54, 0.88) 0 4px, transparent 5px),
+    radial-gradient(circle at 92% 22%, rgba(255, 113, 155, 0.88) 0 4px, transparent 5px),
+    linear-gradient(120deg, transparent 0 18%, rgba(255, 196, 61, 0.9) 18% 20%, transparent 20% 100%),
+    linear-gradient(65deg, transparent 0 28%, rgba(78, 205, 255, 0.85) 28% 30%, transparent 30% 100%),
+    linear-gradient(145deg, transparent 0 40%, rgba(165, 109, 255, 0.8) 40% 42%, transparent 42% 100%),
+    linear-gradient(88deg, transparent 0 56%, rgba(116, 241, 102, 0.82) 56% 58%, transparent 58% 100%),
+    linear-gradient(110deg, transparent 0 72%, rgba(255, 144, 54, 0.82) 72% 74%, transparent 74% 100%);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.round-results-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  color: #0f172a;
+}
+
+.round-results-grid .round-finish-pill .small {
+  display: block;
+  margin-bottom: 8px;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.round-results-grid .round-finish-pill .fw-bold {
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  line-height: 1.35;
+  color: #111827;
+}
+
+.round-results-feedback {
+  text-align: left;
+  border-radius: 24px;
+  box-shadow: 0 16px 36px rgba(53, 148, 71, 0.10);
+}
+
+.round-results-actions {
+  align-items: center;
+  gap: 16px;
+}
+
+.round-results-card .gfg-pill-btn {
+  width: min(440px, 100%);
+  min-height: 56px;
+  font-size: 1rem;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.18);
 }
 
 .gfg-round-page #saveRoundStatus {
@@ -257,6 +338,17 @@
 }
 
 #feedbackInsights .insight-line:last-child {
+  border-bottom: none;
+}
+
+#resultsFeedbackInsights .insight-line {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  color: #374151;
+  line-height: 1.7;
+}
+
+#resultsFeedbackInsights .insight-line:last-child {
   border-bottom: none;
 }
 
@@ -374,6 +466,24 @@ body.fullscreen-active {
 
   .gfg-round-page #selectionWrapper.fullscreen #scoreboardCard {
     position: static !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .round-results-card {
+    padding: 0.85rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .round-results-card .gfg-pill-btn {
+    min-height: 52px !important;
+    padding: 12px 18px !important;
+    font-size: 0.98rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .round-results-title {
+    font-size: 1.85rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .round-results-grid .round-finish-pill .fw-bold {
+    font-size: 1rem !important;
   }
 }
 

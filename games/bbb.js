@@ -1,5 +1,5 @@
-// =====================================================
-// BBB — Bingo · Bango · Bongo (GoodFlight Games)
+﻿// =====================================================
+// BBB â€” Bingo Â· Bango Â· Bongo (GoodFlight Games)
 // Page-scoped IDs (BBB-specific) to avoid collisions
 // - Tracks Bingo/Bango/Bongo selections per hole
 // - Totals points per player
@@ -28,10 +28,10 @@ fullscreenBtn?.addEventListener("click", () => {
 
   if (selectionWrapper?.classList.contains("fullscreen")) {
     body.classList.add("no-scroll");
-    fullscreenBtn.innerText = "❌ Close Fullscreen";
+    fullscreenBtn.innerText = "Close Fullscreen";
   } else {
     body.classList.remove("no-scroll");
-    fullscreenBtn.innerText = "📱 Fullscreen Selection";
+    fullscreenBtn.innerText = "Fullscreen Selection";
   }
 });
 
@@ -94,7 +94,7 @@ document.querySelectorAll(".bbb-player").forEach((input, idx) => {
 // SELECT OPTIONS + BINDINGS
 // ---------------------------
 function buildSelectOptions() {
-  const base = `<option value="">—</option>`;
+  const base = `<option value="">â€”</option>`;
   const opts = players.map((_, i) => `<option value="${i}">${safeName(i)}</option>`).join("");
   const html = base + opts;
 
@@ -256,18 +256,18 @@ function showResultsSummary() {
   const maxMoney = Math.max(...netMoney);
 
   resultsCard.innerHTML = `
-    <h2>🎉 Game Over! 🎉</h2>
+    <h2>ðŸŽ‰ Game Over! ðŸŽ‰</h2>
     ${players.map((p, i) => `
       <div class="d-flex justify-content-center align-items-center my-2 fs-5">
-        <span>${p}: ${totals[i]} pts — ${(netMoney[i] >= 0 ? "+" : "-") + "$" + Math.abs(netMoney[i]).toFixed(2)}</span>
-        ${netMoney[i] === maxMoney ? '<span class="ms-2">🏆</span>' : ''}
+        <span>${p}: ${totals[i]} pts â€” ${(netMoney[i] >= 0 ? "+" : "-") + "$" + Math.abs(netMoney[i]).toFixed(2)}</span>
+        ${netMoney[i] === maxMoney ? '<span class="ms-2">ðŸ†</span>' : ''}
       </div>
     `).join("")}
 
     <div class="gfg-results-actions">
-      <a id="saveGameBtn" class="gfg-pill-btn">💾 Save Game Data</a>
-    <a href="goodflightgames.html" class="gfg-pill-btn">💸 Back to Games</a>
-      <a href="../index.html" class="gfg-pill-btn">🏠 Back to Home</a>
+      <a id="saveGameBtn" class="gfg-pill-btn">Save Game Data</a>
+      <a href="goodflightgames.html" class="gfg-pill-btn">Back to Games</a>
+      <a href="../index.html" class="gfg-pill-btn">Back to Home</a>
     </div>
   `;
 
@@ -300,7 +300,7 @@ function showResultsSummary() {
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-      alert("✅ BBB game saved!");
+      alert("âœ… BBB game saved!");
     } catch (err) {
       console.error(err);
       alert("Error saving BBB game.");
@@ -349,7 +349,7 @@ function loadGameData(data) {
 
     loadGameData(payload.data);
     sessionStorage.removeItem("gfg_savedGame");
-    alert("✅ Loaded saved BBB game!");
+    alert("âœ… Loaded saved BBB game!");
   } catch (e) {
     console.error("BBB Auto-load failed:", e);
   }
@@ -370,8 +370,8 @@ document.addEventListener("DOMContentLoaded", () => {
     <p><strong>Bingo</strong> = first on the green</p>
     <p><strong>Bango</strong> = closest to the pin</p>
     <p><strong>Bongo</strong> = first in the hole</p>
-    <p>Each pick is worth <strong>1 point</strong>. Money is <strong>points × bet</strong>.</p>
-    <p class="mb-0">Tip: You can leave any category blank (—) and fill it later.</p>
+    <p>Each pick is worth <strong>1 point</strong>. Money is <strong>points Ã— bet</strong>.</p>
+    <p class="mb-0">Tip: You can leave any category blank (â€”) and fill it later.</p>
   `;
 
   const open = () => {
@@ -418,3 +418,4 @@ recalc();
 
 // Expose for debugging
 window.GFG_BBB = { loadGameData };
+

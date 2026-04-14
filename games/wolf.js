@@ -1,4 +1,4 @@
-// =====================================================
+﻿// =====================================================
 // FULLSCREEN
 // =====================================================
 
@@ -12,10 +12,10 @@ fullscreenBtn?.addEventListener("click", () => {
 
   if (selectionWrapper?.classList.contains("fullscreen")) {
     body.classList.add("no-scroll");
-    fullscreenBtn.innerText = "❌ Close Fullscreen";
+    fullscreenBtn.innerText = "Close Fullscreen";
   } else {
     body.classList.remove("no-scroll");
-    fullscreenBtn.innerText = "📱 Fullscreen Selection";
+    fullscreenBtn.innerText = "Fullscreen Selection";
   }
 });
 
@@ -750,23 +750,19 @@ function showResultsSummary() {
   const maxMoney = Math.max(...netMoney);
 
   resultsCard.innerHTML = `
-    <h2>🎉 Game Over! 🎉</h2>
+    <h2>Game Over!</h2>
     ${players.map((p, i) => `
       <div class="d-flex justify-content-center align-items-center my-2 fs-5">
         <span>${p}: ${totals[i]} pts — <span id="finalMoney${i}">$0.00</span></span>
-        ${netMoney[i] === maxMoney ? '<span class="ms-2">🏆</span>' : ''}
+        ${netMoney[i] === maxMoney ? '<span class="ms-2">Winner</span>' : ''}
       </div>
     `).join("")}
-    <a id="saveGameBtn" class="gfg-pill-btn">💾 Save Game Data</a><br>
-    <a href="goodflightgames.html" class="gfg-pill-btn">💸 Back to Games</a>
-    <a href="../index.html" class="gfg-pill-btn" style="margin-top:10px;">🏠 Back to Home</a>
+    <div class="gfg-results-actions">
+      <a id="saveGameBtn" class="gfg-pill-btn">Save Game Data</a>
+      <a href="goodflightgames.html" class="gfg-pill-btn">Back to Games</a>
+      <a href="../index.html" class="gfg-pill-btn">Back to Home</a>
+    </div>
   `;
-
-  players.forEach((_, i) => {
-    const el = document.getElementById(`finalMoney${i}`);
-    animateMoney(el, 0, netMoney[i]);
-  });
-
   runConfetti();
 
   const saveBtn = document.getElementById("saveGameBtn");
@@ -807,7 +803,7 @@ function showResultsSummary() {
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-      alert("✅ Wolf game saved!");
+      alert("âœ… Wolf game saved!");
     } catch (err) {
       console.error(err);
       alert("Error saving Wolf game.");
@@ -869,7 +865,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (openBtn && modal && closeBtn && bodyEl) {
     bodyEl.innerHTML = `
-<h5 class="mt-2">🐺 Wolf Rules</h5>
+<h5 class="mt-2">ðŸº Wolf Rules</h5>
 
 <p>
   <strong>Wolf</strong> is a 4-player golf game played over 18 holes.
@@ -887,7 +883,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <h5 class="mt-4">How a Hole Works</h5>
 <ol>
   <li>All 4 players tee off.</li>
-  <li>After each other player’s drive, the Wolf decides whether to choose that player as a partner.</li>
+  <li>After each other playerâ€™s drive, the Wolf decides whether to choose that player as a partner.</li>
   <li>If the Wolf chooses a partner, the hole becomes <strong>2 vs 2</strong>.</li>
   <li>If the Wolf does not choose any partner, the Wolf plays alone in a <strong>1 vs 3</strong> format.</li>
 </ol>
@@ -972,3 +968,5 @@ syncToggleControlledInputs();
 render();
 recalc();
 hideBirdiePrompt();
+
+
