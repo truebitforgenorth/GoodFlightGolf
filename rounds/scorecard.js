@@ -802,14 +802,12 @@ function showResultsSummary() {
       </div>
     </div>
 
-    <div class="round-results-actions">
-      <p class="round-results-actions__title">What do you want to do with this round?</p>
-      <div class="round-results-actions__buttons">
-        <button id="resultsSaveRoundBtn" class="gfg-pill-btn round-results-btn" type="button">Save Round</button>
-        <button id="resultsStartNewRoundBtn" class="gfg-pill-btn round-results-btn" type="button">Start New Round</button>
-        <a href="../playerlog.html" class="gfg-pill-btn round-results-btn">Back to MyFlight</a>
-      </div>
-    </div>
+<div class="gfg-results-actions">
+  <a id="saveRoundBtn" class="gfg-pill-btn">💾 Save Round Data</a>
+  <a href="../playerlog.html" class="gfg-pill-btn">💸 Back to The LockerRoom</a>
+  <a href="../index.html" class="gfg-pill-btn">🏠 Back to Home</a>
+</div>
+<div id="saveRoundStatus" class="text-center mt-3 small"></div>
 
     <div id="resultsSaveRoundStatus" class="text-center mt-3 fw-bold"></div>
   `;
