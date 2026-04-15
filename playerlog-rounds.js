@@ -77,6 +77,32 @@ window.addEventListener("DOMContentLoaded", () => {
     return "Unknown time";
   }
 
+  function getDocTimeValue(value) {
+    try {
+      if (value?.toDate) return value.toDate().getTime();
+      if (typeof value?.seconds === "number") return value.seconds * 1000;
+      if (typeof value === "number") return value;
+    } catch (error) {
+      console.warn("Could not read timestamp value:", error);
+    }
+    return 0;
+  }
+
+  function getRoundSortValue(round) {
+    const explicitTime =
+      getDocTimeValue(round?.timestamp) ||
+      getDocTimeValue(round?.createdAt);
+
+    if (explicitTime) return explicitTime;
+
+    if (round?.roundDate) {
+      const parsed = new Date(`${round.roundDate}T00:00:00`).getTime();
+      if (!Number.isNaN(parsed)) return parsed;
+    }
+
+    return 0;
+  }
+
   function getHandicapPreview(rounds) {
     const diffs = rounds
       .map((round) =>
@@ -627,13 +653,13 @@ window.addEventListener("DOMContentLoaded", () => {
         .collection("users")
         .doc(uid)
         .collection("savedRounds")
-        .orderBy("roundDate", "desc")
         .get();
 
       allRounds = snap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data()
-      }));
+      }))
+      .sort((a, b) => getRoundSortValue(b) - getRoundSortValue(a));
 
       updateSummaryStats(allRounds);
       renderSavedRounds();

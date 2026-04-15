@@ -203,14 +203,14 @@
   border-bottom: none;
 }
 
-#resultsFeedbackInsights .insight-line {
+#roundResultsFeedbackInsights .insight-line {
   padding: 10px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   color: #374151;
   line-height: 1.7;
 }
 
-#resultsFeedbackInsights .insight-line:last-child {
+#roundResultsFeedbackInsights .insight-line:last-child {
   border-bottom: none;
 }
 

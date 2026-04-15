@@ -18,16 +18,16 @@ const gfgCourses = [
     holes: [
       { hole: 1, par: 5 },
       { hole: 2, par: 4 },
-      { hole: 3, par: 3 },
-      { hole: 4, par: 5 },
-      { hole: 5, par: 4 },
-      { hole: 6, par: 3 },
-      { hole: 7, par: 5 },
+      { hole: 3, par: 4 },
+      { hole: 4, par: 3 },
+      { hole: 5, par: 5 },
+      { hole: 6, par: 4 },
+      { hole: 7, par: 4 },
       { hole: 8, par: 4 },
-      { hole: 9, par: 4 },
+      { hole: 9, par: 3 },
       { hole: 10, par: 4 },
-      { hole: 11, par: 4 },
-      { hole: 12, par: 3 },
+      { hole: 11, par: 3 },
+      { hole: 12, par: 4 },
       { hole: 13, par: 5 },
       { hole: 14, par: 4 },
       { hole: 15, par: 3 },
@@ -199,6 +199,8 @@ const sumGir = $("sumGir");
 const sumCourseMeta = $("sumCourseMeta");
 
 const resultsCard = $("resultsCard");
+const roundResultsFeedbackCard = $("roundResultsFeedbackCard");
+const roundResultsFeedbackInsights = $("roundResultsFeedbackInsights");
 const holeSetupCard = $("holeSetupCard");
 const holeNavCard = $("holeNavCard");
 const scoreboardCard = $("scoreboardCard");
@@ -206,6 +208,7 @@ const scoreboardCard = $("scoreboardCard");
 let currentHole = 1;
 let currentCourseId = "oneka-ridge";
 let holes = {};
+let savedRoundDocId = null;
 
 function setRoundPrevButtonLabel() {
   if (!prevHoleBtn) return;
@@ -226,6 +229,17 @@ function setRoundNextButtonLabel(mode = "next") {
   }
 
   nextHoleBtn.innerHTML = `<span>Next</span><span class="nav-arrow" aria-hidden="true">&rarr;</span>`;
+}
+
+function syncFullscreenScrollLock() {
+  const fullscreen = selectionWrapper?.classList.contains("fullscreen");
+
+  if (!fullscreen) {
+    body.classList.remove("no-scroll");
+    return;
+  }
+
+  body.classList.add("no-scroll");
 }
 
 function createHoleData() {
@@ -315,12 +329,13 @@ fullscreenBtn?.addEventListener("click", () => {
   body.classList.toggle("fullscreen-active");
 
   if (selectionWrapper?.classList.contains("fullscreen")) {
-    body.classList.add("no-scroll");
     fullscreenBtn.innerText = "Close Fullscreen";
   } else {
     body.classList.remove("no-scroll");
     fullscreenBtn.innerText = "Fullscreen Selection";
   }
+
+  syncFullscreenScrollLock();
 });
 
 function populateCourseSelect() {
@@ -363,6 +378,7 @@ function updateCourseModeUI() {
 function resetRoundForCourse() {
   currentHole = 1;
   holes = {};
+  savedRoundDocId = null;
 
   allHoleNumbers().forEach(holeNumber => {
     holes[holeNumber] = createHoleData();
@@ -658,9 +674,18 @@ function hideResultsSummary() {
     selectionWrapper?.appendChild(resultsCard);
   }
 
+  if (roundResultsFeedbackCard) {
+    roundResultsFeedbackCard.classList.add("hidden");
+  }
+
+  if (roundResultsFeedbackInsights) {
+    roundResultsFeedbackInsights.innerHTML = "";
+  }
+
   if (holeSetupCard) holeSetupCard.style.display = "block";
   if (holeNavCard) holeNavCard.style.display = "block";
   if (scoreboardCard) scoreboardCard.style.display = "block";
+  syncFullscreenScrollLock();
 }
 
 async function saveRoundToAccount(statusEl) {
@@ -669,7 +694,12 @@ async function saveRoundToAccount(statusEl) {
   const user = firebase?.auth?.().currentUser;
   if (!user) {
     if (statusEl) statusEl.textContent = "Please log in to save your round.";
-    return;
+    return null;
+  }
+
+  if (savedRoundDocId) {
+    if (statusEl) statusEl.textContent = "Round already saved to your account.";
+    return savedRoundDocId;
   }
 
   const course = getCurrentCourse();
@@ -731,20 +761,24 @@ async function saveRoundToAccount(statusEl) {
         isActive: isHoleActive(holeNumber)
       };
     }),
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
   };
 
   try {
-    await firebase.firestore()
+    const docRef = await firebase.firestore()
       .collection("users")
       .doc(user.uid)
       .collection("savedRounds")
       .add(roundPayload);
 
+    savedRoundDocId = docRef.id;
     if (statusEl) statusEl.textContent = "Round saved to your account!";
+    return docRef.id;
   } catch (error) {
     console.error(error);
     if (statusEl) statusEl.textContent = "Error saving round.";
+    return null;
   }
 }
 
@@ -817,22 +851,26 @@ function showResultsSummary() {
 
         <div class="gfg-results-actions round-results-actions mb-4">
           <a id="resultsSaveRoundBtn" class="gfg-pill-btn">Save Round Data</a>
-          <a href="../playerlog.html" class="gfg-pill-btn">Back to Locker Room</a>
+          <a id="resultsBackToLockerRoomBtn" href="../playerlog.html" class="gfg-pill-btn">Back to Locker Room</a>
           <a href="../index.html" class="gfg-pill-btn">Back to Home</a>
         </div>
         <div id="resultsSaveRoundStatus" class="text-center mb-4 fw-bold"></div>
-
-        <div class="card p-3 gfg-finish-feedback round-results-feedback">
-          <h5 class="mb-2">Round Feedback</h5>
-          <div id="resultsFeedbackInsights">
-            ${insights.map((line) => `<div class="insight-line">${line}</div>`).join("")}
-          </div>
-        </div>
       </div>
     </div>
   `;
 
+  if (roundResultsFeedbackInsights) {
+    roundResultsFeedbackInsights.innerHTML = insights
+      .map((line) => `<div class="insight-line">${line}</div>`)
+      .join("");
+  }
+
+  if (roundResultsFeedbackCard) {
+    roundResultsFeedbackCard.classList.remove("hidden");
+  }
+
   const resultsSaveRoundBtn = document.getElementById("resultsSaveRoundBtn");
+  const resultsBackToLockerRoomBtn = document.getElementById("resultsBackToLockerRoomBtn");
   const resultsSaveRoundStatus = document.getElementById("resultsSaveRoundStatus");
 
   if (resultsSaveRoundStatus) resultsSaveRoundStatus.textContent = "";
@@ -843,7 +881,19 @@ function showResultsSummary() {
     };
   }
 
+  if (resultsBackToLockerRoomBtn) {
+    resultsBackToLockerRoomBtn.onclick = async (event) => {
+      event.preventDefault();
+
+      const saveResult = await saveRoundToAccount(resultsSaveRoundStatus);
+      if (!firebase?.auth?.().currentUser || saveResult) {
+        window.location.href = "../playerlog.html";
+      }
+    };
+  }
+
   runConfetti();
+  syncFullscreenScrollLock();
   resultsCard.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 courseSelect?.addEventListener("change", () => {
@@ -950,6 +1000,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   render();
+  syncFullscreenScrollLock();
 });
 
 
