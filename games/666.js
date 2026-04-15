@@ -51,6 +51,7 @@ const teamDisplay = document.getElementById("teamDisplay666");
 
 const holeSetupCard = document.getElementById("holeSetupCard");
 const holeNavCard = document.getElementById("holeNavCard");
+const scoreboardCard = document.getElementById("scoreboardCard");
 
 const prevHoleBtn = document.getElementById("prevHoleBtn");
 const nextHoleBtn = document.getElementById("nextHoleBtn");
@@ -324,7 +325,7 @@ function showResultsSummary() {
   if (!resultsCard) {
     resultsCard = document.createElement("div");
     resultsCard.id = "resultsCard666";
-    resultsCard.className = "card game-card p-4 mb-3 text-center";
+    resultsCard.className = "card game-card p-4 mb-3 text-center gfg-finish-card";
     selectionWrapper.appendChild(resultsCard);
   }
 
@@ -333,19 +334,31 @@ function showResultsSummary() {
   const maxMoney = Math.max(...netMoney);
 
   resultsCard.innerHTML = `
-    <h2>Game Over!</h2>
-    ${players.map((p, i) => `
-      <div class="d-flex justify-content-center align-items-center my-2 fs-5">
-        <span>${safeName(i)}: ${totals[i]} pts — <span id="finalMoney666_${i}">+$0.00</span></span>
-        ${netMoney[i] === maxMoney ? '<span class="ms-2">Winner</span>' : ''}
+    <div class="gfg-finish-shell">
+      <div class="gfg-finish-confetti" aria-hidden="true"></div>
+      <div class="gfg-finish-inner">
+        <h2 class="gfg-finish-title mb-2">&#127881; 19th Hole - Game Complete! &#127881;</h2>
+        <p class="gfg-finish-subtitle mb-4">Six-Six-Six</p>
+        <div class="row g-3 mb-4 gfg-finish-grid">
+          ${players.map((p, i) => `
+            <div class="col-6">
+              <div class="gfg-finish-pill">
+                <span class="gfg-finish-label">${safeName(i)}${netMoney[i] === maxMoney ? " Winner" : ""}</span>
+                <div class="gfg-finish-value">${totals[i]} pts</div>
+                <div class="gfg-finish-value" id="finalMoney666_${i}">+$0.00</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+        <div class="gfg-results-actions">
+          <a id="saveGameBtn" class="gfg-pill-btn">Save Game Data</a>
+          <a href="goodflightgames.html" class="gfg-pill-btn">Back to Games</a>
+          <a href="../index.html" class="gfg-pill-btn">Back to Home</a>
+        </div>
       </div>
-    `).join("")}
-    <div class="gfg-results-actions">
-      <a id="saveGameBtn" class="gfg-pill-btn">Save Game Data</a>
-      <a href="goodflightgames.html" class="gfg-pill-btn">Back to Games</a>
-      <a href="../index.html" class="gfg-pill-btn">Back to Home</a>
     </div>
   `;
+  resultsCard.style.display = "block";
   players.forEach((_, i) => {
     const el = document.getElementById(`finalMoney666_${i}`);
     if (el) animateMoney(el, 0, netMoney[i]);

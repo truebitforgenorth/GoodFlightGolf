@@ -1,61 +1,61 @@
 /* =========================================
    GAME CARD & BUTTONS
 ========================================= */
-.game-card {
+.wolf-page .game-card {
   transition: none !important;
 }
 
-.mode-group .btn.selected {
+.wolf-page .mode-group .btn.selected {
   color: white !important;
 }
 
-.mode-group .btn-outline-primary.selected {
+.wolf-page .mode-group .btn-outline-primary.selected {
   background: #0d6efd !important;
   border: #0d6efd !important;
 }
 
-.mode-group .btn-outline-danger.selected {
+.wolf-page .mode-group .btn-outline-danger.selected {
   background: #dc3545 !important;
   border: #dc3545 !important;
 }
 
-.mode-group .btn-outline-warning.selected {
+.wolf-page .mode-group .btn-outline-warning.selected {
   background: #ffc107 !important;
   border: #ffc107 !important;
   color: black !important;
 }
 
-.mode-group .btn-outline-dark.selected {
+.wolf-page .mode-group .btn-outline-dark.selected {
   background: #212529 !important;
   border: #212529 !important;
 }
 
-.team-win,
-.lone-win,
-.dump-win {
+.wolf-page .team-win,
+.wolf-page .lone-win,
+.wolf-page .dump-win {
   background: #359447 !important;
   color: white;
 }
 
-.team-lose,
-.lone-lose {
+.wolf-page .team-lose,
+.wolf-page .lone-lose {
   background: #d9534f !important;
   color: white;
 }
 
-.dump-lose {
+.wolf-page .dump-lose {
   background: #0f8992 !important;
   color: white;
 }
 
-.hidden {
+.wolf-page .hidden {
   display: none !important;
 }
 
 /* =========================================
    POT BANNER
 ========================================= */
-.pot-banner {
+.wolf-page .pot-banner {
   position: sticky;
   top: 0;
   z-index: 999;
@@ -69,7 +69,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, .25);
 }
 
-.pot-pop {
+.wolf-page .pot-pop {
   animation: potPop 600ms ease;
 }
 
@@ -91,83 +91,10 @@
   }
 }
 
-/* =========================================
-   FULLSCREEN LAYOUT
-========================================= */
-body.fullscreen-active #foot {
-  display: none !important;
-}
-
-#selectionWrapper.fullscreen {
-  position: fixed;
-  inset: 0;
-  z-index: 1050;
-  background: white;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  overflow: hidden;
-  margin: 0;
-  border-radius: 0;
-}
-
-#fullscreenContent {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-#scoreboardCard {
-  margin-top: auto;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-}
-
-/* =========================================
-   COMPACT FULLSCREEN FOR SMALL PHONES
-========================================= */
-@media (max-width: 480px) {
-  #selectionWrapper.fullscreen {
-    padding: 0.5rem;
-    font-size: 0.85rem;
-  }
-
-  #selectionWrapper.fullscreen .game-card {
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  #selectionWrapper.fullscreen input,
-  #selectionWrapper.fullscreen select,
-  #selectionWrapper.fullscreen button {
-    font-size: 1rem;
-    padding: 0.25rem 0.5rem;
-  }
-
-  #selectionWrapper.fullscreen h4 {
-    font-size: 1rem;
-  }
-
-  #selectionWrapper.fullscreen .fs-6 {
-    font-size: 0.9rem;
-  }
-
-  #selectionWrapper.fullscreen .d-flex .border {
-    padding: 0.25rem;
-  }
-
-  #selectionWrapper.fullscreen #potBanner {
-    font-size: 0.9rem;
-    padding: 6px 12px;
-  }
-}
-
 /* =====================================
    WOLF RULES MODAL STYLING
 ===================================== */
-#wolfRulesModal {
+.wolf-page #wolfRulesModal {
   position: fixed;
   inset: 0;
   background: rgba(23, 25, 39, 0.85);
@@ -179,11 +106,11 @@ body.fullscreen-active #foot {
   animation: fadeIn 0.25s ease-out;
 }
 
-#wolfRulesModal.hidden {
+.wolf-page #wolfRulesModal.hidden {
   display: none !important;
 }
 
-#wolfRulesModal .modal-content {
+.wolf-page #wolfRulesModal .modal-content {
   background: #171927;
   color: white;
   width: 95%;
@@ -197,35 +124,35 @@ body.fullscreen-active #foot {
   animation: slideUp 0.3s ease-out;
 }
 
-#wolfRulesModal h3 {
+.wolf-page #wolfRulesModal h3 {
   color: #FAD02E;
   font-weight: 700;
 }
 
-#wolfRulesModal h5 {
+.wolf-page #wolfRulesModal h5 {
   color: #FAD02E;
   margin-top: 1rem;
   font-weight: 600;
 }
 
-#wolfRulesModal ul {
+.wolf-page #wolfRulesModal ul {
   padding-left: 1.2rem;
 }
 
-#wolfRulesModal li {
+.wolf-page #wolfRulesModal li {
   margin-bottom: 6px;
 }
 
-#wolfRulesModal p {
+.wolf-page #wolfRulesModal p {
   opacity: 0.9;
 }
 
-#wolfRulesModal .btn-secondary {
+.wolf-page #wolfRulesModal .btn-secondary {
   background: #2a2d4a;
   border: none;
 }
 
-#wolfRulesModal .btn-secondary:hover {
+.wolf-page #wolfRulesModal .btn-secondary:hover {
   background: #359447;
 }
 
@@ -252,7 +179,7 @@ body.fullscreen-active #foot {
   }
 }
 
-#wolfRulesBtn {
+.wolf-page #wolfRulesBtn {
   background: #171927;
   color: #FAD02E;
   border: 2px solid #359447;
@@ -262,7 +189,7 @@ body.fullscreen-active #foot {
   transition: all 0.25s ease;
 }
 
-#wolfRulesBtn:hover {
+.wolf-page #wolfRulesBtn:hover {
   background: #22243a;
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
@@ -271,7 +198,7 @@ body.fullscreen-active #foot {
 /* =========================================
    Wolf Icon
 ========================================= */
-.wolf-hero-icon {
+.wolf-page .wolf-hero-icon {
   width: 300px;
   height: auto;
   object-fit: contain;
@@ -282,16 +209,16 @@ body.fullscreen-active #foot {
 /* =========================================
    Game Options Toggles
 ========================================= */
-.game-options-card {
+.wolf-page .game-options-card {
   margin-bottom: 1rem;
 }
 
-.game-options-card h3 {
+.wolf-page .game-options-card h3 {
   font-size: 1.1rem;
   margin-bottom: 0.75rem;
 }
 
-.option-row {
+.wolf-page .option-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -299,13 +226,13 @@ body.fullscreen-active #foot {
   gap: 12px;
 }
 
-.option-row label {
+.wolf-page .option-row label {
   margin: 0;
   font-weight: 600;
 }
 
 /* Toggle Switch */
-.switch {
+.wolf-page .switch {
   position: relative;
   display: inline-block;
   width: 48px;
@@ -313,13 +240,13 @@ body.fullscreen-active #foot {
   flex-shrink: 0;
 }
 
-.switch input {
+.wolf-page .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+.wolf-page .slider {
   position: absolute;
   cursor: pointer;
   inset: 0;
@@ -328,7 +255,7 @@ body.fullscreen-active #foot {
   border-radius: 24px;
 }
 
-.slider:before {
+.wolf-page .slider:before {
   position: absolute;
   content: "";
   height: 18px;
@@ -340,18 +267,18 @@ body.fullscreen-active #foot {
   border-radius: 50%;
 }
 
-input:checked + .slider {
+.wolf-page input:checked + .slider {
   background-color: #359447;
 }
 
-input:checked + .slider:before {
+.wolf-page input:checked + .slider:before {
   transform: translateX(24px);
 }
 
 /* =========================================
    Inline Birdie Question
 ========================================= */
-#birdieQuestionWrap {
+.wolf-page #birdieQuestionWrap {
   margin-top: 1rem;
   padding: 1rem;
   border: 1px solid rgba(0, 0, 0, 0.12);
@@ -359,17 +286,17 @@ input:checked + .slider:before {
   background: rgba(53, 148, 71, 0.06);
 }
 
-#birdieQuestionText {
+.wolf-page #birdieQuestionText {
   font-size: 1rem;
 }
 
-.birdie-question-buttons {
+.wolf-page .birdie-question-buttons {
   display: grid;
   gap: 0.75rem;
 }
 
-#birdieYes,
-#birdieNo {
+.wolf-page #birdieYes,
+.wolf-page #birdieNo {
   min-height: 44px;
 }
 

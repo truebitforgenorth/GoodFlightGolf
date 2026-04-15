@@ -3,6 +3,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const pgaNewsContainer = document.getElementById('pga-news');
+  if (!pgaNewsContainer) return;
 
   const apiKey = 'a1caf8725d194029aeb578342d287a1b';
   const url = `https://newsapi.org/v2/everything?q=pgatour OR golf&language=en&sortBy=publishedAt&pageSize=5&apiKey=${apiKey}`;
@@ -51,33 +52,4 @@ document.addEventListener('DOMContentLoaded', () => {
       displayError('Failed to load PGA news. Please try again later.');
     });
 });
-
-//ARTICLELIST scroll
-      (function () {
-        function setArticlesScroll() {
-          const leftCard = document.querySelector('.row > .col-md-6:first-child .card');
-          const rightCard = document.querySelector('#articles .card');
-          const rightCardBody = document.querySelector('#articles .card-body');
-          if (!leftCard || !rightCard || !rightCardBody) return;
-
-          // Total height of left card
-          const leftH = leftCard.getBoundingClientRect().height;
-
-          // Heights of right card header/footer (if any)
-          const rightHeader = document.querySelector('#articles .card-header');
-          const rightFooter = document.querySelector('#articles .card-footer');
-          const headerH = rightHeader ? rightHeader.getBoundingClientRect().height : 0;
-          const footerH = rightFooter ? rightFooter.getBoundingClientRect().height : 0;
-
-          // Compute body height to fill same card height and set it
-          const bodyH = Math.max(0, Math.floor(leftH - headerH - footerH - 2)); // 2px buffer
-          rightCardBody.style.maxHeight = bodyH + 'px';
-          rightCardBody.style.overflowY = 'auto';
-          rightCardBody.style.webkitOverflowScrolling = 'touch';
-        }
-
-        // Run after DOM ready and on resize
-        document.addEventListener('DOMContentLoaded', setArticlesScroll);
-        window.addEventListener('resize', setTimeout.bind(null, setArticlesScroll, 50));
-      })();
     

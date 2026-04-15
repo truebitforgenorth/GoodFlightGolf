@@ -191,7 +191,7 @@
 
             <div>
               <h4 id="holeTitle" class="m-0">Hole 1</h4>
-              <div class="small text-muted" id="holeMeta">Par 4</div>
+              <div class="small text-muted d-none" id="holeMeta"></div>
             </div>
 
             <button class="btn btn-secondary" id="nextHoleBtn" type="button"><span>Next</span><span class="nav-arrow" aria-hidden="true">&rarr;</span></button>
@@ -278,101 +278,89 @@
             </div>
           </div>
 
-          <div class="round-hole-summary mt-4" id="holeSummaryCard">
-            <h5 class="mb-3">Hole Summary</h5>
-            <div class="row g-2">
-              <div class="col-6 col-md-3">
-                <div class="round-stat-pill">
-                  <div class="round-stat-label">Par</div>
-                  <div class="round-stat-value" id="holeParValue">4</div>
-                </div>
-              </div>
+          <div class="round-summary-card mt-4" id="holeSummaryCard">
+            <h4 class="text-center fs-6 mb-2">Hole Summary</h4>
 
-              <div class="col-6 col-md-3">
-                <div class="round-stat-pill">
-                  <div class="round-stat-label">Result</div>
-                  <div class="round-stat-value" id="holeResultValue">Par</div>
-                </div>
+            <div class="round-summary-row">
+              <div class="round-summary-pill">
+                <div class="round-summary-pill-label">Par</div>
+                <div class="round-summary-pill-value" id="holeParValue">4</div>
               </div>
-
-              <div class="col-6 col-md-3">
-                <div class="round-stat-pill">
-                  <div class="round-stat-label">FIR</div>
-                  <div class="round-stat-value" id="holeFirValue">&mdash;</div>
-                </div>
+              <div class="round-summary-pill">
+                <div class="round-summary-pill-label">Result</div>
+                <div class="round-summary-pill-value" id="holeResultValue">Par</div>
               </div>
+            </div>
 
-              <div class="col-6 col-md-3">
-                <div class="round-stat-pill">
-                  <div class="round-stat-label">GIR</div>
-                  <div class="round-stat-value" id="holeGirValue">No</div>
-                </div>
+            <div class="round-summary-row">
+              <div class="round-summary-pill">
+                <div class="round-summary-pill-label">FIR</div>
+                <div class="round-summary-pill-value" id="holeFirValue">&mdash;</div>
               </div>
-
-              <div class="col-6 col-md-3">
-                <div class="round-stat-pill">
-                  <div class="round-stat-label">3-Putt</div>
-                  <div class="round-stat-value" id="holeThreePuttValue">No</div>
-                </div>
+              <div class="round-summary-pill">
+                <div class="round-summary-pill-label">GIR</div>
+                <div class="round-summary-pill-value" id="holeGirValue">No</div>
               </div>
+            </div>
 
-              <div class="col-6 col-md-3">
-                <div class="round-stat-pill">
-                  <div class="round-stat-label">Penalty</div>
-                  <div class="round-stat-value" id="holePenaltyValue">0</div>
-                </div>
+            <div class="round-summary-row">
+              <div class="round-summary-pill">
+                <div class="round-summary-pill-label">3-Putt</div>
+                <div class="round-summary-pill-value" id="holeThreePuttValue">No</div>
               </div>
-
-              <div class="col-6 col-md-3">
-                <div class="round-stat-pill">
-                  <div class="round-stat-label">Bunker</div>
-                  <div class="round-stat-value" id="holeBunkerValue">0</div>
-                </div>
+              <div class="round-summary-pill">
+                <div class="round-summary-pill-label">Penalty</div>
+                <div class="round-summary-pill-value" id="holePenaltyValue">0</div>
               </div>
+            </div>
 
-              <div class="col-6 col-md-3">
-                <div class="round-stat-pill">
-                  <div class="round-stat-label">Putts</div>
-                  <div class="round-stat-value" id="holePuttsSummaryValue">2</div>
-                </div>
+            <div class="round-summary-row">
+              <div class="round-summary-pill">
+                <div class="round-summary-pill-label">Bunker</div>
+                <div class="round-summary-pill-value" id="holeBunkerValue">0</div>
+              </div>
+              <div class="round-summary-pill">
+                <div class="round-summary-pill-label">Putts</div>
+                <div class="round-summary-pill-value" id="holePuttsSummaryValue">2</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="card game-card p-2" id="scoreboardCard">
+        <div class="card game-card p-2 round-summary-card" id="scoreboardCard">
           <h4 class="text-center fs-6 mb-1">Round Summary</h4>
+          <div id="sumCourseMeta" class="round-summary-meta">Oneka Ridge Golf Course - White Tees</div>
 
-          <div class="d-flex mb-1 text-center">
-            <div class="border rounded p-1 flex-fill me-1">
-              <div class="fw-bold fs-6">Thru</div>
-              <div id="sumThru" class="fs-6 fw-bold">1</div>
+          <div class="round-summary-row">
+            <div class="round-summary-pill">
+              <div class="round-summary-pill-label">Thru</div>
+              <div id="sumThru" class="round-summary-pill-value">1</div>
             </div>
-            <div class="border rounded p-1 flex-fill ms-1">
-              <div class="fw-bold fs-6">Total</div>
-              <div id="sumScore" class="fs-6 fw-bold">71</div>
+            <div class="round-summary-pill">
+              <div class="round-summary-pill-label">Total</div>
+              <div id="sumScore" class="round-summary-pill-value">71</div>
             </div>
           </div>
 
-          <div class="d-flex mb-1 text-center">
-            <div class="border rounded p-1 flex-fill me-1">
-              <div class="fw-bold fs-6">vs Par</div>
-              <div id="sumVsPar" class="fs-6 fw-bold">E</div>
+          <div class="round-summary-row">
+            <div class="round-summary-pill">
+              <div class="round-summary-pill-label">vs Par</div>
+              <div id="sumVsPar" class="round-summary-pill-value">E</div>
             </div>
-            <div class="border rounded p-1 flex-fill ms-1">
-              <div class="fw-bold fs-6">Putts</div>
-              <div id="sumPutts" class="fs-6 fw-bold">36</div>
+            <div class="round-summary-pill">
+              <div class="round-summary-pill-label">Putts</div>
+              <div id="sumPutts" class="round-summary-pill-value">36</div>
             </div>
           </div>
 
-          <div class="d-flex text-center">
-            <div class="border rounded p-1 flex-fill me-1">
-              <div class="fw-bold fs-6">FIR</div>
-              <div id="sumFir" class="fs-6 fw-bold">0%</div>
+          <div class="round-summary-row">
+            <div class="round-summary-pill">
+              <div class="round-summary-pill-label">FIR</div>
+              <div id="sumFir" class="round-summary-pill-value">0%</div>
             </div>
-            <div class="border rounded p-1 flex-fill ms-1">
-              <div class="fw-bold fs-6">GIR</div>
-              <div id="sumGir" class="fs-6 fw-bold">0%</div>
+            <div class="round-summary-pill">
+              <div class="round-summary-pill-label">GIR</div>
+              <div id="sumGir" class="round-summary-pill-value">0%</div>
             </div>
           </div>
         </div>

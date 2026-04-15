@@ -196,6 +196,7 @@ const sumVsPar = $("sumVsPar");
 const sumPutts = $("sumPutts");
 const sumFir = $("sumFir");
 const sumGir = $("sumGir");
+const sumCourseMeta = $("sumCourseMeta");
 
 const resultsCard = $("resultsCard");
 const holeSetupCard = $("holeSetupCard");
@@ -550,14 +551,8 @@ function updateCounters() {
 }
 
 function updateHoleMeta() {
-  const par = getHolePar();
-  const selectedTee = getSelectedTee();
-  const courseName = getCourseDisplayName();
-
   if (holeTitle) holeTitle.textContent = `Hole ${currentHole}`;
-  if (holeMeta) {
-    holeMeta.textContent = `${courseName} - ${selectedTee.name} Tees - Par ${par}`;
-  }
+  if (holeMeta) holeMeta.textContent = "";
 }
 
 function updateSelects() {
@@ -587,6 +582,8 @@ function updateHoleSummary() {
 
 function updateScoreboard() {
   const summary = getRoundSummary();
+  const selectedTee = getSelectedTee();
+  const courseName = getCourseDisplayName();
 
   if (sumThru) sumThru.textContent = summary.holesCounted;
   if (sumScore) sumScore.textContent = summary.totalStrokes;
@@ -594,6 +591,7 @@ function updateScoreboard() {
   if (sumPutts) sumPutts.textContent = summary.totalPutts;
   if (sumFir) sumFir.textContent = `${summary.firPct}%`;
   if (sumGir) sumGir.textContent = `${summary.girPct}%`;
+  if (sumCourseMeta) sumCourseMeta.textContent = `${courseName} - ${selectedTee.name} Tees`;
 }
 
 function render() {
@@ -762,80 +760,74 @@ function showResultsSummary() {
   if (!resultsCard) return;
 
   selectionWrapper?.appendChild(resultsCard);
-  resultsCard.className = "card game-card p-4 mb-3 text-center round-results-card";
+  resultsCard.className = "card game-card p-4 mb-3 text-center gfg-finish-card round-results-card";
   resultsCard.classList.remove("hidden");
   resultsCard.innerHTML = `
-    <div class="round-results-shell">
-      <div class="round-results-confetti" aria-hidden="true"></div>
+    <div class="gfg-finish-shell">
+      <div class="gfg-finish-confetti" aria-hidden="true"></div>
 
-      <div class="round-results-inner">
-        <h2 class="mb-3 round-results-title">&#127881; 19th Hole - Round Complete! &#127881;</h2>
+      <div class="gfg-finish-inner">
+        <h2 class="mb-2 gfg-finish-title">&#127881; 19th Hole - Round Complete! &#127881;</h2>
+        <p class="gfg-finish-subtitle mb-4">${courseName}</p>
 
-        <div class="row g-3 mb-4 round-results-grid">
-          <div class="col-6 col-md-3">
-            <div class="round-finish-pill">
-              <div class="small">Course</div>
-              <div class="fw-bold">${courseName}</div>
+        <div class="row g-3 mb-4 gfg-finish-grid round-results-grid">
+          <div class="col-6">
+            <div class="gfg-finish-pill">
+              <span class="gfg-finish-label">Total</span>
+              <div class="gfg-finish-value">${summary.totalStrokes}</div>
             </div>
           </div>
-          <div class="col-6 col-md-3">
-            <div class="round-finish-pill">
-              <div class="small">Score</div>
-              <div class="fw-bold">${summary.totalStrokes}</div>
+          <div class="col-6">
+            <div class="gfg-finish-pill">
+              <span class="gfg-finish-label">vs Par</span>
+              <div class="gfg-finish-value">${formatVsPar(summary.vsPar)}</div>
             </div>
           </div>
-          <div class="col-6 col-md-3">
-            <div class="round-finish-pill">
-              <div class="small">vs Par</div>
-              <div class="fw-bold">${formatVsPar(summary.vsPar)}</div>
+          <div class="col-6">
+            <div class="gfg-finish-pill">
+              <span class="gfg-finish-label">Putts</span>
+              <div class="gfg-finish-value">${summary.totalPutts}</div>
             </div>
           </div>
-          <div class="col-6 col-md-3">
-            <div class="round-finish-pill">
-              <div class="small">Putts</div>
-              <div class="fw-bold">${summary.totalPutts}</div>
+          <div class="col-6">
+            <div class="gfg-finish-pill">
+              <span class="gfg-finish-label">FIR</span>
+              <div class="gfg-finish-value">${summary.firHits}/${summary.firChances} (${summary.firPct}%)</div>
             </div>
           </div>
-          <div class="col-6 col-md-3">
-            <div class="round-finish-pill">
-              <div class="small">FIR</div>
-              <div class="fw-bold">${summary.firHits}/${summary.firChances} (${summary.firPct}%)</div>
+          <div class="col-6">
+            <div class="gfg-finish-pill">
+              <span class="gfg-finish-label">GIR</span>
+              <div class="gfg-finish-value">${summary.girHits}/${summary.holesCounted || 18} (${summary.girPct}%)</div>
             </div>
           </div>
-          <div class="col-6 col-md-3">
-            <div class="round-finish-pill">
-              <div class="small">GIR</div>
-              <div class="fw-bold">${summary.girHits}/${summary.holesCounted || 18} (${summary.girPct}%)</div>
+          <div class="col-6">
+            <div class="gfg-finish-pill">
+              <span class="gfg-finish-label">Penalty Strokes</span>
+              <div class="gfg-finish-value">${summary.penalties}</div>
             </div>
           </div>
-          <div class="col-6 col-md-3">
-            <div class="round-finish-pill">
-              <div class="small">Penalty Strokes</div>
-              <div class="fw-bold">${summary.penalties}</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-3">
-            <div class="round-finish-pill">
-              <div class="small">Bunker Shots</div>
-              <div class="fw-bold">${summary.bunkers}</div>
+          <div class="col-6">
+            <div class="gfg-finish-pill">
+              <span class="gfg-finish-label">Bunker Shots</span>
+              <div class="gfg-finish-value">${summary.bunkers}</div>
             </div>
           </div>
         </div>
 
-        <div class="card p-3 mb-4 round-feedback-card round-results-feedback">
+        <div class="gfg-results-actions round-results-actions mb-4">
+          <a id="resultsSaveRoundBtn" class="gfg-pill-btn">Save Round Data</a>
+          <a href="../playerlog.html" class="gfg-pill-btn">Back to Locker Room</a>
+          <a href="../index.html" class="gfg-pill-btn">Back to Home</a>
+        </div>
+        <div id="resultsSaveRoundStatus" class="text-center mb-4 fw-bold"></div>
+
+        <div class="card p-3 gfg-finish-feedback round-results-feedback">
           <h5 class="mb-2">Round Feedback</h5>
           <div id="resultsFeedbackInsights">
             ${insights.map((line) => `<div class="insight-line">${line}</div>`).join("")}
           </div>
         </div>
-
-        <div class="gfg-results-actions round-results-actions">
-          <a id="resultsSaveRoundBtn" class="gfg-pill-btn">Save Round Data</a>
-          <a href="../playerlog.html" class="gfg-pill-btn">Back to Locker Room</a>
-          <a href="../index.html" class="gfg-pill-btn">Back to Home</a>
-        </div>
-        <div id="saveRoundStatus" class="text-center mt-3 small"></div>
-        <div id="resultsSaveRoundStatus" class="text-center mt-3 fw-bold"></div>
       </div>
     </div>
   `;
