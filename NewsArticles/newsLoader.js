@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   const articles = [
     {
+      title: "Collin Morikawa's Back Injury: Recovery, Augusta Grit, and What's Next",
+      link: "collin-morikawa-back-injury-recovery-and-future.html",
+      summary:
+        "A sourced look at Morikawa's March 2026 back injury, his Masters return, and what his short-term PGA Tour outlook looks like."
+    },
+    {
       title: "Viktor Hovland's 2025 PGA Tour Season: Momentum and Major Promise",
       link: "viktor-hovland-2025-pga-tour-season.html",
       summary:

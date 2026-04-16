@@ -20,6 +20,11 @@ window.addEventListener("DOMContentLoaded", () => {
   const avgPuttsValue = document.getElementById("avgPuttsValue");
   const avgFirValue = document.getElementById("avgFirValue");
   const avgGirValue = document.getElementById("avgGirValue");
+  const shotPatternLoggedIn = document.getElementById("shotPatternLoggedIn");
+  const shotPatternSummary = document.getElementById("shotPatternSummary");
+  const shotPatternStatus = document.getElementById("shotPatternStatus");
+  const shotPatternChartCanvas = document.getElementById("shotPatternChart");
+  const shotPatternTabs = Array.from(document.querySelectorAll(".shot-pattern-tab"));
 
   const gameTotalsLoggedIn = document.getElementById("gameTotalsLoggedIn");
   const gamesPlayedLoggedIn = document.getElementById("gamesPlayedLoggedIn");
@@ -45,6 +50,8 @@ window.addEventListener("DOMContentLoaded", () => {
   let allGames = [];
   let roundsExpanded = false;
   let gamesExpanded = false;
+  let activeShotPatternView = "drive";
+  let shotPatternChartInstance = null;
 
   function formatVsPar(value) {
     if (value === 0) return "E";
@@ -135,6 +142,159 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     return 18;
+  }
+
+  function getShotPatternConfig(view, rounds) {
+    const driveConfig = {
+      title: "Driving Miss Pattern",
+      emptyLabel: "tracked drives",
+      labels: ["Missed Left", "Hit Fairway", "Missed Right", "Drive Bunker", "Penalty"],
+      keys: ["left", "fairway", "right", "bunker", "penalty"],
+      colors: ["#c85746", "#359447", "#d97706", "#7c3aed", "#1f2937"],
+      valueGetter: (hole) => String(hole?.drive || "").toLowerCase(),
+      ignoreValues: ["", "none"]
+    };
+
+    const approachConfig = {
+      title: "Approach Pattern",
+      emptyLabel: "tracked approaches",
+      labels: ["Left", "Hit Green", "Right", "Short", "Long", "Bunker"],
+      keys: ["left", "green", "right", "short", "long", "bunker"],
+      colors: ["#c85746", "#359447", "#d97706", "#0ea5e9", "#8b5cf6", "#1f2937"],
+      valueGetter: (hole) => String(hole?.approach || "").toLowerCase(),
+      ignoreValues: [""]
+    };
+
+    const config = view === "approach" ? approachConfig : driveConfig;
+    const counts = Object.fromEntries(config.keys.map((key) => [key, 0]));
+
+    rounds.forEach((round) => {
+      const holes = Array.isArray(round?.holes) ? round.holes : [];
+
+      holes.forEach((hole) => {
+        if (!hole || hole.isActive === false) return;
+
+        const value = config.valueGetter(hole);
+        if (config.ignoreValues.includes(value)) return;
+        if (!Object.prototype.hasOwnProperty.call(counts, value)) return;
+
+        counts[value] += 1;
+      });
+    });
+
+    const total = config.keys.reduce((sum, key) => sum + counts[key], 0);
+    const percentages = config.keys.map((key) =>
+      total ? Number(((counts[key] / total) * 100).toFixed(1)) : 0
+    );
+
+    const topKey = config.keys.reduce((bestKey, key) => {
+      if (!bestKey) return key;
+      return counts[key] > counts[bestKey] ? key : bestKey;
+    }, config.keys[0] || "");
+
+    return {
+      ...config,
+      counts,
+      total,
+      percentages,
+      topLabel: total ? config.labels[config.keys.indexOf(topKey)] : ""
+    };
+  }
+
+  function updateShotPatternTabState() {
+    shotPatternTabs.forEach((button) => {
+      const isActive = button.dataset.shotView === activeShotPatternView;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+  }
+
+  function renderShotPatternChart(rounds) {
+    if (!shotPatternChartCanvas || !shotPatternSummary || !shotPatternStatus) return;
+
+    updateShotPatternTabState();
+
+    if (typeof Chart === "undefined") {
+      shotPatternSummary.textContent = "Chart library unavailable.";
+      shotPatternStatus.textContent = "Chart.js did not load on this page.";
+      return;
+    }
+
+    const config = getShotPatternConfig(activeShotPatternView, rounds);
+
+    if (shotPatternChartInstance) {
+      shotPatternChartInstance.destroy();
+      shotPatternChartInstance = null;
+    }
+
+    if (!config.total) {
+      shotPatternSummary.textContent = `No ${config.emptyLabel} yet.`;
+      shotPatternStatus.textContent = `Save rounds with ${activeShotPatternView === "drive" ? "drive" : "approach"} results to build this chart.`;
+    } else {
+      shotPatternSummary.textContent =
+        `${config.title} - ${config.total} ${config.emptyLabel} across ${rounds.length} saved round${rounds.length === 1 ? "" : "s"}.`;
+      shotPatternStatus.textContent =
+        `${config.topLabel} is currently your most common ${activeShotPatternView === "drive" ? "driving" : "approach"} outcome.`;
+    }
+
+    const ctx = shotPatternChartCanvas.getContext("2d");
+    shotPatternChartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: config.labels,
+        datasets: [
+          {
+            label: "% of tracked shots",
+            data: config.percentages,
+            backgroundColor: config.colors,
+            borderRadius: 12,
+            borderSkipped: false,
+            maxBarThickness: 56
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label(context) {
+                const idx = context.dataIndex;
+                const key = config.keys[idx];
+                const count = config.counts[key] || 0;
+                const pct = config.percentages[idx] || 0;
+                return `${count} shot${count === 1 ? "" : "s"} (${pct}%)`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              callback(value) {
+                return `${value}%`;
+              }
+            },
+            title: {
+              display: true,
+              text: "Percentage"
+            }
+          },
+          x: {
+            ticks: {
+              maxRotation: 0,
+              autoSkip: false
+            }
+          }
+        }
+      }
+    });
   }
 
   function escapeHtml(value) {
@@ -580,6 +740,7 @@ window.addEventListener("DOMContentLoaded", () => {
           updateSummaryStats(allRounds);
           renderSavedRounds();
           renderCourseData(allRounds);
+          renderShotPatternChart(allRounds);
         } catch (error) {
           console.error("Error deleting round:", error);
           window.alert("There was an error deleting that round.");
@@ -664,6 +825,7 @@ window.addEventListener("DOMContentLoaded", () => {
       updateSummaryStats(allRounds);
       renderSavedRounds();
       renderCourseData(allRounds);
+      renderShotPatternChart(allRounds);
     } catch (error) {
       console.error("Error loading saved rounds:", error);
 
@@ -723,6 +885,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     if (savedRoundsLoggedIn) savedRoundsLoggedIn.classList.toggle("d-none", !loggedIn);
     if (courseDataLoggedIn) courseDataLoggedIn.classList.toggle("d-none", !loggedIn);
+    if (shotPatternLoggedIn) shotPatternLoggedIn.classList.toggle("d-none", !loggedIn);
     if (loginToUsePlayerData) loginToUsePlayerData.classList.toggle("d-none", loggedIn);
     if (playerDataShell) playerDataShell.classList.toggle("is-locked", !loggedIn);
   }
@@ -767,6 +930,7 @@ window.addEventListener("DOMContentLoaded", () => {
         updateSummaryStats([]);
         renderSavedRounds();
         renderCourseData([]);
+        renderShotPatternChart([]);
         resetGameDisplays();
         return;
       }
@@ -777,4 +941,14 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   initPlayerLogRounds();
+
+  shotPatternTabs.forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextView = button.dataset.shotView;
+      if (!nextView || nextView === activeShotPatternView) return;
+
+      activeShotPatternView = nextView;
+      renderShotPatternChart(allRounds);
+    });
+  });
 });

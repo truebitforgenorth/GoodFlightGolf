@@ -310,6 +310,42 @@
                     </div>
                 </div>
 
+                <div class="row g-4 mt-1">
+                    <div class="col-12">
+                        <section id="shotPatternSection">
+                            <div class="card">
+                                <div class="card-header">📊 Shot Pattern Trends</div>
+                                <div class="card-body">
+                                    <div id="shotPatternLoggedIn" class="d-none">
+                                        <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
+                                            <button type="button" class="gfg-pill-btn shot-pattern-tab is-active"
+                                                data-shot-view="drive">
+                                                Driving
+                                            </button>
+                                            <button type="button" class="gfg-pill-btn shot-pattern-tab"
+                                                data-shot-view="approach">
+                                                Approach
+                                            </button>
+                                        </div>
+
+                                        <p id="shotPatternSummary" class="text-center text-muted mb-3">
+                                            Save rounds to build your shot pattern chart.
+                                        </p>
+
+                                        <div class="shot-pattern-canvas-wrap">
+                                            <canvas id="shotPatternChart" height="120"></canvas>
+                                        </div>
+
+                                        <p id="shotPatternStatus" class="text-center small text-muted mt-3 mb-0">
+                                            Driving and approach charts are built from the hole-by-hole results saved in your rounds.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
                 <div id="loginToUsePlayerData" class="gfg-lock-overlay">
                     <div class="gfg-lock-card">
                         <div class="gfg-lock-icon">🔒</div>

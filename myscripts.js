@@ -1,37 +1,32 @@
-// Main login (global) — SAFE on all pages
+// Main login (global) - safe on all pages
 
 window.addEventListener("DOMContentLoaded", () => {
-  // EmailJS init (only if loaded)
   try {
     if (window.emailjs) emailjs.init("CJRVHaDVYa2VCU89T");
-  } catch (e) {
-    console.warn("EmailJS init skipped:", e);
+  } catch (error) {
+    console.warn("EmailJS init skipped:", error);
   }
 
   console.log("Firebase:", firebase);
 
-// --- Firebase init (ONE place for entire site) ---
-const firebaseConfig = {
-  apiKey: "AIzaSyAnfVHRG6zXhUHURD8-z_7Wiwy2pO4qxF8",
-  authDomain: "fairway-fusion-3a4d4.firebaseapp.com",
-  projectId: "fairway-fusion-3a4d4",
-  storageBucket: "fairway-fusion-3a4d4.appspot.com",
-  messagingSenderId: "161862648502",
-  appId: "1:161862648502:web:3d59d3f6a8930197c26b16"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyAnfVHRG6zXhUHURD8-z_7Wiwy2pO4qxF8",
+    authDomain: "fairway-fusion-3a4d4.firebaseapp.com",
+    projectId: "fairway-fusion-3a4d4",
+    storageBucket: "fairway-fusion-3a4d4.appspot.com",
+    messagingSenderId: "161862648502",
+    appId: "1:161862648502:web:3d59d3f6a8930197c26b16"
+  };
 
-// Prevent "Firebase App named '[DEFAULT]' already exists"
-if (!firebase.apps || !firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+  if (!firebase.apps || !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
 
-// Optional: expose db globally if your pages use it
-window.db = firebase.firestore();
+  window.db = firebase.firestore();
 
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // DOM Elements (may not exist on every page)
   const loginBtn = document.getElementById("loginBtn");
   const signupBtn = document.getElementById("signupBtn");
   const logoutBtn = document.getElementById("logoutBtn");
@@ -42,72 +37,124 @@ window.db = firebase.firestore();
   const loginMessageEl = document.getElementById("loginMessage");
   const signupMessageEl = document.getElementById("signupMessage");
 
-  // Bootstrap modal (only if exists on page)
+  function setAuthMessage(el, message = "", type = "") {
+    if (!el) return;
+
+    el.textContent = message;
+    el.classList.remove("gfg-auth-message", "is-error", "is-success");
+
+    if (!message) return;
+
+    el.classList.add("gfg-auth-message");
+    el.classList.add(type === "success" ? "is-success" : "is-error");
+  }
+
+  function getAuthToastHost() {
+    let host = document.getElementById("gfgAuthToastHost");
+
+    if (!host) {
+      host = document.createElement("div");
+      host.id = "gfgAuthToastHost";
+      host.className = "gfg-auth-toast-host";
+      document.body.appendChild(host);
+    }
+
+    return host;
+  }
+
+  function showAuthToast(message, type = "success") {
+    if (!message) return;
+
+    const host = getAuthToastHost();
+    const toast = document.createElement("div");
+    toast.className = `gfg-auth-toast gfg-auth-toast--${type}`;
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    toast.textContent = message;
+
+    host.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.classList.add("is-visible");
+    });
+
+    window.setTimeout(() => {
+      toast.classList.remove("is-visible");
+      window.setTimeout(() => toast.remove(), 260);
+    }, 2800);
+  }
+
+  async function getDisplayNameForUser(user) {
+    if (!user) return "Golfer";
+
+    let displayName = user.email || "Golfer";
+
+    try {
+      const doc = await db.collection("users").doc(user.uid).get();
+      if (doc.exists && doc.data().username) {
+        displayName = doc.data().username;
+      }
+    } catch (error) {
+      console.error("Error getting username:", error);
+    }
+
+    return displayName;
+  }
+
   let authModal = null;
   const authModalEl = document.getElementById("authModal");
   if (authModalEl && window.bootstrap) {
     authModal = new bootstrap.Modal(authModalEl);
   }
 
-  // -----------------------------
-  // LOGIN
-  // -----------------------------
   if (loginBtn) {
-    loginBtn.addEventListener("click", () => {
+    loginBtn.addEventListener("click", async () => {
       const emailEl = document.getElementById("loginEmail");
       const passEl = document.getElementById("loginPassword");
 
       const email = emailEl ? emailEl.value : "";
       const password = passEl ? passEl.value : "";
 
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          if (loginMessageEl) loginMessageEl.textContent = "";
-          if (authModal) authModal.hide();
-        })
-        .catch(err => {
-          if (loginMessageEl) loginMessageEl.textContent = err.message;
-          else alert(err.message);
-        });
+      try {
+        const cred = await auth.signInWithEmailAndPassword(email, password);
+        const displayName = await getDisplayNameForUser(cred.user);
+
+        setAuthMessage(loginMessageEl, "Welcome back. You are logged in.", "success");
+        if (authModal) authModal.hide();
+        showAuthToast(`Welcome back, ${displayName}!`);
+      } catch (error) {
+        setAuthMessage(loginMessageEl, error.message, "error");
+        if (!loginMessageEl) alert(error.message);
+      }
     });
   }
 
-// -----------------------------
-// SIGNUP
-// -----------------------------
-if (signupBtn) {
-  signupBtn.addEventListener("click", () => {
+  if (signupBtn) {
+    signupBtn.addEventListener("click", async () => {
+      const usernameInput = document.getElementById("signupUsername");
+      const emailEl = document.getElementById("signupEmail");
+      const passEl = document.getElementById("signupPassword");
+      const tosCheckbox = document.getElementById("signupTosCheckbox");
 
-    const usernameInput = document.getElementById("signupUsername");
-    const emailEl = document.getElementById("signupEmail");
-    const passEl = document.getElementById("signupPassword");
-    const tosCheckbox = document.getElementById("signupTosCheckbox");
+      const email = emailEl ? emailEl.value : "";
+      const password = passEl ? passEl.value : "";
+      const username = usernameInput ? usernameInput.value.trim() : "";
 
-    const email = emailEl ? emailEl.value : "";
-    const password = passEl ? passEl.value : "";
-    const username = usernameInput ? usernameInput.value.trim() : "";
-
-    // Require username if field exists
-    if (usernameInput && !username) {
-      if (signupMessageEl) signupMessageEl.textContent = "Please enter a username.";
-      return;
-    }
-
-    // 🚨 Require Terms agreement
-    if (!tosCheckbox || !tosCheckbox.checked) {
-      if (signupMessageEl) {
-        signupMessageEl.textContent = "You must agree to the Terms of Service before creating an account.";
+      if (usernameInput && !username) {
+        setAuthMessage(signupMessageEl, "Please enter a username.", "error");
+        return;
       }
-      return;
-    }
 
-    auth.createUserWithEmailAndPassword(email, password)
-      .then((cred) => {
+      if (!tosCheckbox || !tosCheckbox.checked) {
+        setAuthMessage(signupMessageEl, "You must agree to the Terms of Service before creating an account.", "error");
+        return;
+      }
 
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
         const nameToSave = username || email;
 
-        // 🔐 Save user + legal agreement
-        return db.collection("users").doc(cred.user.uid).set({
+        await db.collection("users").doc(cred.user.uid).set({
           username: nameToSave,
           tosAccepted: true,
           privacyAccepted: true,
@@ -115,43 +162,32 @@ if (signupBtn) {
           legalVersion: "2026-03-15",
           legalAcceptedAt: new Date().toISOString()
         });
-      })
-      .then(() => {
 
-        // 📧 Send welcome email (GOODFLIGHTGOLF fixed)
         if (window.emailjs) {
-          return emailjs.send("service_6j5b7jm", "template_gtko0rj", {
+          await emailjs.send("service_6j5b7jm", "template_gtko0rj", {
             to_email: email,
-            to_name: username || email,
+            to_name: nameToSave,
             site_name: "GoodFlightGolf"
           });
         }
-      })
-      .then(() => {
-        if (signupMessageEl) signupMessageEl.textContent = "";
-        if (authModal) authModal.hide();
-      })
-      .catch(err => {
-        if (signupMessageEl) signupMessageEl.textContent = err.message;
-        else alert(err.message);
-        console.error("Signup error:", err);
-      });
-  });
-}
 
-  // -----------------------------
-  // LOGOUT
-  // -----------------------------
+        setAuthMessage(signupMessageEl, "Account created successfully.", "success");
+        if (authModal) authModal.hide();
+        showAuthToast(`Congrats, ${nameToSave}! Your account is ready.`);
+      } catch (error) {
+        setAuthMessage(signupMessageEl, error.message, "error");
+        if (!signupMessageEl) alert(error.message);
+        console.error("Signup error:", error);
+      }
+    });
+  }
+
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => auth.signOut());
   }
 
-  // -----------------------------
-  // AUTH STATE (ONE LISTENER)
-  // -----------------------------
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
-      // Logged out UI
       if (userEmail) {
         userEmail.textContent = "";
         userEmail.classList.add("d-none");
@@ -166,17 +202,7 @@ if (signupBtn) {
       return;
     }
 
-    // Logged in UI
-    let displayName = user.email;
-
-    try {
-      const doc = await db.collection("users").doc(user.uid).get();
-      if (doc.exists && doc.data().username) {
-        displayName = doc.data().username;
-      }
-    } catch (err) {
-      console.error("Error getting username:", err);
-    }
+    const displayName = await getDisplayNameForUser(user);
 
     if (userEmail) {
       userEmail.textContent = displayName;
@@ -192,16 +218,13 @@ if (signupBtn) {
   });
 });
 
+const mybutton = document.getElementById("btn-back-to-top");
 
+window.addEventListener("scroll", () => {
+  if (!mybutton) return;
+  mybutton.style.display = document.documentElement.scrollTop > 300 ? "flex" : "none";
+});
 
-// Back to top
-    const mybutton = document.getElementById("btn-back-to-top");
-
-    window.addEventListener("scroll", () => {
-      if (!mybutton) return;
-      mybutton.style.display = (document.documentElement.scrollTop > 300) ? "flex" : "none";
-    });
-
-    mybutton?.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+mybutton?.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
