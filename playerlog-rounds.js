@@ -241,8 +241,41 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     const ctx = shotPatternChartCanvas.getContext("2d");
+    const valueLabelPlugin = {
+      id: "shotPatternValueLabels",
+      afterDatasetsDraw(chart) {
+        const { ctx: chartCtx } = chart;
+        const meta = chart.getDatasetMeta(0);
+
+        chartCtx.save();
+        chartCtx.textAlign = "center";
+        chartCtx.textBaseline = "middle";
+        chartCtx.font = `${isMobileChart ? "700 10px" : "700 12px"} Poppins, sans-serif`;
+
+        meta.data.forEach((bar, index) => {
+          const value = config.percentages[index] || 0;
+          if (!value) return;
+
+          const x = bar.x;
+          let y = bar.y + 14;
+          let fill = "#ffffff";
+
+          if (value < 8) {
+            y = bar.y - 10;
+            fill = "#1f2937";
+          }
+
+          chartCtx.fillStyle = fill;
+          chartCtx.fillText(`${value}%`, x, y);
+        });
+
+        chartCtx.restore();
+      }
+    };
+
     shotPatternChartInstance = new Chart(ctx, {
       type: "bar",
+      plugins: [valueLabelPlugin],
       data: {
         labels: config.chartLabels || config.labels,
         datasets: [
