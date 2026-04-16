@@ -149,6 +149,7 @@ window.addEventListener("DOMContentLoaded", () => {
       title: "Driving Miss Pattern",
       emptyLabel: "tracked drives",
       labels: ["Missed Left", "Hit Fairway", "Missed Right", "Drive Bunker", "Penalty"],
+      chartLabels: [["Missed", "Left"], ["Hit", "Fairway"], ["Missed", "Right"], ["Drive", "Bunker"], "Penalty"],
       keys: ["left", "fairway", "right", "bunker", "penalty"],
       colors: ["#c85746", "#359447", "#d97706", "#7c3aed", "#1f2937"],
       valueGetter: (hole) => String(hole?.drive || "").toLowerCase(),
@@ -159,6 +160,7 @@ window.addEventListener("DOMContentLoaded", () => {
       title: "Approach Pattern",
       emptyLabel: "tracked approaches",
       labels: ["Left", "Hit Green", "Right", "Short", "Long", "Bunker"],
+      chartLabels: ["Left", ["Hit", "Green"], "Right", "Short", "Long", "Bunker"],
       keys: ["left", "green", "right", "short", "long", "bunker"],
       colors: ["#c85746", "#359447", "#d97706", "#0ea5e9", "#8b5cf6", "#1f2937"],
       valueGetter: (hole) => String(hole?.approach || "").toLowerCase(),
@@ -221,6 +223,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     const config = getShotPatternConfig(activeShotPatternView, rounds);
+    const isMobileChart = window.innerWidth <= 767;
 
     if (shotPatternChartInstance) {
       shotPatternChartInstance.destroy();
@@ -241,7 +244,7 @@ window.addEventListener("DOMContentLoaded", () => {
     shotPatternChartInstance = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: config.labels,
+        labels: config.chartLabels || config.labels,
         datasets: [
           {
             label: "% of tracked shots",
@@ -249,19 +252,29 @@ window.addEventListener("DOMContentLoaded", () => {
             backgroundColor: config.colors,
             borderRadius: 12,
             borderSkipped: false,
-            maxBarThickness: 56
+            maxBarThickness: isMobileChart ? 38 : 56
           }
         ]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: !isMobileChart,
         plugins: {
           legend: {
             display: false
           },
           tooltip: {
+            titleFont: {
+              size: isMobileChart ? 12 : 14
+            },
+            bodyFont: {
+              size: isMobileChart ? 12 : 13
+            },
             callbacks: {
+              title(items) {
+                const idx = items?.[0]?.dataIndex ?? 0;
+                return config.labels[idx] || "";
+              },
               label(context) {
                 const idx = context.dataIndex;
                 const key = config.keys[idx];
@@ -277,19 +290,29 @@ window.addEventListener("DOMContentLoaded", () => {
             beginAtZero: true,
             max: 100,
             ticks: {
+              font: {
+                size: isMobileChart ? 10 : 12
+              },
               callback(value) {
                 return `${value}%`;
               }
             },
             title: {
               display: true,
-              text: "Percentage"
+              text: "Percentage",
+              font: {
+                size: isMobileChart ? 11 : 12
+              }
             }
           },
           x: {
             ticks: {
               maxRotation: 0,
-              autoSkip: false
+              autoSkip: false,
+              font: {
+                size: isMobileChart ? 10 : 12
+              },
+              padding: isMobileChart ? 6 : 8
             }
           }
         }
@@ -950,5 +973,13 @@ window.addEventListener("DOMContentLoaded", () => {
       activeShotPatternView = nextView;
       renderShotPatternChart(allRounds);
     });
+  });
+
+  let shotPatternResizeTimeout = null;
+  window.addEventListener("resize", () => {
+    window.clearTimeout(shotPatternResizeTimeout);
+    shotPatternResizeTimeout = window.setTimeout(() => {
+      renderShotPatternChart(allRounds);
+    }, 120);
   });
 });

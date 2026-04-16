@@ -316,6 +316,26 @@ input[type="submit"] {
   line-height: 1.5;
 }
 
+@media (max-width: 767px) {
+  #shotPatternSection .card-body {
+    padding: 1rem;
+  }
+
+  .shot-pattern-canvas-wrap {
+    padding: 10px;
+    border-radius: 16px;
+  }
+
+  #shotPatternChart {
+    max-height: none;
+    height: 280px !important;
+  }
+
+  .shot-pattern-tab {
+    min-width: 120px;
+  }
+}
+
 /* =====================================================
    GAMES PAGE ICONS
 ===================================================== */
