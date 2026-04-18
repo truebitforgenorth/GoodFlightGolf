@@ -25,6 +25,10 @@ window.addEventListener("DOMContentLoaded", () => {
   const shotPatternStatus = document.getElementById("shotPatternStatus");
   const shotPatternChartCanvas = document.getElementById("shotPatternChart");
   const shotPatternTabs = Array.from(document.querySelectorAll(".shot-pattern-tab"));
+  const firGirTrendLoggedIn = document.getElementById("firGirTrendLoggedIn");
+  const firGirTrendSummary = document.getElementById("firGirTrendSummary");
+  const firGirTrendStatus = document.getElementById("firGirTrendStatus");
+  const firGirTrendChartCanvas = document.getElementById("firGirTrendChart");
 
   const gameTotalsLoggedIn = document.getElementById("gameTotalsLoggedIn");
   const gamesPlayedLoggedIn = document.getElementById("gamesPlayedLoggedIn");
@@ -52,6 +56,8 @@ window.addEventListener("DOMContentLoaded", () => {
   let gamesExpanded = false;
   let activeShotPatternView = "drive";
   let shotPatternChartInstance = null;
+  let firGirTrendChartInstance = null;
+  let shotPatternResizeTimeout = null;
 
   function formatVsPar(value) {
     if (value === 0) return "E";
@@ -315,7 +321,7 @@ window.addEventListener("DOMContentLoaded", () => {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: !isMobileChart,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             display: false
@@ -402,6 +408,13 @@ window.addEventListener("DOMContentLoaded", () => {
     if (type === "666") return "Six-Six-Six";
     if (type === "bbb") return "Bingo · Bango · Bongo";
     return "Saved Game";
+  }
+
+  function scheduleShotPatternRender(delay = 90) {
+    window.clearTimeout(shotPatternResizeTimeout);
+    shotPatternResizeTimeout = window.setTimeout(() => {
+      renderShotPatternChart(allRounds);
+    }, delay);
   }
 
   function getGameMoneyFromData(game) {
@@ -968,6 +981,10 @@ window.addEventListener("DOMContentLoaded", () => {
     if (shotPatternLoggedIn) shotPatternLoggedIn.classList.toggle("d-none", !loggedIn);
     if (loginToUsePlayerData) loginToUsePlayerData.classList.toggle("d-none", loggedIn);
     if (playerDataShell) playerDataShell.classList.toggle("is-locked", !loggedIn);
+
+    if (loggedIn) {
+      scheduleShotPatternRender(140);
+    }
   }
 
   function updateGameDataLock(user) {
@@ -1032,11 +1049,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  let shotPatternResizeTimeout = null;
   window.addEventListener("resize", () => {
-    window.clearTimeout(shotPatternResizeTimeout);
-    shotPatternResizeTimeout = window.setTimeout(() => {
-      renderShotPatternChart(allRounds);
-    }, 120);
+    scheduleShotPatternRender(120);
   });
 });

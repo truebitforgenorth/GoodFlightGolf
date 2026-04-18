@@ -275,6 +275,32 @@ input[type="submit"] {
   padding: 2px 6px;
 }
 
+.shot-pattern-canvas-wrap {
+  position: relative;
+  min-height: 300px;
+  padding: 14px 16px 10px;
+  border: 1px solid rgba(53, 148, 71, 0.18);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 252, 247, 0.92));
+}
+
+#shotPatternChart {
+  display: block;
+  width: 100% !important;
+  height: 275px !important;
+}
+
+@media (max-width: 767px) {
+  .shot-pattern-canvas-wrap {
+    min-height: 250px;
+    padding: 12px 10px 8px;
+  }
+
+  #shotPatternChart {
+    height: 225px !important;
+  }
+}
+
 /* =====================================================
    GAMES PAGE ICONS
 ===================================================== */
