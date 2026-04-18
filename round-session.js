@@ -203,6 +203,61 @@
     return `../rounds/scorecard.html${sessionId ? `?sessionId=${encodeURIComponent(sessionId)}` : ""}`;
   }
 
+  function isInteractiveSwipeTarget(target) {
+    return !!target?.closest?.("button, a, input, select, textarea, label, summary, .btn, .form-select, .form-control");
+  }
+
+  function attachLinkedFullscreenSwipe(config = {}) {
+    const surface = config.surface;
+    if (!surface) return () => {};
+
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+
+    function onTouchStart(event) {
+      if (event.touches.length !== 1) return;
+      if (isInteractiveSwipeTarget(event.target)) return;
+
+      tracking = true;
+      startX = event.touches[0].clientX;
+      startY = event.touches[0].clientY;
+    }
+
+    function onTouchEnd(event) {
+      if (!tracking) return;
+      tracking = false;
+
+      if (typeof config.isEnabled === "function" && !config.isEnabled()) return;
+
+      const touch = event.changedTouches?.[0];
+      if (!touch) return;
+
+      const deltaX = touch.clientX - startX;
+      const deltaY = touch.clientY - startY;
+      const direction = config.direction === "right" ? "right" : "left";
+      const enoughHorizontalTravel = Math.abs(deltaX) >= 90;
+      const mostlyHorizontal = Math.abs(deltaY) <= 70;
+
+      if (!enoughHorizontalTravel || !mostlyHorizontal) return;
+      if (direction === "left" && deltaX >= 0) return;
+      if (direction === "right" && deltaX <= 0) return;
+
+      const targetUrl = typeof config.getTargetUrl === "function" ? config.getTargetUrl() : "";
+      if (!targetUrl) return;
+
+      window.location.href = targetUrl;
+    }
+
+    surface.addEventListener("touchstart", onTouchStart, { passive: true });
+    surface.addEventListener("touchend", onTouchEnd, { passive: true });
+
+    return function detachLinkedFullscreenSwipe() {
+      surface.removeEventListener("touchstart", onTouchStart);
+      surface.removeEventListener("touchend", onTouchEnd);
+    };
+  }
+
   window.GFGSession = {
     normalizeGameType,
     createSessionId,
@@ -221,6 +276,7 @@
     completeSessionPart,
     getSessionIdFromUrl,
     getLinkedGameUrl,
-    getScorecardUrl
+    getScorecardUrl,
+    attachLinkedFullscreenSwipe
   };
 })();

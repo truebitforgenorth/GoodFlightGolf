@@ -1243,6 +1243,16 @@ hideBirdiePrompt();
 restoreLinkedGameDraft();
 renderLinkedSessionBanner();
 
+sessionApi?.attachLinkedFullscreenSwipe?.({
+  surface: selectionWrapper,
+  direction: "right",
+  isEnabled: () => selectionWrapper?.classList.contains("fullscreen") && !!getLinkedSession()?.sessionId,
+  getTargetUrl: () => {
+    const linkedSession = getLinkedSession();
+    return linkedSession?.sessionId ? sessionApi.getScorecardUrl(linkedSession.sessionId) : "";
+  }
+});
+
 window.GFG_WOLF = { loadGameData };
 
 

@@ -178,44 +178,25 @@
         </div>
       </div>
 
-      <div class="round-session-box mt-4" id="roundSessionBox">
-        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
-          <div>
-            <h5 class="mb-1">Round + Game Session</h5>
-            <p class="small text-muted mb-0">
-              Track your scorecard and a side game together without losing your place on the course.
-            </p>
-          </div>
+      <div class="round-session-inline mt-4">
+        <div class="round-session-inline-copy">
+          <h5 class="mb-1">Round + Game Session</h5>
+          <p id="roundSessionStatus" class="small text-muted mb-0">
+            Round only keeps your scorecard by itself. Round + Game links this round to Wolf, 666, or BBB.
+          </p>
         </div>
 
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="small fw-bold mb-1" for="sessionModeSelect">Session Mode</label>
-            <select id="sessionModeSelect" class="form-select">
-              <option value="roundOnly" selected>Round Only</option>
-              <option value="roundGame">Round + Game</option>
-            </select>
-          </div>
-
-          <div class="col-md-6" id="linkedGameTypeWrap">
-            <label class="small fw-bold mb-1" for="linkedGameTypeSelect">Linked Game</label>
-            <select id="linkedGameTypeSelect" class="form-select">
-              <option value="wolf">Wolf</option>
-              <option value="666">Six-Six-Six</option>
-              <option value="bbb">Bingo Bango Bongo</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="d-flex flex-wrap gap-2 mt-3">
-          <button type="button" id="launchLinkedGameBtn" class="gfg-pill-btn">Open Linked Game</button>
+        <div class="d-flex flex-wrap gap-2">
+          <button
+            type="button"
+            id="openRoundSessionModalBtn"
+            class="gfg-pill-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#roundSessionModal">
+            Round + Game Options
+          </button>
           <a id="continueLinkedGameBtn" href="../games/goodflightgames.html" class="gfg-pill-btn hidden">Continue Linked Game</a>
-          <button type="button" id="clearRoundSessionBtn" class="gfg-pill-btn round-session-clear-btn hidden">Clear Session</button>
         </div>
-
-        <p id="roundSessionStatus" class="small text-muted mt-3 mb-0">
-          Round only keeps your scorecard by itself. Round + Game ties the scorecard to Wolf, 666, or BBB.
-        </p>
       </div>
     </section>
 
@@ -495,6 +476,52 @@
 
           <div id="signupMessage" class="mt-3" style="min-height: 1.5em;"></div>
           <button id="signupBtn" class="btn btn-primary mt-3">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="roundSessionModal" tabindex="-1" aria-labelledby="roundSessionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content round-session-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="roundSessionModalLabel">Round + Game Session</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="round-session-modal-copy">
+            <p class="mb-2">
+              Choose whether you are tracking only your round or linking this scorecard to a side game for the same on-course session.
+            </p>
+            <p class="small text-muted mb-0">
+              When a game is linked, fullscreen will let you jump between the scorecard and the game without losing your place.
+            </p>
+          </div>
+
+          <div class="row g-3 mt-1">
+            <div class="col-12">
+              <label class="small fw-bold mb-1" for="sessionModeSelect">How Are You Playing?</label>
+              <select id="sessionModeSelect" class="form-select">
+                <option value="roundOnly" selected>Round Only</option>
+                <option value="roundGame">Round + Game</option>
+              </select>
+            </div>
+
+            <div class="col-12" id="linkedGameTypeWrap">
+              <label class="small fw-bold mb-1" for="linkedGameTypeSelect">Choose Your Game</label>
+              <select id="linkedGameTypeSelect" class="form-select">
+                <option value="wolf">Wolf</option>
+                <option value="666">Six-Six-Six</option>
+                <option value="bbb">Bingo Bango Bongo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mt-4">
+            <button type="button" id="launchLinkedGameBtn" class="gfg-pill-btn">Save Session Choice</button>
+            <button type="button" id="clearRoundSessionBtn" class="gfg-pill-btn round-session-clear-btn hidden">Clear Session</button>
+          </div>
         </div>
       </div>
     </div>

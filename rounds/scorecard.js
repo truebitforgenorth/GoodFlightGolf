@@ -144,6 +144,8 @@ const courseSelect = $("courseSelect");
 const roundDate = $("roundDate");
 const teeName = $("teeName");
 const roundNotes = $("roundNotes");
+const roundSessionModalEl = $("roundSessionModal");
+const openRoundSessionModalBtn = $("openRoundSessionModalBtn");
 const sessionModeSelect = $("sessionModeSelect");
 const linkedGameTypeWrap = $("linkedGameTypeWrap");
 const linkedGameTypeSelect = $("linkedGameTypeSelect");
@@ -236,6 +238,11 @@ function getLinkedGameLabel(gameType = getLinkedGameType()) {
   return "Wolf";
 }
 
+function closeRoundSessionModal() {
+  if (!roundSessionModalEl || !window.bootstrap?.Modal) return;
+  window.bootstrap.Modal.getOrCreateInstance(roundSessionModalEl).hide();
+}
+
 function cloneHoleState(source) {
   return JSON.parse(JSON.stringify(source || {}));
 }
@@ -295,30 +302,36 @@ function renderRoundSessionUI() {
   const isRoundGame = getSessionModeValue() === "round+game";
   const activeSession = sessionApi?.getActiveSession();
   const linkedSession = !!activeRoundSessionId;
+  const activeGameType = activeSession?.gameType || getLinkedGameType();
 
   linkedGameTypeWrap?.classList.toggle("hidden", !isRoundGame);
-  launchLinkedGameBtn?.classList.toggle("hidden", !isRoundGame);
   continueLinkedGameBtn?.classList.toggle("hidden", !linkedSession);
   clearRoundSessionBtn?.classList.toggle("hidden", !linkedSession);
 
+  if (launchLinkedGameBtn) {
+    launchLinkedGameBtn.textContent = isRoundGame ? `Open ${getLinkedGameLabel()}` : "Keep Round Only";
+  }
+
+  if (openRoundSessionModalBtn) {
+    openRoundSessionModalBtn.textContent = linkedSession ? "Manage Linked Session" : "Round + Game Options";
+  }
+
   if (continueLinkedGameBtn && linkedSession) {
-    const gameType = activeSession?.gameType || getLinkedGameType();
-    continueLinkedGameBtn.href = `../games/${sessionApi.getLinkedGameUrl(gameType, activeRoundSessionId)}`;
-    continueLinkedGameBtn.textContent = `Continue ${getLinkedGameLabel(gameType)}`;
+    continueLinkedGameBtn.href = `../games/${sessionApi.getLinkedGameUrl(activeGameType, activeRoundSessionId)}`;
+    continueLinkedGameBtn.textContent = `Continue ${getLinkedGameLabel(activeGameType)}`;
   }
 
   if (!roundSessionStatus) return;
 
   if (linkedSession) {
-    const gameType = activeSession?.gameType || getLinkedGameType();
     roundSessionStatus.textContent =
-      `Active session linked to ${getLinkedGameLabel(gameType)}. You can jump between the scorecard and game without losing the round session.`;
+      `Active session linked to ${getLinkedGameLabel(activeGameType)}. In fullscreen, swipe left to jump into the linked game.`;
     return;
   }
 
   roundSessionStatus.textContent = isRoundGame
     ? `Open ${getLinkedGameLabel()} to start tracking both at the same time.`
-    : "Round only keeps your scorecard by itself. Round + Game ties the scorecard to Wolf, 666, or BBB.";
+    : "Round only keeps your scorecard by itself. Round + Game links this round to Wolf, 666, or BBB.";
 }
 
 function applyRoundDraft(draft) {
@@ -1144,6 +1157,9 @@ customCourseName?.addEventListener("input", render);
 customTeeName?.addEventListener("change", render);
 customCourseRating?.addEventListener("input", render);
 customSlopeRating?.addEventListener("input", render);
+openRoundSessionModalBtn?.addEventListener("click", () => {
+  renderRoundSessionUI();
+});
 sessionModeSelect?.addEventListener("change", () => {
   if (getSessionModeValue() !== "round+game") {
     renderRoundSessionUI();
@@ -1163,6 +1179,20 @@ linkedGameTypeSelect?.addEventListener("change", () => {
   renderRoundSessionUI();
 });
 launchLinkedGameBtn?.addEventListener("click", () => {
+  if (getSessionModeValue() !== "round+game") {
+    if (sessionApi && activeRoundSessionId) {
+      const confirmed = window.confirm("Switch back to round only and clear the linked session draft?");
+      if (!confirmed) return;
+
+      sessionApi.clearSessionArtifacts(activeRoundSessionId);
+      activeRoundSessionId = null;
+    }
+
+    renderRoundSessionUI();
+    closeRoundSessionModal();
+    return;
+  }
+
   if (sessionModeSelect) {
     sessionModeSelect.value = "roundGame";
   }
@@ -1183,6 +1213,7 @@ clearRoundSessionBtn?.addEventListener("click", () => {
   activeRoundSessionId = null;
   if (sessionModeSelect) sessionModeSelect.value = "roundOnly";
   renderRoundSessionUI();
+  closeRoundSessionModal();
 });
 
 holeParSelect?.addEventListener("change", () => {
@@ -1280,6 +1311,19 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
     renderRoundSessionUI();
   }
+
+  sessionApi?.attachLinkedFullscreenSwipe?.({
+    surface: selectionWrapper,
+    direction: "left",
+    isEnabled: () => selectionWrapper?.classList.contains("fullscreen") && !!activeRoundSessionId,
+    getTargetUrl: () => {
+      if (!sessionApi || !activeRoundSessionId) return "";
+      const activeSession = sessionApi.getActiveSession();
+      const gameType = activeSession?.gameType || getLinkedGameType();
+      return `../games/${sessionApi.getLinkedGameUrl(gameType, activeRoundSessionId)}`;
+    }
+  });
+
   syncFullscreenScrollLock();
 });
 
