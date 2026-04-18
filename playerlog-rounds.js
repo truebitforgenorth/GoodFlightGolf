@@ -383,6 +383,213 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function formatTrendRoundLabel(round, index) {
+    if (round?.roundDate) {
+      const parsed = new Date(`${round.roundDate}T00:00:00`);
+      if (!Number.isNaN(parsed.getTime())) {
+        return parsed.toLocaleDateString(undefined, {
+          month: "numeric",
+          day: "numeric"
+        });
+      }
+    }
+
+    return `R${index + 1}`;
+  }
+
+  function getRoundFirPctValue(round) {
+    if (typeof round?.firPct === "number") return round.firPct;
+
+    if (typeof round?.firHits === "number" && typeof round?.firChances === "number") {
+      return round.firChances ? Math.round((round.firHits / round.firChances) * 100) : 0;
+    }
+
+    if (Array.isArray(round?.holes) && round.holes.length) {
+      const activeHoles = round.holes.filter((hole) => hole && hole.isActive !== false);
+      const firChances = activeHoles.filter((hole) => Number(hole?.par) > 3).length;
+      const firHits = activeHoles.filter((hole) => hole?.fir === true).length;
+      return firChances ? Math.round((firHits / firChances) * 100) : 0;
+    }
+
+    return 0;
+  }
+
+  function getRoundGirPctValue(round) {
+    if (typeof round?.girPct === "number") return round.girPct;
+
+    if (typeof round?.girHits === "number") {
+      const holesCount = getRoundHolesCount(round);
+      return holesCount ? Math.round((round.girHits / holesCount) * 100) : 0;
+    }
+
+    if (Array.isArray(round?.holes) && round.holes.length) {
+      const activeHoles = round.holes.filter((hole) => hole && hole.isActive !== false);
+      const girHits = activeHoles.filter((hole) => hole?.gir === true).length;
+      return activeHoles.length ? Math.round((girHits / activeHoles.length) * 100) : 0;
+    }
+
+    return 0;
+  }
+
+  function getFirGirTrendData(rounds) {
+    const orderedRounds = [...rounds].sort((a, b) => getRoundSortValue(a) - getRoundSortValue(b));
+
+    return {
+      orderedRounds,
+      labels: orderedRounds.map((round, index) => formatTrendRoundLabel(round, index)),
+      firValues: orderedRounds.map((round) => getRoundFirPctValue(round)),
+      girValues: orderedRounds.map((round) => getRoundGirPctValue(round))
+    };
+  }
+
+  function renderFirGirTrendChart(rounds) {
+    if (!firGirTrendChartCanvas || !firGirTrendSummary || !firGirTrendStatus) return;
+
+    if (typeof Chart === "undefined") {
+      firGirTrendSummary.textContent = "Chart library unavailable.";
+      firGirTrendStatus.textContent = "Chart.js did not load on this page.";
+      return;
+    }
+
+    const isMobileChart = window.innerWidth <= 767;
+    const trendData = getFirGirTrendData(rounds);
+
+    if (firGirTrendChartInstance) {
+      firGirTrendChartInstance.destroy();
+      firGirTrendChartInstance = null;
+    }
+
+    if (!trendData.orderedRounds.length) {
+      firGirTrendSummary.textContent = "Save rounds to build your FIR and GIR trend chart.";
+      firGirTrendStatus.textContent = "Each point tracks the FIR and GIR percentage from one saved round.";
+    } else {
+      const latestRound = trendData.orderedRounds[trendData.orderedRounds.length - 1];
+      const latestFir = trendData.firValues[trendData.firValues.length - 1] ?? 0;
+      const latestGir = trendData.girValues[trendData.girValues.length - 1] ?? 0;
+      const latestCourse = latestRound?.courseName ? ` at ${latestRound.courseName}` : "";
+
+      firGirTrendSummary.textContent =
+        `Tracking FIR and GIR across ${trendData.orderedRounds.length} saved round${trendData.orderedRounds.length === 1 ? "" : "s"} from oldest to newest.`;
+      firGirTrendStatus.textContent =
+        `Latest round${latestCourse}: FIR ${latestFir}% and GIR ${latestGir}%.`;
+    }
+
+    const ctx = firGirTrendChartCanvas.getContext("2d");
+    firGirTrendChartInstance = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: trendData.labels,
+        datasets: [
+          {
+            label: "FIR",
+            data: trendData.firValues,
+            borderColor: "#359447",
+            backgroundColor: "rgba(53, 148, 71, 0.14)",
+            pointBackgroundColor: "#359447",
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 2,
+            pointRadius: isMobileChart ? 3.5 : 4.5,
+            pointHoverRadius: isMobileChart ? 5 : 6,
+            borderWidth: 3,
+            tension: 0.32,
+            fill: false
+          },
+          {
+            label: "GIR",
+            data: trendData.girValues,
+            borderColor: "#0ea5e9",
+            backgroundColor: "rgba(14, 165, 233, 0.14)",
+            pointBackgroundColor: "#0ea5e9",
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 2,
+            pointRadius: isMobileChart ? 3.5 : 4.5,
+            pointHoverRadius: isMobileChart ? 5 : 6,
+            borderWidth: 3,
+            tension: 0.32,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: "index",
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            position: "top",
+            labels: {
+              usePointStyle: true,
+              boxWidth: 10,
+              padding: isMobileChart ? 12 : 16,
+              font: {
+                size: isMobileChart ? 11 : 12
+              }
+            }
+          },
+          tooltip: {
+            titleFont: {
+              size: isMobileChart ? 12 : 13
+            },
+            bodyFont: {
+              size: isMobileChart ? 12 : 13
+            },
+            callbacks: {
+              title(items) {
+                const idx = items?.[0]?.dataIndex ?? 0;
+                const round = trendData.orderedRounds[idx];
+                const titleParts = [trendData.labels[idx] || `Round ${idx + 1}`];
+                if (round?.courseName) titleParts.push(round.courseName);
+                return titleParts;
+              },
+              label(context) {
+                return `${context.dataset.label}: ${context.parsed.y ?? 0}%`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              stepSize: 20,
+              font: {
+                size: isMobileChart ? 10 : 12
+              },
+              callback(value) {
+                return `${value}%`;
+              }
+            },
+            title: {
+              display: true,
+              text: "Percentage",
+              font: {
+                size: isMobileChart ? 11 : 12
+              }
+            }
+          },
+          x: {
+            ticks: {
+              autoSkip: true,
+              maxRotation: 0,
+              minRotation: 0,
+              maxTicksLimit: isMobileChart ? 6 : 10,
+              font: {
+                size: isMobileChart ? 10 : 12
+              }
+            },
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  }
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -414,6 +621,7 @@ window.addEventListener("DOMContentLoaded", () => {
     window.clearTimeout(shotPatternResizeTimeout);
     shotPatternResizeTimeout = window.setTimeout(() => {
       renderShotPatternChart(allRounds);
+      renderFirGirTrendChart(allRounds);
     }, delay);
   }
 
@@ -834,6 +1042,7 @@ window.addEventListener("DOMContentLoaded", () => {
           renderSavedRounds();
           renderCourseData(allRounds);
           renderShotPatternChart(allRounds);
+          renderFirGirTrendChart(allRounds);
         } catch (error) {
           console.error("Error deleting round:", error);
           window.alert("There was an error deleting that round.");
@@ -919,6 +1128,7 @@ window.addEventListener("DOMContentLoaded", () => {
       renderSavedRounds();
       renderCourseData(allRounds);
       renderShotPatternChart(allRounds);
+      renderFirGirTrendChart(allRounds);
     } catch (error) {
       console.error("Error loading saved rounds:", error);
 
@@ -979,6 +1189,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (savedRoundsLoggedIn) savedRoundsLoggedIn.classList.toggle("d-none", !loggedIn);
     if (courseDataLoggedIn) courseDataLoggedIn.classList.toggle("d-none", !loggedIn);
     if (shotPatternLoggedIn) shotPatternLoggedIn.classList.toggle("d-none", !loggedIn);
+    if (firGirTrendLoggedIn) firGirTrendLoggedIn.classList.toggle("d-none", !loggedIn);
     if (loginToUsePlayerData) loginToUsePlayerData.classList.toggle("d-none", loggedIn);
     if (playerDataShell) playerDataShell.classList.toggle("is-locked", !loggedIn);
 
@@ -1028,6 +1239,7 @@ window.addEventListener("DOMContentLoaded", () => {
         renderSavedRounds();
         renderCourseData([]);
         renderShotPatternChart([]);
+        renderFirGirTrendChart([]);
         resetGameDisplays();
         return;
       }
