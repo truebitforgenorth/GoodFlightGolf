@@ -20,15 +20,11 @@ window.addEventListener("DOMContentLoaded", () => {
   const avgPuttsValue = document.getElementById("avgPuttsValue");
   const avgFirValue = document.getElementById("avgFirValue");
   const avgGirValue = document.getElementById("avgGirValue");
-  const shotPatternLoggedIn = document.getElementById("shotPatternLoggedIn");
-  const shotPatternSummary = document.getElementById("shotPatternSummary");
-  const shotPatternStatus = document.getElementById("shotPatternStatus");
-  const shotPatternChartCanvas = document.getElementById("shotPatternChart");
-  const shotPatternTabs = Array.from(document.querySelectorAll(".shot-pattern-tab"));
-  const firGirTrendLoggedIn = document.getElementById("firGirTrendLoggedIn");
-  const firGirTrendSummary = document.getElementById("firGirTrendSummary");
-  const firGirTrendStatus = document.getElementById("firGirTrendStatus");
-  const firGirTrendChartCanvas = document.getElementById("firGirTrendChart");
+  const analyticsLoggedIn = document.getElementById("analyticsLoggedIn");
+  const analyticsSummary = document.getElementById("analyticsSummary");
+  const analyticsStatus = document.getElementById("analyticsStatus");
+  const analyticsChartCanvas = document.getElementById("analyticsChart");
+  const analyticsTabs = Array.from(document.querySelectorAll(".analytics-tab"));
 
   const gameTotalsLoggedIn = document.getElementById("gameTotalsLoggedIn");
   const gamesPlayedLoggedIn = document.getElementById("gamesPlayedLoggedIn");
@@ -54,10 +50,9 @@ window.addEventListener("DOMContentLoaded", () => {
   let allGames = [];
   let roundsExpanded = false;
   let gamesExpanded = false;
-  let activeShotPatternView = "drive";
-  let shotPatternChartInstance = null;
-  let firGirTrendChartInstance = null;
-  let shotPatternResizeTimeout = null;
+  let activeAnalyticsView = "drive";
+  let analyticsChartInstance = null;
+  let analyticsResizeTimeout = null;
 
   function formatVsPar(value) {
     if (value === 0) return "E";
@@ -431,6 +426,57 @@ window.addEventListener("DOMContentLoaded", () => {
     return 0;
   }
 
+  function getRoundFirAggregate(round) {
+    const explicitHits = Number(round?.firHits);
+    const explicitChances = Number(round?.firChances);
+    if (Number.isFinite(explicitHits) && Number.isFinite(explicitChances) && explicitChances >= 0) {
+      return {
+        hits: explicitHits,
+        chances: explicitChances
+      };
+    }
+
+    if (Array.isArray(round?.holes) && round.holes.length) {
+      const activeHoles = round.holes.filter((hole) => hole && hole.isActive !== false);
+      const firChances = activeHoles.filter((hole) => Number(hole?.par) > 3).length;
+      const firHits = activeHoles.filter((hole) => hole?.fir === true).length;
+      return {
+        hits: firHits,
+        chances: firChances
+      };
+    }
+
+    return {
+      hits: 0,
+      chances: 0
+    };
+  }
+
+  function getRoundGirAggregate(round) {
+    const explicitHits = Number(round?.girHits);
+    const holesCount = getRoundHolesCount(round);
+    if (Number.isFinite(explicitHits) && holesCount >= 0) {
+      return {
+        hits: explicitHits,
+        chances: holesCount
+      };
+    }
+
+    if (Array.isArray(round?.holes) && round.holes.length) {
+      const activeHoles = round.holes.filter((hole) => hole && hole.isActive !== false);
+      const girHits = activeHoles.filter((hole) => hole?.gir === true).length;
+      return {
+        hits: girHits,
+        chances: activeHoles.length
+      };
+    }
+
+    return {
+      hits: 0,
+      chances: 0
+    };
+  }
+
   function getFirGirTrendData(rounds) {
     const orderedRounds = [...rounds].sort((a, b) => getRoundSortValue(a) - getRoundSortValue(b));
 
@@ -590,6 +636,474 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function updateAnalyticsTabState() {
+    analyticsTabs.forEach((button) => {
+      const isActive = button.dataset.analyticsView === activeAnalyticsView;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+  }
+
+  function getOrderedRounds(rounds) {
+    return [...rounds].sort((a, b) => getRoundSortValue(a) - getRoundSortValue(b));
+  }
+
+  function getRoundPuttsValue(round) {
+    if (typeof round?.totalPutts === "number") return round.totalPutts;
+
+    if (Array.isArray(round?.holes) && round.holes.length) {
+      return round.holes
+        .filter((hole) => hole && hole.isActive !== false)
+        .reduce((sum, hole) => sum + (Number(hole?.putts) || 0), 0);
+    }
+
+    return 0;
+  }
+
+  function getRoundScoreSlices(round) {
+    if (Array.isArray(round?.holes) && round.holes.length) {
+      const activeHoles = round.holes.filter((hole) => hole && hole.isActive !== false);
+      let front9 = 0;
+      let back9 = 0;
+
+      activeHoles.forEach((hole, index) => {
+        const holeNumber = Number(hole?.hole) || (index + 1);
+        const strokes = Number(hole?.strokes) || 0;
+        if (holeNumber <= 9) front9 += strokes;
+        else back9 += strokes;
+      });
+
+      return {
+        total: front9 + back9,
+        front9,
+        back9
+      };
+    }
+
+    return {
+      total: Number(round?.totalScore) || 0,
+      front9: null,
+      back9: null
+    };
+  }
+
+  function getScoreBreakdownData(rounds) {
+    const counts = {
+      birdies: 0,
+      pars: 0,
+      bogeys: 0,
+      doublesPlus: 0
+    };
+
+    rounds.forEach((round) => {
+      const holes = Array.isArray(round?.holes) ? round.holes : [];
+      holes.forEach((hole) => {
+        if (!hole || hole.isActive === false) return;
+
+        let diff = Number.isFinite(Number(hole?.diff)) ? Number(hole.diff) : null;
+        if (diff === null) {
+          const strokes = Number(hole?.strokes);
+          const par = Number(hole?.par);
+          if (Number.isFinite(strokes) && Number.isFinite(par)) diff = strokes - par;
+        }
+        if (diff === null) return;
+
+        if (diff <= -1) counts.birdies += 1;
+        else if (diff === 0) counts.pars += 1;
+        else if (diff === 1) counts.bogeys += 1;
+        else counts.doublesPlus += 1;
+      });
+    });
+
+    const total = Object.values(counts).reduce((sum, value) => sum + value, 0);
+    return { counts, total };
+  }
+
+  function destroyAnalyticsChart() {
+    if (analyticsChartInstance) {
+      analyticsChartInstance.destroy();
+      analyticsChartInstance = null;
+    }
+  }
+
+  function createAnalyticsLineChart(ctx, labels, datasets, yTitle, maxY, isMobileChart) {
+    analyticsChartInstance = new Chart(ctx, {
+      type: "line",
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: "index",
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            position: "top",
+            labels: {
+              usePointStyle: true,
+              boxWidth: 10,
+              padding: isMobileChart ? 12 : 16,
+              font: {
+                size: isMobileChart ? 11 : 12
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: maxY,
+            ticks: {
+              stepSize: maxY === 100 ? 20 : undefined,
+              font: {
+                size: isMobileChart ? 10 : 12
+              }
+            },
+            title: {
+              display: true,
+              text: yTitle,
+              font: {
+                size: isMobileChart ? 11 : 12
+              }
+            }
+          },
+          x: {
+            ticks: {
+              autoSkip: true,
+              maxRotation: 0,
+              minRotation: 0,
+              maxTicksLimit: isMobileChart ? 6 : 10,
+              font: {
+                size: isMobileChart ? 10 : 12
+              }
+            },
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function createAnalyticsPieChart(ctx, values, isMobileChart) {
+    analyticsChartInstance = new Chart(ctx, {
+      type: "pie",
+      data: {
+        labels: ["Birdies", "Pars", "Bogeys", "Doubles+"],
+        datasets: [
+          {
+            data: values,
+            backgroundColor: ["#359447", "#0ea5e9", "#d97706", "#c85746"],
+            borderColor: "#ffffff",
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: isMobileChart ? "bottom" : "right",
+            labels: {
+              usePointStyle: true,
+              padding: isMobileChart ? 12 : 16,
+              font: {
+                size: isMobileChart ? 11 : 12
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderAnalyticsChart(rounds) {
+    if (!analyticsChartCanvas || !analyticsSummary || !analyticsStatus) return;
+
+    updateAnalyticsTabState();
+
+    if (typeof Chart === "undefined") {
+      analyticsSummary.textContent = "Chart library unavailable.";
+      analyticsStatus.textContent = "Chart.js did not load on this page.";
+      return;
+    }
+
+    destroyAnalyticsChart();
+
+    const ctx = analyticsChartCanvas.getContext("2d");
+    const isMobileChart = window.innerWidth <= 767;
+    const orderedRounds = getOrderedRounds(rounds);
+    const labels = orderedRounds.map((round, index) => formatTrendRoundLabel(round, index));
+
+    if (activeAnalyticsView === "drive" || activeAnalyticsView === "approach") {
+      const config = getShotPatternConfig(activeAnalyticsView, rounds);
+      analyticsSummary.textContent = !config.total
+        ? `No ${config.emptyLabel} yet.`
+        : `${config.title} - ${config.total} ${config.emptyLabel} across ${rounds.length} saved round${rounds.length === 1 ? "" : "s"}.`;
+      analyticsStatus.textContent = !config.total
+        ? `Save rounds with ${activeAnalyticsView === "drive" ? "drive" : "approach"} results to build this chart.`
+        : `${config.topLabel} is currently your most common ${activeAnalyticsView === "drive" ? "driving" : "approach"} outcome.`;
+
+      const valueLabelPlugin = {
+        id: "analyticsValueLabels",
+        afterDatasetsDraw(chart) {
+          const { ctx: chartCtx } = chart;
+          const meta = chart.getDatasetMeta(0);
+          chartCtx.save();
+          chartCtx.textAlign = "center";
+          chartCtx.textBaseline = "middle";
+          chartCtx.font = `${isMobileChart ? "700 10px" : "700 12px"} Poppins, sans-serif`;
+
+          meta.data.forEach((bar, index) => {
+            const value = config.percentages[index] || 0;
+            if (!value) return;
+            const x = bar.x;
+            let y = bar.y + 14;
+            let fill = "#ffffff";
+            if (value < 8) {
+              y = bar.y - 10;
+              fill = "#1f2937";
+            }
+            chartCtx.fillStyle = fill;
+            chartCtx.fillText(`${value}%`, x, y);
+          });
+
+          chartCtx.restore();
+        }
+      };
+
+      analyticsChartInstance = new Chart(ctx, {
+        type: "bar",
+        plugins: [valueLabelPlugin],
+        data: {
+          labels: config.chartLabels || config.labels,
+          datasets: [
+            {
+              label: "% of tracked shots",
+              data: config.percentages,
+              backgroundColor: config.colors,
+              borderRadius: 12,
+              borderSkipped: false,
+              maxBarThickness: isMobileChart ? 38 : 56
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                font: {
+                  size: isMobileChart ? 10 : 12
+                },
+                callback(value) {
+                  return `${value}%`;
+                }
+              },
+              title: {
+                display: true,
+                text: "Percentage",
+                font: {
+                  size: isMobileChart ? 11 : 12
+                }
+              }
+            },
+            x: {
+              ticks: {
+                maxRotation: 0,
+                autoSkip: false,
+                font: {
+                  size: isMobileChart ? 10 : 12
+                },
+                padding: isMobileChart ? 6 : 8
+              }
+            }
+          }
+        }
+      });
+      return;
+    }
+
+    if (activeAnalyticsView === "firGir") {
+      const firValues = orderedRounds.map((round) => getRoundFirPctValue(round));
+      const girValues = orderedRounds.map((round) => getRoundGirPctValue(round));
+      analyticsSummary.textContent = orderedRounds.length
+        ? `Tracking FIR and GIR across ${orderedRounds.length} saved round${orderedRounds.length === 1 ? "" : "s"} from oldest to newest.`
+        : "Save rounds to build your FIR and GIR trend chart.";
+      analyticsStatus.textContent = orderedRounds.length
+        ? `Latest round: FIR ${firValues[firValues.length - 1] ?? 0}% and GIR ${girValues[girValues.length - 1] ?? 0}%.`
+        : "Each point tracks the FIR and GIR percentage from one saved round.";
+      createAnalyticsLineChart(
+        ctx,
+        labels,
+        [
+          {
+            label: "FIR",
+            data: firValues,
+            borderColor: "#359447",
+            backgroundColor: "rgba(53, 148, 71, 0.14)",
+            pointBackgroundColor: "#359447",
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 2,
+            pointRadius: isMobileChart ? 3.5 : 4.5,
+            pointHoverRadius: isMobileChart ? 5 : 6,
+            borderWidth: 3,
+            tension: 0.32,
+            fill: false
+          },
+          {
+            label: "GIR",
+            data: girValues,
+            borderColor: "#0ea5e9",
+            backgroundColor: "rgba(14, 165, 233, 0.14)",
+            pointBackgroundColor: "#0ea5e9",
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 2,
+            pointRadius: isMobileChart ? 3.5 : 4.5,
+            pointHoverRadius: isMobileChart ? 5 : 6,
+            borderWidth: 3,
+            tension: 0.32,
+            fill: false
+          }
+        ],
+        "Percentage",
+        100,
+        isMobileChart
+      );
+      return;
+    }
+
+    if (activeAnalyticsView === "putts") {
+      const puttsValues = orderedRounds.map((round) => getRoundPuttsValue(round));
+      analyticsSummary.textContent = orderedRounds.length
+        ? `Tracking total putts across ${orderedRounds.length} saved round${orderedRounds.length === 1 ? "" : "s"}.`
+        : "Save rounds to build your putts-per-round chart.";
+      analyticsStatus.textContent = orderedRounds.length
+        ? `Latest round putts: ${puttsValues[puttsValues.length - 1] ?? 0}.`
+        : "Each point will show total putts from one saved round.";
+      createAnalyticsLineChart(
+        ctx,
+        labels,
+        [
+          {
+            label: "Putts",
+            data: puttsValues,
+            borderColor: "#f0b429",
+            backgroundColor: "rgba(240, 180, 41, 0.16)",
+            pointBackgroundColor: "#f0b429",
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 2,
+            pointRadius: isMobileChart ? 3.5 : 4.5,
+            pointHoverRadius: isMobileChart ? 5 : 6,
+            borderWidth: 3,
+            tension: 0.32,
+            fill: false
+          }
+        ],
+        "Putts",
+        Math.max(36, ...puttsValues, 0),
+        isMobileChart
+      );
+      return;
+    }
+
+    if (activeAnalyticsView === "scoreTotals") {
+      const slices = orderedRounds.map((round) => getRoundScoreSlices(round));
+      const totalValues = slices.map((slice) => slice.total);
+      const frontValues = slices.map((slice) => slice.front9);
+      const backValues = slices.map((slice) => slice.back9);
+      analyticsSummary.textContent = orderedRounds.length
+        ? `Tracking total, front 9, and back 9 scores across ${orderedRounds.length} saved round${orderedRounds.length === 1 ? "" : "s"}.`
+        : "Save rounds to build your scorecard totals chart.";
+      analyticsStatus.textContent = orderedRounds.length
+        ? `Latest round total: ${totalValues[totalValues.length - 1] ?? 0}.`
+        : "Front 9 and back 9 lines appear when hole-by-hole saved data exists.";
+      createAnalyticsLineChart(
+        ctx,
+        labels,
+        [
+          {
+            label: "Total",
+            data: totalValues,
+            borderColor: "#132033",
+            backgroundColor: "rgba(19, 32, 51, 0.14)",
+            pointBackgroundColor: "#132033",
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 2,
+            pointRadius: isMobileChart ? 3.5 : 4.5,
+            pointHoverRadius: isMobileChart ? 5 : 6,
+            borderWidth: 3,
+            tension: 0.28,
+            fill: false
+          },
+          {
+            label: "Front 9",
+            data: frontValues,
+            borderColor: "#359447",
+            backgroundColor: "rgba(53, 148, 71, 0.14)",
+            pointBackgroundColor: "#359447",
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 2,
+            pointRadius: isMobileChart ? 3.5 : 4.5,
+            pointHoverRadius: isMobileChart ? 5 : 6,
+            borderWidth: 3,
+            tension: 0.28,
+            fill: false,
+            spanGaps: true
+          },
+          {
+            label: "Back 9",
+            data: backValues,
+            borderColor: "#0ea5e9",
+            backgroundColor: "rgba(14, 165, 233, 0.14)",
+            pointBackgroundColor: "#0ea5e9",
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 2,
+            pointRadius: isMobileChart ? 3.5 : 4.5,
+            pointHoverRadius: isMobileChart ? 5 : 6,
+            borderWidth: 3,
+            tension: 0.28,
+            fill: false,
+            spanGaps: true
+          }
+        ],
+        "Strokes",
+        Math.max(72, ...totalValues.filter((value) => typeof value === "number"), 0),
+        isMobileChart
+      );
+      return;
+    }
+
+    const breakdown = getScoreBreakdownData(rounds);
+    analyticsSummary.textContent = breakdown.total
+      ? `Score breakdown built from ${breakdown.total} saved hole${breakdown.total === 1 ? "" : "s"}.`
+      : "Save rounds with hole-by-hole scores to build your Birdies / Pars / Bogeys / Doubles+ pie chart.";
+    analyticsStatus.textContent = breakdown.total
+      ? "Birdies, pars, bogeys, and doubles+ are grouped from all saved hole results."
+      : "This chart needs saved hole results from your rounds.";
+    createAnalyticsPieChart(
+      ctx,
+      [
+        breakdown.counts.birdies,
+        breakdown.counts.pars,
+        breakdown.counts.bogeys,
+        breakdown.counts.doublesPlus
+      ],
+      isMobileChart
+    );
+  }
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -617,11 +1131,10 @@ window.addEventListener("DOMContentLoaded", () => {
     return "Saved Game";
   }
 
-  function scheduleShotPatternRender(delay = 90) {
-    window.clearTimeout(shotPatternResizeTimeout);
-    shotPatternResizeTimeout = window.setTimeout(() => {
-      renderShotPatternChart(allRounds);
-      renderFirGirTrendChart(allRounds);
+  function scheduleAnalyticsRender(delay = 90) {
+    window.clearTimeout(analyticsResizeTimeout);
+    analyticsResizeTimeout = window.setTimeout(() => {
+      renderAnalyticsChart(allRounds);
     }, delay);
   }
 
@@ -692,13 +1205,17 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const totals = rounds.reduce(
       (acc, round) => {
+        const firTotals = getRoundFirAggregate(round);
+        const girTotals = getRoundGirAggregate(round);
+
         acc.thru += getRoundHolesCount(round);
         acc.score += Number(round.totalScore) || 0;
         acc.vsPar += Number(round.vsPar) || 0;
         acc.putts += Number(round.totalPutts) || 0;
-        acc.firHits += Number(round.firHits) || 0;
-        acc.firChances += Number(round.firChances) || 0;
-        acc.girHits += Number(round.girHits) || 0;
+        acc.firHits += firTotals.hits;
+        acc.firChances += firTotals.chances;
+        acc.girHits += girTotals.hits;
+        acc.girChances += girTotals.chances;
         return acc;
       },
       {
@@ -708,15 +1225,16 @@ window.addEventListener("DOMContentLoaded", () => {
         putts: 0,
         firHits: 0,
         firChances: 0,
-        girHits: 0
+        girHits: 0,
+        girChances: 0
       }
     );
 
     const firPct = totals.firChances
       ? Math.round((totals.firHits / totals.firChances) * 100)
       : 0;
-    const girPct = totals.thru
-      ? Math.round((totals.girHits / totals.thru) * 100)
+    const girPct = totals.girChances
+      ? Math.round((totals.girHits / totals.girChances) * 100)
       : 0;
 
     if (totalThruValue) totalThruValue.textContent = String(totals.thru);
@@ -1041,8 +1559,7 @@ window.addEventListener("DOMContentLoaded", () => {
           updateSummaryStats(allRounds);
           renderSavedRounds();
           renderCourseData(allRounds);
-          renderShotPatternChart(allRounds);
-          renderFirGirTrendChart(allRounds);
+          renderAnalyticsChart(allRounds);
         } catch (error) {
           console.error("Error deleting round:", error);
           window.alert("There was an error deleting that round.");
@@ -1127,8 +1644,7 @@ window.addEventListener("DOMContentLoaded", () => {
       updateSummaryStats(allRounds);
       renderSavedRounds();
       renderCourseData(allRounds);
-      renderShotPatternChart(allRounds);
-      renderFirGirTrendChart(allRounds);
+      renderAnalyticsChart(allRounds);
     } catch (error) {
       console.error("Error loading saved rounds:", error);
 
@@ -1188,13 +1704,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
     if (savedRoundsLoggedIn) savedRoundsLoggedIn.classList.toggle("d-none", !loggedIn);
     if (courseDataLoggedIn) courseDataLoggedIn.classList.toggle("d-none", !loggedIn);
-    if (shotPatternLoggedIn) shotPatternLoggedIn.classList.toggle("d-none", !loggedIn);
-    if (firGirTrendLoggedIn) firGirTrendLoggedIn.classList.toggle("d-none", !loggedIn);
+    if (analyticsLoggedIn) analyticsLoggedIn.classList.toggle("d-none", !loggedIn);
     if (loginToUsePlayerData) loginToUsePlayerData.classList.toggle("d-none", loggedIn);
     if (playerDataShell) playerDataShell.classList.toggle("is-locked", !loggedIn);
 
     if (loggedIn) {
-      scheduleShotPatternRender(140);
+      scheduleAnalyticsRender(140);
     }
   }
 
@@ -1238,8 +1753,7 @@ window.addEventListener("DOMContentLoaded", () => {
         updateSummaryStats([]);
         renderSavedRounds();
         renderCourseData([]);
-        renderShotPatternChart([]);
-        renderFirGirTrendChart([]);
+        renderAnalyticsChart([]);
         resetGameDisplays();
         return;
       }
@@ -1251,17 +1765,17 @@ window.addEventListener("DOMContentLoaded", () => {
 
   initPlayerLogRounds();
 
-  shotPatternTabs.forEach((button) => {
+  analyticsTabs.forEach((button) => {
     button.addEventListener("click", () => {
-      const nextView = button.dataset.shotView;
-      if (!nextView || nextView === activeShotPatternView) return;
+      const nextView = button.dataset.analyticsView;
+      if (!nextView || nextView === activeAnalyticsView) return;
 
-      activeShotPatternView = nextView;
-      renderShotPatternChart(allRounds);
+      activeAnalyticsView = nextView;
+      renderAnalyticsChart(allRounds);
     });
   });
 
   window.addEventListener("resize", () => {
-    scheduleShotPatternRender(120);
+    scheduleAnalyticsRender(120);
   });
 });

@@ -275,6 +275,7 @@ input[type="submit"] {
   padding: 2px 6px;
 }
 
+.analytics-canvas-wrap,
 .shot-pattern-canvas-wrap,
 .fir-gir-trend-canvas-wrap {
   position: relative;
@@ -285,6 +286,7 @@ input[type="submit"] {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 252, 247, 0.92));
 }
 
+#analyticsChart,
 #shotPatternChart {
   display: block;
   width: 100% !important;
@@ -298,12 +300,14 @@ input[type="submit"] {
 }
 
 @media (max-width: 767px) {
+  .analytics-canvas-wrap,
   .shot-pattern-canvas-wrap,
   .fir-gir-trend-canvas-wrap {
     min-height: 250px;
     padding: 12px 10px 8px;
   }
 
+  #analyticsChart,
   #shotPatternChart {
     height: 225px !important;
   }
