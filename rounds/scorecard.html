@@ -499,27 +499,46 @@
             </p>
           </div>
 
-          <div class="row g-3 mt-1">
-            <div class="col-12">
-              <label class="small fw-bold mb-1" for="sessionModeSelect">How Are You Playing?</label>
-              <select id="sessionModeSelect" class="form-select">
-                <option value="roundOnly" selected>Round Only</option>
-                <option value="roundGame">Round + Game</option>
-              </select>
+          <div class="round-session-picker mt-3">
+            <div class="round-session-picker-label">How Are You Playing?</div>
+
+            <div class="round-session-mode-grid">
+              <button type="button" class="round-session-mode-btn is-active" data-session-choice="roundOnly">
+                <span class="round-session-mode-title">Round Only</span>
+                <span class="round-session-mode-copy">Track just the scorecard.</span>
+              </button>
+
+              <button type="button" class="round-session-mode-btn" data-session-choice="roundGame">
+                <span class="round-session-mode-title">Round + Game</span>
+                <span class="round-session-mode-copy">Link the round to a side game.</span>
+              </button>
             </div>
 
-            <div class="col-12" id="linkedGameTypeWrap">
-              <label class="small fw-bold mb-1" for="linkedGameTypeSelect">Choose Your Game</label>
-              <select id="linkedGameTypeSelect" class="form-select">
-                <option value="wolf">Wolf</option>
-                <option value="666">Six-Six-Six</option>
-                <option value="bbb">Bingo Bango Bongo</option>
-              </select>
+            <div class="round-session-game-wrap" id="linkedGameTypeWrap">
+              <div class="round-session-picker-label">Choose Your Game</div>
+
+              <div class="round-session-game-grid">
+                <button type="button" class="round-session-game-btn is-active" data-linked-game="wolf">Wolf</button>
+                <button type="button" class="round-session-game-btn" data-linked-game="666">Six-Six-Six</button>
+                <button type="button" class="round-session-game-btn" data-linked-game="bbb">BBB</button>
+              </div>
             </div>
+
+            <select id="sessionModeSelect" class="form-select hidden">
+              <option value="roundOnly" selected>Round Only</option>
+              <option value="roundGame">Round + Game</option>
+            </select>
+
+            <select id="linkedGameTypeSelect" class="form-select hidden">
+              <option value="wolf">Wolf</option>
+              <option value="666">Six-Six-Six</option>
+              <option value="bbb">Bingo Bango Bongo</option>
+            </select>
           </div>
 
           <div class="d-flex flex-wrap gap-2 mt-4">
-            <button type="button" id="launchLinkedGameBtn" class="gfg-pill-btn">Save Session Choice</button>
+            <button type="button" id="saveRoundSessionBtn" class="gfg-pill-btn">Save Session Choice</button>
+            <button type="button" id="launchLinkedGameBtn" class="gfg-pill-btn hidden">Open Linked Game</button>
             <button type="button" id="clearRoundSessionBtn" class="gfg-pill-btn round-session-clear-btn hidden">Clear Session</button>
           </div>
         </div>

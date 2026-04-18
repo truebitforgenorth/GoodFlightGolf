@@ -204,7 +204,7 @@
   }
 
   function isInteractiveSwipeTarget(target) {
-    return !!target?.closest?.("button, a, input, select, textarea, label, summary, .btn, .form-select, .form-control");
+    return !!target?.closest?.("input, select, textarea, option");
   }
 
   function attachLinkedFullscreenSwipe(config = {}) {
