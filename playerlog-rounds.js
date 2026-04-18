@@ -25,6 +25,11 @@ window.addEventListener("DOMContentLoaded", () => {
   const analyticsStatus = document.getElementById("analyticsStatus");
   const analyticsChartCanvas = document.getElementById("analyticsChart");
   const analyticsTabs = Array.from(document.querySelectorAll(".analytics-tab"));
+  const gameAnalyticsLoggedIn = document.getElementById("gameAnalyticsLoggedIn");
+  const gameAnalyticsSummary = document.getElementById("gameAnalyticsSummary");
+  const gameAnalyticsStatus = document.getElementById("gameAnalyticsStatus");
+  const gameAnalyticsChartCanvas = document.getElementById("gameAnalyticsChart");
+  const gameAnalyticsTabs = Array.from(document.querySelectorAll(".game-analytics-tab"));
 
   const gameTotalsLoggedIn = document.getElementById("gameTotalsLoggedIn");
   const gamesPlayedLoggedIn = document.getElementById("gamesPlayedLoggedIn");
@@ -53,6 +58,38 @@ window.addEventListener("DOMContentLoaded", () => {
   let activeAnalyticsView = "drive";
   let analyticsChartInstance = null;
   let analyticsResizeTimeout = null;
+  let activeGameAnalyticsView = "moneyTime";
+  let gameAnalyticsChartInstance = null;
+  let gameAnalyticsResizeTimeout = null;
+
+  const gameTotalsHeader = gameTotalsLoggedIn?.closest(".card")?.querySelector(".card-header");
+  const gamesPlayedHeader = gamesPlayedLoggedIn?.closest(".card")?.querySelector(".card-header");
+  const gameDataLockIcon = loginToUseGameData?.querySelector(".gfg-lock-icon");
+
+  if (gameTotalsHeader) {
+    gameTotalsHeader.textContent = `${String.fromCodePoint(0x1F4B0)} Game Totals`;
+  }
+
+  if (gamesPlayedHeader) {
+    gamesPlayedHeader.textContent = `${String.fromCodePoint(0x1F4DD)} Games Played`;
+  }
+
+  if (gameDataLockIcon) {
+    gameDataLockIcon.textContent = String.fromCodePoint(0x1F512);
+  }
+
+  [
+    wolfMoneyTotal,
+    wolfPointsTotal,
+    sixesMoneyTotal,
+    sixesPointsTotal,
+    bbbMoneyTotal,
+    bbbPointsTotal
+  ].forEach((element) => {
+    if (element && /â€”/.test(element.textContent || "")) {
+      element.textContent = "-";
+    }
+  });
 
   function formatVsPar(value) {
     if (value === 0) return "E";
@@ -1138,6 +1175,876 @@ window.addEventListener("DOMContentLoaded", () => {
     }, delay);
   }
 
+  function getSafeGameLabel(data) {
+    const type = normalizeGameType(data);
+    if (type === "bbb") return "Bingo Bango Bongo";
+    return getGameLabel(data);
+  }
+
+  function scheduleGameAnalyticsRender(delay = 90) {
+    window.clearTimeout(gameAnalyticsResizeTimeout);
+    gameAnalyticsResizeTimeout = window.setTimeout(() => {
+      renderGameAnalyticsChart(allGames, allRounds);
+    }, delay);
+  }
+
+  function getGameSortValue(game) {
+    return getDocTimeValue(game?.timestamp) || getDocTimeValue(game?.createdAt) || 0;
+  }
+
+  function getOrderedGames(games) {
+    return [...games].sort((a, b) => getGameSortValue(a) - getGameSortValue(b));
+  }
+
+  function formatGameTrendLabel(game, index) {
+    const type = normalizeGameType(game);
+    const shortType =
+      type === "wolf" ? "Wolf" :
+      type === "666" ? "666" :
+      type === "bbb" ? "BBB" :
+      "Game";
+
+    const timeValue = getGameSortValue(game);
+    if (!timeValue) return `${shortType} ${index + 1}`;
+
+    const shortDate = new Date(timeValue).toLocaleDateString(undefined, {
+      month: "numeric",
+      day: "numeric"
+    });
+
+    return `${shortType} ${shortDate}`;
+  }
+
+  function getGameHoleEntries(game) {
+    const source = game?.holes;
+    if (Array.isArray(source)) {
+      return source.filter(Boolean);
+    }
+
+    if (!source || typeof source !== "object") {
+      return [];
+    }
+
+    return Object.keys(source)
+      .sort((a, b) => Number(a) - Number(b))
+      .map((key) => source[key])
+      .filter(Boolean);
+  }
+
+  function getTrackedWolfEventStats(game) {
+    const trackedIndex = getTrackedPlayerIndex(game);
+    const holes = getGameHoleEntries(game);
+    const stats = { wins: 0, losses: 0, pushes: 0, opportunities: 0 };
+
+    if (trackedIndex === null) return stats;
+
+    holes.forEach((hole) => {
+      const result = String(hole?.result || "");
+      if (!result) return;
+
+      stats.opportunities += 1;
+
+      if (result === "push") {
+        stats.pushes += 1;
+        return;
+      }
+
+      let winners = [];
+
+      if (result === "wolfTeam") {
+        winners = [hole?.wolf, hole?.partner].filter((value) => Number.isInteger(value));
+      } else if (result === "others") {
+        winners = [0, 1, 2, 3].filter((value) => value !== hole?.wolf && value !== hole?.partner);
+      } else if (result === "loneWin") {
+        winners = Number.isInteger(hole?.wolf) ? [hole.wolf] : [];
+      } else if (result === "loneLose") {
+        winners = [0, 1, 2, 3].filter((value) => value !== hole?.wolf);
+      } else if (result === "dumpWin") {
+        winners = Number.isInteger(hole?.partner) ? [hole.partner] : [];
+      } else if (result === "dumpLose") {
+        winners = [0, 1, 2, 3].filter((value) => value !== hole?.partner);
+      }
+
+      if (!winners.length) return;
+
+      if (winners.includes(trackedIndex)) {
+        stats.wins += 1;
+      } else {
+        stats.losses += 1;
+      }
+    });
+
+    return stats;
+  }
+
+  function getTrackedSixesEventStats(game) {
+    const trackedIndex = getTrackedPlayerIndex(game);
+    const holes = getGameHoleEntries(game);
+    const stats = { wins: 0, losses: 0, pushes: 0, opportunities: 0 };
+
+    if (trackedIndex === null) return stats;
+
+    holes.forEach((hole, index) => {
+      const result = String(hole?.result || "");
+      if (!result) return;
+
+      stats.opportunities += 1;
+
+      if (result === "push") {
+        stats.pushes += 1;
+        return;
+      }
+
+      const holeNumber = index + 1;
+      const teams =
+        holeNumber >= 1 && holeNumber <= 6 ? { team1: [0, 1], team2: [2, 3] } :
+        holeNumber >= 7 && holeNumber <= 12 ? { team1: [0, 2], team2: [1, 3] } :
+        { team1: [0, 3], team2: [1, 2] };
+
+      const winners = result === "team1" ? teams.team1 : result === "team2" ? teams.team2 : [];
+      if (!winners.length) return;
+
+      if (winners.includes(trackedIndex)) {
+        stats.wins += 1;
+      } else {
+        stats.losses += 1;
+      }
+    });
+
+    return stats;
+  }
+
+  function getTrackedBBBEventStats(game) {
+    const trackedIndex = getTrackedPlayerIndex(game);
+    const holes = getGameHoleEntries(game);
+    const stats = { wins: 0, losses: 0, pushes: 0, opportunities: 0 };
+
+    if (trackedIndex === null) return stats;
+
+    holes.forEach((hole) => {
+      ["bingo", "bango", "bongo"].forEach((key) => {
+        const winnerIndex = Number(hole?.[key]);
+        if (!Number.isInteger(winnerIndex) || winnerIndex < 0) return;
+
+        stats.opportunities += 1;
+        if (winnerIndex === trackedIndex) {
+          stats.wins += 1;
+        } else {
+          stats.losses += 1;
+        }
+      });
+    });
+
+    return stats;
+  }
+
+  function getTrackedGameEventStats(game) {
+    const type = normalizeGameType(game);
+    if (type === "wolf") return getTrackedWolfEventStats(game);
+    if (type === "666") return getTrackedSixesEventStats(game);
+    if (type === "bbb") return getTrackedBBBEventStats(game);
+    return { wins: 0, losses: 0, pushes: 0, opportunities: 0 };
+  }
+
+  function getGameOutcomeCode(game) {
+    const money = getGameMoneyFromData(game);
+    if (money > 0) return 1;
+    if (money < 0) return -1;
+    return 0;
+  }
+
+  function getGameOutcomeLabel(game) {
+    const code = getGameOutcomeCode(game);
+    if (code > 0) return "Win";
+    if (code < 0) return "Loss";
+    return "Push";
+  }
+
+  function getGameStreakStats(games) {
+    const orderedGames = getOrderedGames(games);
+    let bestWin = 0;
+    let bestLoss = 0;
+    let runningWin = 0;
+    let runningLoss = 0;
+
+    orderedGames.forEach((game) => {
+      const outcome = getGameOutcomeCode(game);
+
+      if (outcome > 0) {
+        runningWin += 1;
+        runningLoss = 0;
+        bestWin = Math.max(bestWin, runningWin);
+        return;
+      }
+
+      if (outcome < 0) {
+        runningLoss += 1;
+        runningWin = 0;
+        bestLoss = Math.max(bestLoss, runningLoss);
+        return;
+      }
+
+      runningWin = 0;
+      runningLoss = 0;
+    });
+
+    let currentWin = 0;
+    let currentLoss = 0;
+
+    for (let index = orderedGames.length - 1; index >= 0; index -= 1) {
+      const outcome = getGameOutcomeCode(orderedGames[index]);
+      if (outcome > 0 && currentLoss === 0) {
+        currentWin += 1;
+        continue;
+      }
+      if (outcome < 0 && currentWin === 0) {
+        currentLoss += 1;
+        continue;
+      }
+      break;
+    }
+
+    return {
+      currentWin,
+      bestWin,
+      currentLoss,
+      bestLoss
+    };
+  }
+
+  function getGameDistributionBuckets(games) {
+    const values = games.map((game) => getGameMoneyFromData(game));
+    const nonZeroAbsValues = values
+      .filter((value) => value !== 0)
+      .map((value) => Math.abs(value))
+      .sort((a, b) => a - b);
+
+    const threshold = nonZeroAbsValues.length
+      ? nonZeroAbsValues[Math.floor(nonZeroAbsValues.length / 2)]
+      : 1;
+
+    const buckets = {
+      bigLosses: 0,
+      smallLosses: 0,
+      pushes: 0,
+      smallWins: 0,
+      bigWins: 0
+    };
+
+    values.forEach((value) => {
+      if (value === 0) {
+        buckets.pushes += 1;
+      } else if (value > 0) {
+        if (Math.abs(value) > threshold) buckets.bigWins += 1;
+        else buckets.smallWins += 1;
+      } else if (Math.abs(value) > threshold) {
+        buckets.bigLosses += 1;
+      } else {
+        buckets.smallLosses += 1;
+      }
+    });
+
+    return {
+      threshold,
+      buckets
+    };
+  }
+
+  function getRoundDateKey(round) {
+    if (round?.roundDate) return String(round.roundDate);
+
+    const timeValue = getRoundSortValue(round);
+    if (!timeValue) return "";
+
+    return new Date(timeValue).toLocaleDateString("en-CA");
+  }
+
+  function getGameDateKey(game) {
+    const timeValue = getGameSortValue(game);
+    if (!timeValue) return "";
+    return new Date(timeValue).toLocaleDateString("en-CA");
+  }
+
+  function getScoreMoneyPairs(games, rounds) {
+    const roundBuckets = rounds.reduce((map, round) => {
+      const key = getRoundDateKey(round);
+      const score = Number(round?.totalScore);
+      if (!key || !Number.isFinite(score) || score <= 0) return map;
+
+      if (!map.has(key)) {
+        map.set(key, []);
+      }
+
+      map.get(key).push(score);
+      return map;
+    }, new Map());
+
+    return getOrderedGames(games).reduce((pairs, game, index) => {
+      const key = getGameDateKey(game);
+      const scores = roundBuckets.get(key);
+      if (!key || !scores?.length) return pairs;
+
+      const averageScore = scores.reduce((sum, value) => sum + value, 0) / scores.length;
+      pairs.push({
+        x: Number(averageScore.toFixed(1)),
+        y: Number(getGameMoneyFromData(game).toFixed(2)),
+        label: formatGameTrendLabel(game, index),
+        type: getSafeGameLabel(game)
+      });
+      return pairs;
+    }, []);
+  }
+
+  function updateGameAnalyticsTabState() {
+    gameAnalyticsTabs.forEach((button) => {
+      const isActive = button.dataset.gameAnalyticsView === activeGameAnalyticsView;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+  }
+
+  function destroyGameAnalyticsChart() {
+    if (!gameAnalyticsChartInstance) return;
+    gameAnalyticsChartInstance.destroy();
+    gameAnalyticsChartInstance = null;
+  }
+
+  function createGameAnalyticsBarChart(ctx, labels, datasets, isMobileChart, yTitle, extraOptions = {}) {
+    gameAnalyticsChartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: datasets.length > 1,
+            position: isMobileChart ? "bottom" : "top",
+            labels: {
+              usePointStyle: true,
+              padding: isMobileChart ? 10 : 14,
+              font: {
+                size: isMobileChart ? 10 : 12
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              font: {
+                size: isMobileChart ? 10 : 12
+              },
+              callback: extraOptions.yTickFormatter
+            },
+            title: {
+              display: true,
+              text: yTitle,
+              font: {
+                size: isMobileChart ? 11 : 12
+              }
+            },
+            suggestedMin: extraOptions.suggestedMin,
+            suggestedMax: extraOptions.suggestedMax
+          },
+          x: {
+            ticks: {
+              autoSkip: true,
+              maxRotation: 0,
+              minRotation: 0,
+              maxTicksLimit: isMobileChart ? 6 : 10,
+              font: {
+                size: isMobileChart ? 10 : 12
+              }
+            },
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function createGameAnalyticsLineChart(ctx, labels, datasets, isMobileChart, yTitle, suggestedMax, extraOptions = {}) {
+    gameAnalyticsChartInstance = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: "index",
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            position: isMobileChart ? "bottom" : "top",
+            labels: {
+              usePointStyle: true,
+              padding: isMobileChart ? 10 : 14,
+              font: {
+                size: isMobileChart ? 10 : 12
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: extraOptions.beginAtZero !== false,
+            suggestedMax,
+            ticks: {
+              font: {
+                size: isMobileChart ? 10 : 12
+              },
+              callback: extraOptions.yTickFormatter
+            },
+            title: {
+              display: true,
+              text: yTitle,
+              font: {
+                size: isMobileChart ? 11 : 12
+              }
+            }
+          },
+          x: {
+            ticks: {
+              autoSkip: true,
+              maxRotation: 0,
+              minRotation: 0,
+              maxTicksLimit: isMobileChart ? 6 : 10,
+              font: {
+                size: isMobileChart ? 10 : 12
+              }
+            },
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderGameAnalyticsChart(games, rounds) {
+    if (!gameAnalyticsChartCanvas || !gameAnalyticsSummary || !gameAnalyticsStatus) return;
+
+    updateGameAnalyticsTabState();
+
+    if (typeof Chart === "undefined") {
+      gameAnalyticsSummary.textContent = "Chart library unavailable.";
+      gameAnalyticsStatus.textContent = "Chart.js did not load on this page.";
+      return;
+    }
+
+    destroyGameAnalyticsChart();
+
+    const ctx = gameAnalyticsChartCanvas.getContext("2d");
+    const isMobileChart = window.innerWidth <= 767;
+    const orderedGames = getOrderedGames(games);
+    const labels = orderedGames.map((game, index) => formatGameTrendLabel(game, index));
+    const moneyValues = orderedGames.map((game) => Number(getGameMoneyFromData(game).toFixed(2)));
+    const totalMoney = moneyValues.reduce((sum, value) => sum + value, 0);
+
+    if (activeGameAnalyticsView === "moneyTime") {
+      const runningTotals = moneyValues.reduce((values, value) => {
+        const lastValue = values.length ? values[values.length - 1] : 0;
+        values.push(Number((lastValue + value).toFixed(2)));
+        return values;
+      }, []);
+
+      gameAnalyticsSummary.textContent = orderedGames.length
+        ? `Tracking per-game profit and your running total across ${orderedGames.length} saved game${orderedGames.length === 1 ? "" : "s"}.`
+        : "Save games to build your money-over-time chart.";
+      gameAnalyticsStatus.textContent = orderedGames.length
+        ? `Current tracked total: ${formatMoney(totalMoney)}.`
+        : "Each save adds one profit/loss bar and updates the running-total line.";
+
+      gameAnalyticsChartInstance = new Chart(ctx, {
+        data: {
+          labels,
+          datasets: [
+            {
+              type: "bar",
+              label: "Per Game Profit/Loss",
+              data: moneyValues,
+              backgroundColor: moneyValues.map((value) =>
+                value > 0 ? "rgba(53, 148, 71, 0.82)" :
+                value < 0 ? "rgba(200, 87, 70, 0.82)" :
+                "rgba(107, 114, 128, 0.72)"
+              ),
+              borderRadius: 12,
+              borderSkipped: false,
+              maxBarThickness: isMobileChart ? 34 : 48
+            },
+            {
+              type: "line",
+              label: "Running Total",
+              data: runningTotals,
+              borderColor: "#132033",
+              backgroundColor: "rgba(19, 32, 51, 0.12)",
+              pointBackgroundColor: "#132033",
+              pointBorderColor: "#ffffff",
+              pointBorderWidth: 2,
+              pointRadius: isMobileChart ? 3.5 : 4.5,
+              pointHoverRadius: isMobileChart ? 5 : 6,
+              borderWidth: 3,
+              tension: 0.28,
+              yAxisID: "y"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: "index",
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              position: isMobileChart ? "bottom" : "top",
+              labels: {
+                usePointStyle: true,
+                padding: isMobileChart ? 10 : 14,
+                font: {
+                  size: isMobileChart ? 10 : 12
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              ticks: {
+                font: {
+                  size: isMobileChart ? 10 : 12
+                },
+                callback(value) {
+                  return `$${value}`;
+                }
+              },
+              title: {
+                display: true,
+                text: "Money",
+                font: {
+                  size: isMobileChart ? 11 : 12
+                }
+              }
+            },
+            x: {
+              ticks: {
+                autoSkip: true,
+                maxRotation: 0,
+                minRotation: 0,
+                maxTicksLimit: isMobileChart ? 6 : 10,
+                font: {
+                  size: isMobileChart ? 10 : 12
+                }
+              },
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+      return;
+    }
+
+    if (activeGameAnalyticsView === "gameTypeMoney") {
+      const totals = {
+        Wolf: 0,
+        "666": 0,
+        BBB: 0
+      };
+
+      orderedGames.forEach((game) => {
+        const type = normalizeGameType(game);
+        const money = getGameMoneyFromData(game);
+        if (type === "wolf") totals.Wolf += money;
+        if (type === "666") totals["666"] += money;
+        if (type === "bbb") totals.BBB += money;
+      });
+
+      gameAnalyticsSummary.textContent = orderedGames.length
+        ? "See which game formats are making you money and which ones are costing you."
+        : "Save games to compare earnings across Wolf, 666, and BBB.";
+      gameAnalyticsStatus.textContent = orderedGames.length
+        ? `Best current game type: ${Object.entries(totals).sort((a, b) => b[1] - a[1])[0]?.[0] || "None"}.`
+        : "Totals are calculated from the player slot you selected as yourself in each saved game.";
+
+      createGameAnalyticsBarChart(
+        ctx,
+        Object.keys(totals),
+        [
+          {
+            label: "Total Earnings",
+            data: Object.values(totals).map((value) => Number(value.toFixed(2))),
+            backgroundColor: ["#359447", "#0ea5e9", "#f0b429"],
+            borderRadius: 14,
+            borderSkipped: false,
+            maxBarThickness: isMobileChart ? 52 : 70
+          }
+        ],
+        isMobileChart,
+        "Money",
+        {
+          yTickFormatter(value) {
+            return `$${value}`;
+          }
+        }
+      );
+      return;
+    }
+
+    if (activeGameAnalyticsView === "winRate") {
+      const eventStats = orderedGames.reduce(
+        (totals, game) => {
+          const stats = getTrackedGameEventStats(game);
+          totals.wins += stats.wins;
+          totals.losses += stats.losses;
+          totals.pushes += stats.pushes;
+          totals.opportunities += stats.opportunities;
+          return totals;
+        },
+        { wins: 0, losses: 0, pushes: 0, opportunities: 0 }
+      );
+
+      const roundWins = orderedGames.filter((game) => getGameOutcomeCode(game) > 0).length;
+      const roundPushes = orderedGames.filter((game) => getGameOutcomeCode(game) === 0).length;
+      const scoringRate = eventStats.wins + eventStats.losses
+        ? Number(((eventStats.wins / (eventStats.wins + eventStats.losses)) * 100).toFixed(1))
+        : 0;
+      const roundRate = orderedGames.length
+        ? Number(((roundWins / orderedGames.length) * 100).toFixed(1))
+        : 0;
+      const pushRate = orderedGames.length
+        ? Number(((roundPushes / orderedGames.length) * 100).toFixed(1))
+        : 0;
+
+      gameAnalyticsSummary.textContent = orderedGames.length
+        ? `Personal win rate built from ${eventStats.opportunities} tracked scoring chances and ${orderedGames.length} saved game${orderedGames.length === 1 ? "" : "s"}.`
+        : "Save games to calculate your scoring win rate and round win rate.";
+      gameAnalyticsStatus.textContent = orderedGames.length
+        ? "BBB uses Bingo / Bango / Bongo scoring chances when calculating the scoring win rate."
+        : "Round win rate is based on finishing the saved game up money, down money, or at a push.";
+
+      createGameAnalyticsBarChart(
+        ctx,
+        ["Scoring Win %", "Round Win %", "Round Push %"],
+        [
+          {
+            label: "Rate",
+            data: [scoringRate, roundRate, pushRate],
+            backgroundColor: ["#359447", "#132033", "#f0b429"],
+            borderRadius: 14,
+            borderSkipped: false,
+            maxBarThickness: isMobileChart ? 48 : 64
+          }
+        ],
+        isMobileChart,
+        "Percentage",
+        {
+          suggestedMax: 100,
+          yTickFormatter(value) {
+            return `${value}%`;
+          }
+        }
+      );
+      return;
+    }
+
+    if (activeGameAnalyticsView === "outcomeTrend") {
+      const outcomeValues = orderedGames.map((game) => getGameOutcomeCode(game));
+      gameAnalyticsSummary.textContent = orderedGames.length
+        ? `Track win, loss, and push results from oldest to newest across ${orderedGames.length} saved game${orderedGames.length === 1 ? "" : "s"}.`
+        : "Save games to build your round-outcome trend.";
+      gameAnalyticsStatus.textContent = orderedGames.length
+        ? `Latest result: ${getGameOutcomeLabel(orderedGames[orderedGames.length - 1])}.`
+        : "Wins plot above zero, pushes stay at zero, and losses plot below zero.";
+
+      createGameAnalyticsBarChart(
+        ctx,
+        labels,
+        [
+          {
+            label: "Outcome",
+            data: outcomeValues,
+            backgroundColor: outcomeValues.map((value) =>
+              value > 0 ? "#359447" : value < 0 ? "#c85746" : "#f0b429"
+            ),
+            borderRadius: 12,
+            borderSkipped: false,
+            maxBarThickness: isMobileChart ? 32 : 40
+          }
+        ],
+        isMobileChart,
+        "Outcome",
+        {
+          suggestedMin: -1,
+          suggestedMax: 1,
+          yTickFormatter(value) {
+            if (value === 1) return "Win";
+            if (value === 0) return "Push";
+            if (value === -1) return "Loss";
+            return "";
+          }
+        }
+      );
+      return;
+    }
+
+    if (activeGameAnalyticsView === "streaks") {
+      const streaks = getGameStreakStats(orderedGames);
+
+      gameAnalyticsSummary.textContent = orderedGames.length
+        ? "Hot streaks and cold streaks can stack up fast when you track games consistently."
+        : "Save games to build your win and loss streak tracker.";
+      gameAnalyticsStatus.textContent = orderedGames.length
+        ? `Current streaks: ${streaks.currentWin} win${streaks.currentWin === 1 ? "" : "s"} / ${streaks.currentLoss} loss${streaks.currentLoss === 1 ? "" : "es"}.`
+        : "Pushes reset the current streak counters.";
+
+      createGameAnalyticsBarChart(
+        ctx,
+        ["Current Win", "Best Win", "Current Loss", "Best Loss"],
+        [
+          {
+            label: "Games",
+            data: [streaks.currentWin, streaks.bestWin, streaks.currentLoss, streaks.bestLoss],
+            backgroundColor: ["#359447", "#1c7c31", "#d97706", "#c85746"],
+            borderRadius: 14,
+            borderSkipped: false,
+            maxBarThickness: isMobileChart ? 42 : 56
+          }
+        ],
+        isMobileChart,
+        "Games"
+      );
+      return;
+    }
+
+    if (activeGameAnalyticsView === "distribution") {
+      const distribution = getGameDistributionBuckets(orderedGames);
+      const bucketValues = distribution.buckets;
+
+      gameAnalyticsSummary.textContent = orderedGames.length
+        ? "See how often you stack big wins, grind out small wins, push, or take losses."
+        : "Save games to build your earnings-distribution chart.";
+      gameAnalyticsStatus.textContent = orderedGames.length
+        ? `Big win / loss threshold is currently ${formatMoney(distribution.threshold)} in absolute value.`
+        : "Buckets are split into big wins, small wins, pushes, small losses, and big losses.";
+
+      createGameAnalyticsBarChart(
+        ctx,
+        ["Big Losses", "Small Losses", "Pushes", "Small Wins", "Big Wins"],
+        [
+          {
+            label: "Saved Games",
+            data: [
+              bucketValues.bigLosses,
+              bucketValues.smallLosses,
+              bucketValues.pushes,
+              bucketValues.smallWins,
+              bucketValues.bigWins
+            ],
+            backgroundColor: ["#c85746", "#d97706", "#6b7280", "#0ea5e9", "#359447"],
+            borderRadius: 14,
+            borderSkipped: false,
+            maxBarThickness: isMobileChart ? 40 : 54
+          }
+        ],
+        isMobileChart,
+        "Games"
+      );
+      return;
+    }
+
+    const scoreMoneyPairs = getScoreMoneyPairs(orderedGames, rounds);
+    gameAnalyticsSummary.textContent = scoreMoneyPairs.length
+      ? `Comparing saved round scores against game money on ${scoreMoneyPairs.length} matching day${scoreMoneyPairs.length === 1 ? "" : "s"}.`
+      : "Save rounds and games on the same day to build your score-vs-money correlation chart.";
+    gameAnalyticsStatus.textContent = scoreMoneyPairs.length
+      ? "Lower round scores paired with higher money will cluster toward the bottom-right of this chart."
+      : "This view matches each saved game with round scores from the same calendar day.";
+
+    gameAnalyticsChartInstance = new Chart(ctx, {
+      type: "scatter",
+      data: {
+        datasets: [
+          {
+            label: "Score vs Money",
+            data: scoreMoneyPairs,
+            backgroundColor: "rgba(53, 148, 71, 0.82)",
+            borderColor: "#132033",
+            borderWidth: 1.5,
+            pointRadius: isMobileChart ? 5 : 6,
+            pointHoverRadius: isMobileChart ? 6 : 8
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              title(items) {
+                return items[0]?.raw?.label || "Saved Game";
+              },
+              label(context) {
+                const raw = context.raw || {};
+                return `${raw.type || "Game"}: Score ${raw.x}, Money ${formatMoney(raw.y || 0)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Round Score",
+              font: {
+                size: isMobileChart ? 11 : 12
+              }
+            },
+            ticks: {
+              font: {
+                size: isMobileChart ? 10 : 12
+              }
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Game Money",
+              font: {
+                size: isMobileChart ? 11 : 12
+              }
+            },
+            ticks: {
+              font: {
+                size: isMobileChart ? 10 : 12
+              },
+              callback(value) {
+                return `$${value}`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
   function getGameMoneyFromData(game) {
     const points = getTrackedGamePoints(game);
 
@@ -1420,7 +2327,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const html = visibleGames.map((game) => {
       const type = normalizeGameType(game);
-      const label = getGameLabel(game);
+      const label = getSafeGameLabel(game);
       const totals = Array.isArray(game?.totals) ? game.totals : [];
       const players = Array.isArray(game?.players) ? game.players : [];
       const points = getTrackedGamePoints(game);
@@ -1560,6 +2467,7 @@ window.addEventListener("DOMContentLoaded", () => {
           renderSavedRounds();
           renderCourseData(allRounds);
           renderAnalyticsChart(allRounds);
+          renderGameAnalyticsChart(allGames, allRounds);
         } catch (error) {
           console.error("Error deleting round:", error);
           window.alert("There was an error deleting that round.");
@@ -1616,6 +2524,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
           updateGameTotals(allGames);
           renderSavedGames();
+          renderGameAnalyticsChart(allGames, allRounds);
         } catch (error) {
           console.error("Error deleting game:", error);
           window.alert("There was an error deleting that saved game.");
@@ -1645,6 +2554,7 @@ window.addEventListener("DOMContentLoaded", () => {
       renderSavedRounds();
       renderCourseData(allRounds);
       renderAnalyticsChart(allRounds);
+      renderGameAnalyticsChart(allGames, allRounds);
     } catch (error) {
       console.error("Error loading saved rounds:", error);
 
@@ -1657,6 +2567,8 @@ window.addEventListener("DOMContentLoaded", () => {
           </div>
         `;
       }
+
+      renderGameAnalyticsChart([], allRounds);
     }
   }
 
@@ -1677,6 +2589,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
       updateGameTotals(allGames);
       renderSavedGames();
+      renderGameAnalyticsChart(allGames, allRounds);
     } catch (error) {
       console.error("Error loading saved games:", error);
 
@@ -1689,6 +2602,8 @@ window.addEventListener("DOMContentLoaded", () => {
           </div>
         `;
       }
+
+      renderGameAnalyticsChart([], allRounds);
 
       if (wolfMoneyTotal) wolfMoneyTotal.textContent = "—";
       if (wolfPointsTotal) wolfPointsTotal.textContent = "—";
@@ -1718,8 +2633,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
     if (gameTotalsLoggedIn) gameTotalsLoggedIn.classList.toggle("d-none", !loggedIn);
     if (gamesPlayedLoggedIn) gamesPlayedLoggedIn.classList.toggle("d-none", !loggedIn);
+    if (gameAnalyticsLoggedIn) gameAnalyticsLoggedIn.classList.toggle("d-none", !loggedIn);
     if (loginToUseGameData) loginToUseGameData.classList.toggle("d-none", loggedIn);
     if (savedGameDataShell) savedGameDataShell.classList.toggle("is-locked", !loggedIn);
+
+    if (loggedIn) {
+      scheduleGameAnalyticsRender(140);
+    }
   }
 
   function resetGameDisplays() {
@@ -1734,6 +2654,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (bbbPointsTotal) bbbPointsTotal.textContent = "—";
 
     renderSavedGames();
+    renderGameAnalyticsChart([], allRounds);
   }
 
   function initPlayerLogRounds() {
@@ -1775,7 +2696,18 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  gameAnalyticsTabs.forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextView = button.dataset.gameAnalyticsView;
+      if (!nextView || nextView === activeGameAnalyticsView) return;
+
+      activeGameAnalyticsView = nextView;
+      renderGameAnalyticsChart(allGames, allRounds);
+    });
+  });
+
   window.addEventListener("resize", () => {
     scheduleAnalyticsRender(120);
+    scheduleGameAnalyticsRender(120);
   });
 });

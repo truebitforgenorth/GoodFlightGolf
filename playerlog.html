@@ -309,6 +309,8 @@
                         </section>
                     </div>
 
+                </div>
+
                 <div class="row g-4 mt-1">
                     <div class="col-12">
                         <section id="analyticsSection">
@@ -448,6 +450,62 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mt-1">
+                    <div class="col-12">
+                        <section id="gameAnalyticsSection">
+                            <div class="card h-100">
+                                <div class="card-header">&#128200; Personal Game Analytics</div>
+                                <div class="card-body">
+                                    <div id="gameAnalyticsLoggedIn" class="d-none">
+                                        <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
+                                            <button type="button" class="gfg-pill-btn game-analytics-tab is-active"
+                                                data-game-analytics-view="moneyTime">
+                                                Money Over Time
+                                            </button>
+                                            <button type="button" class="gfg-pill-btn game-analytics-tab"
+                                                data-game-analytics-view="gameTypeMoney">
+                                                Money Per Game Type
+                                            </button>
+                                            <button type="button" class="gfg-pill-btn game-analytics-tab"
+                                                data-game-analytics-view="winRate">
+                                                Personal Win Rate
+                                            </button>
+                                            <button type="button" class="gfg-pill-btn game-analytics-tab"
+                                                data-game-analytics-view="outcomeTrend">
+                                                Round Outcome Trend
+                                            </button>
+                                            <button type="button" class="gfg-pill-btn game-analytics-tab"
+                                                data-game-analytics-view="streaks">
+                                                Streak Tracker
+                                            </button>
+                                            <button type="button" class="gfg-pill-btn game-analytics-tab"
+                                                data-game-analytics-view="distribution">
+                                                Earnings Distribution
+                                            </button>
+                                            <button type="button" class="gfg-pill-btn game-analytics-tab"
+                                                data-game-analytics-view="scoreMoney">
+                                                Score vs Money
+                                            </button>
+                                        </div>
+
+                                        <p id="gameAnalyticsSummary" class="text-center text-muted mb-3">
+                                            Save games to build your personal game analytics.
+                                        </p>
+
+                                        <div class="analytics-canvas-wrap">
+                                            <canvas id="gameAnalyticsChart" height="120"></canvas>
+                                        </div>
+
+                                        <p id="gameAnalyticsStatus" class="text-center small text-muted mt-3 mb-0">
+                                            Use the chart buttons to switch between money, outcome, streak, and correlation views.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
                     </div>
                 </div>
 
