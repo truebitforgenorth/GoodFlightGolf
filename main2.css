@@ -787,6 +787,13 @@ footer {
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
 }
 
+#analyticsSection .gfg-pill-btn {
+  min-height: 40px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  gap: 0.4rem;
+}
+
 .btn-primary {
   border: none;
   border-radius: var(--radius-md);
@@ -1218,6 +1225,29 @@ body.fullscreen-active #foot {
     padding: 22px 18px;
   }
 
+  .gfg-section {
+    padding: 24px 0;
+  }
+
+  #playerDataSection > .mb-3,
+  #savedGameDataSection > .mb-3,
+  #handicapDataSection > .mb-3,
+  #clubDistanceSection > .mb-3 {
+    padding-inline: 14px;
+  }
+
+  #playerDataSection hr.my-5,
+  #savedGameDataSection hr.my-5,
+  hr.my-5 {
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  #playerDataShell,
+  #savedGameDataShell {
+    min-height: 360px !important;
+  }
+
   .gfg-locked-shell.is-locked > .row,
   .gfg-locked-shell.is-locked > .card,
   .gfg-locked-shell.is-locked > section,
@@ -1233,6 +1263,19 @@ body.fullscreen-active #foot {
 @media (max-width: 480px) {
   body:not(.fullscreen-active) {
     font-size: 0.9rem;
+  }
+
+  #playerDataSection > .mb-3,
+  #savedGameDataSection > .mb-3,
+  #handicapDataSection > .mb-3,
+  #clubDistanceSection > .mb-3 {
+    padding-inline: 16px;
+  }
+
+  .gfg-section-title,
+  .gfg-section-sub {
+    padding-left: 0;
+    padding-right: 0;
   }
 
   body:not(.fullscreen-active) button,
@@ -1263,6 +1306,12 @@ body.fullscreen-active #foot {
   body:not(.fullscreen-active) .gfg-navbar .navbar-brand {
     font-size: 1.8rem;
     line-height: 1.1;
+  }
+
+  #analyticsSection .gfg-pill-btn {
+    min-height: 36px;
+    padding: 7px 12px;
+    font-size: 0.82rem;
   }
 
   :is(.wolf-page, .gfg-666-page, .gfg-bbb-page) #selectionWrapper.fullscreen {
