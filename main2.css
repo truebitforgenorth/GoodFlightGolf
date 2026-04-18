@@ -806,6 +806,16 @@ footer {
   width: 100%;
 }
 
+.analytics-tab-strip {
+  display: flex;
+  align-items: center;
+}
+
+.analytics-tab-strip .gfg-pill-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .btn-primary {
   border: none;
   border-radius: var(--radius-md);
@@ -1325,6 +1335,22 @@ body.fullscreen-active #foot {
     min-height: 36px;
     padding: 7px 12px;
     font-size: 0.82rem;
+  }
+
+  .analytics-tab-strip {
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 2px 6px;
+    margin-left: -2px;
+    margin-right: -2px;
+  }
+
+  .analytics-tab-strip::-webkit-scrollbar {
+    display: none;
   }
 
   :is(.wolf-page, .gfg-666-page, .gfg-bbb-page) #selectionWrapper.fullscreen {
