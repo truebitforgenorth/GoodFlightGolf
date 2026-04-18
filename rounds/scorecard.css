@@ -41,6 +41,82 @@
   background: rgba(255, 255, 255, 0.78);
 }
 
+.gfg-round-page #fullscreenBtn,
+.gfg-round-page #holeNavCard button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.55rem !important;
+  padding: 12px 18px !important;
+  border: 1px solid rgba(53, 148, 71, 0.55) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, var(--wolf-dark), #111223) !important;
+  color: var(--yellow) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2px !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18) !important;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition), border-color var(--transition) !important;
+}
+
+.gfg-round-page #fullscreenBtn:hover,
+.gfg-round-page #holeNavCard button:hover {
+  background: linear-gradient(180deg, var(--wolf-dark-2), #14162a) !important;
+  transform: translateY(-2px) !important;
+  border-color: rgba(250, 208, 46, 0.55) !important;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26) !important;
+}
+
+.gfg-round-page #holeNavCard .d-flex {
+  gap: 12px !important;
+}
+
+.gfg-round-page #holeNavCard button {
+  width: 110px !important;
+  min-width: 110px !important;
+  min-height: 56px !important;
+  flex: 0 0 110px !important;
+  white-space: nowrap !important;
+  font-size: 0.92rem !important;
+}
+
+.gfg-round-page #holeNavCard .nav-arrow {
+  font-size: 1.08rem !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.gfg-round-page #selectionWrapper.fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: var(--gfg-fullscreen-z) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 1rem !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+.gfg-round-page #selectionWrapper.fullscreen #fullscreenContent {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: auto !important;
+  padding-bottom: 10px !important;
+}
+
+.gfg-round-page #selectionWrapper.fullscreen #scoreboardCard {
+  position: static !important;
+  z-index: auto !important;
+  margin-top: 0 !important;
+  bottom: auto !important;
+}
+
 .gfg-round-page #feedbackSection {
   border: 1px solid rgba(53, 148, 71, 0.1);
   box-shadow: 0 16px 36px rgba(53, 148, 71, 0.12);
@@ -235,6 +311,26 @@
 }
 
 @media (max-width: 480px) {
+  .gfg-round-page #selectionWrapper.fullscreen {
+    padding: 0.75rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen h2,
+  .gfg-round-page #selectionWrapper.fullscreen h3,
+  .gfg-round-page #selectionWrapper.fullscreen h4 {
+    font-size: 0.9rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen button,
+  .gfg-round-page #selectionWrapper.fullscreen .gfg-pill-btn {
+    padding: 8px 12px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .gfg-round-page #selectionWrapper.fullscreen .card {
+    padding: 0.75rem !important;
+  }
+
   .gfg-round-page #selectionWrapper.fullscreen .round-counter-card,
   .gfg-round-page #selectionWrapper.fullscreen .round-summary-card {
     padding: 0.6rem !important;

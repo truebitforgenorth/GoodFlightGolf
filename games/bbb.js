@@ -638,7 +638,7 @@ renderLinkedSessionBanner();
 
 sessionApi?.attachLinkedFullscreenSwipe?.({
   surface: selectionWrapper,
-  direction: "right",
+  direction: "left",
   isEnabled: () => selectionWrapper?.classList.contains("fullscreen") && !!getLinkedSession()?.sessionId,
   getTargetUrl: () => {
     const linkedSession = getLinkedSession();

@@ -1376,7 +1376,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   sessionApi?.attachLinkedFullscreenSwipe?.({
     surface: selectionWrapper,
-    direction: "left",
+    direction: "right",
     isEnabled: () => selectionWrapper?.classList.contains("fullscreen") && !!activeRoundSessionId,
     getTargetUrl: () => {
       if (!sessionApi || !activeRoundSessionId) return "";
