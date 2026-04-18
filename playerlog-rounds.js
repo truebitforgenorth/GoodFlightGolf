@@ -144,6 +144,22 @@ window.addEventListener("DOMContentLoaded", () => {
     return 18;
   }
 
+  function getLegacyShotPatternCounts(round, view, allowedKeys) {
+    const source = view === "approach" ? round?.approachCounts : round?.driveCounts;
+    if (!source || typeof source !== "object") return null;
+
+    const counts = Object.fromEntries(allowedKeys.map((key) => [key, 0]));
+    let hasTrackedData = false;
+
+    allowedKeys.forEach((key) => {
+      const value = Number(source[key]) || 0;
+      counts[key] = value;
+      if (value > 0) hasTrackedData = true;
+    });
+
+    return hasTrackedData ? counts : null;
+  }
+
   function getShotPatternConfig(view, rounds) {
     const driveConfig = {
       title: "Driving Miss Pattern",
@@ -171,6 +187,14 @@ window.addEventListener("DOMContentLoaded", () => {
     const counts = Object.fromEntries(config.keys.map((key) => [key, 0]));
 
     rounds.forEach((round) => {
+      const legacyCounts = getLegacyShotPatternCounts(round, view, config.keys);
+      if (legacyCounts) {
+        config.keys.forEach((key) => {
+          counts[key] += legacyCounts[key];
+        });
+        return;
+      }
+
       const holes = Array.isArray(round?.holes) ? round.holes : [];
 
       holes.forEach((hole) => {
@@ -681,7 +705,7 @@ window.addEventListener("DOMContentLoaded", () => {
               </div>
               <div class="text-end">
                 <div class="small text-muted">Saved Hole</div>
-                <div class="fw-bold">${escapeHtml(game.hole ?? "—")}</div>
+                <div class="fw-bold">${escapeHtml(game.hole ?? "-")}</div>
               </div>
             </div>
 
@@ -706,7 +730,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 players.length
                   ? players.map((player, idx) => `
                     <div class="small">
-                      • ${escapeHtml(player || `Player ${idx + 1}`)} — ${Number(totals[idx]) || 0} pts
+                      * ${escapeHtml(player || `Player ${idx + 1}`)} - ${Number(totals[idx]) || 0} pts
                     </div>
                   `).join("")
                   : `<div class="small">No players saved.</div>`
