@@ -177,6 +177,46 @@
           </div>
         </div>
       </div>
+
+      <div class="round-session-box mt-4" id="roundSessionBox">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+          <div>
+            <h5 class="mb-1">Round + Game Session</h5>
+            <p class="small text-muted mb-0">
+              Track your scorecard and a side game together without losing your place on the course.
+            </p>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="small fw-bold mb-1" for="sessionModeSelect">Session Mode</label>
+            <select id="sessionModeSelect" class="form-select">
+              <option value="roundOnly" selected>Round Only</option>
+              <option value="roundGame">Round + Game</option>
+            </select>
+          </div>
+
+          <div class="col-md-6" id="linkedGameTypeWrap">
+            <label class="small fw-bold mb-1" for="linkedGameTypeSelect">Linked Game</label>
+            <select id="linkedGameTypeSelect" class="form-select">
+              <option value="wolf">Wolf</option>
+              <option value="666">Six-Six-Six</option>
+              <option value="bbb">Bingo Bango Bongo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <button type="button" id="launchLinkedGameBtn" class="gfg-pill-btn">Open Linked Game</button>
+          <a id="continueLinkedGameBtn" href="../games/goodflightgames.html" class="gfg-pill-btn hidden">Continue Linked Game</a>
+          <button type="button" id="clearRoundSessionBtn" class="gfg-pill-btn round-session-clear-btn hidden">Clear Session</button>
+        </div>
+
+        <p id="roundSessionStatus" class="small text-muted mt-3 mb-0">
+          Round only keeps your scorecard by itself. Round + Game ties the scorecard to Wolf, 666, or BBB.
+        </p>
+      </div>
     </section>
 
     <section id="selectionWrapper" class="card game-card p-4 mb-3">
@@ -482,6 +522,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../myscripts.js"></script>
+  <script src="../round-session.js"></script>
   <script src="scorecard.js"></script>
 </body>
 

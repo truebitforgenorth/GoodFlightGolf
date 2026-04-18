@@ -74,6 +74,118 @@ let totals = [0, 0, 0, 0];
 let holes = {}; // holes[n] = { result: "team1" | "team2" | "push" }
 let currentPot = 0;
 let selectedSelfPlayerIndex = null;
+const sessionApi = window.GFGSession || null;
+let linkedSessionId = sessionApi?.getSessionIdFromUrl() || "";
+let loadedFromSavedGame = false;
+
+function getLinkedSession() {
+  if (!sessionApi) return null;
+
+  const activeSession = sessionApi.getActiveSession();
+  if (linkedSessionId) {
+    return activeSession?.sessionId === linkedSessionId
+      ? activeSession
+      : { sessionId: linkedSessionId };
+  }
+
+  if (loadedFromSavedGame) {
+    return null;
+  }
+
+  if (activeSession?.sessionId && sessionApi.normalizeGameType(activeSession.gameType) === "666") {
+    linkedSessionId = activeSession.sessionId;
+    return activeSession;
+  }
+
+  return null;
+}
+
+function renderLinkedSessionBanner() {
+  let banner = document.getElementById("gfgLinkedRoundBanner");
+  const linkedSession = getLinkedSession();
+
+  if (!linkedSession?.sessionId) {
+    banner?.remove();
+    return;
+  }
+
+  if (!banner) {
+    banner = document.createElement("div");
+    banner.id = "gfgLinkedRoundBanner";
+    banner.className = "card game-card p-3 mb-3";
+    selectionWrapper?.parentElement?.insertBefore(banner, selectionWrapper);
+  }
+
+  const course = linkedSession.courseName || "Linked Round Session";
+  const tee = linkedSession.teeName ? ` - ${linkedSession.teeName}` : "";
+  banner.innerHTML = `
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div>
+        <h5 class="mb-1">Linked Round Session</h5>
+        <div class="small text-muted">${course}${tee}</div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <a class="gfg-pill-btn" href="../rounds/scorecard.html?sessionId=${encodeURIComponent(linkedSession.sessionId)}">Back to Scorecard</a>
+        <button type="button" class="gfg-pill-btn game-session-clear-btn" id="clearLinkedGameSessionBtn">Clear Session</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("clearLinkedGameSessionBtn")?.addEventListener("click", () => {
+    const confirmed = window.confirm("Clear this linked round session and remove the in-progress shared drafts?");
+    if (!confirmed) return;
+
+    sessionApi?.clearSessionArtifacts(linkedSession.sessionId);
+    linkedSessionId = "";
+    renderLinkedSessionBanner();
+  });
+}
+
+function getGameDraftPayload() {
+  return {
+    sessionId: linkedSessionId,
+    hole,
+    holes,
+    totals,
+    players,
+    trackedPlayerIndex: selectedSelfPlayerIndex,
+    base: +baseInput.value || 0,
+    dollarValue: +dollarValueInput.value || 0,
+    tieSetPoints: tieSetPoints.value !== "" ? +tieSetPoints.value : null,
+    tieMultiplier: +tieMultiplier.value || 1
+  };
+}
+
+function persistLinkedGameDraft() {
+  if (!sessionApi || !linkedSessionId) return;
+
+  sessionApi.saveGameDraft("666", linkedSessionId, getGameDraftPayload());
+  sessionApi.updateActiveSession({
+    sessionId: linkedSessionId,
+    mode: "round+game",
+    gameType: "666",
+    currentGameHole: hole
+  });
+}
+
+function restoreLinkedGameDraft() {
+  if (!sessionApi || loadedFromSavedGame) return false;
+
+  const linkedSession = getLinkedSession();
+  if (!linkedSession?.sessionId) return false;
+
+  linkedSessionId = linkedSession.sessionId;
+  const draft = sessionApi.loadGameDraft("666", linkedSessionId);
+  if (!draft) {
+    renderLinkedSessionBanner();
+    return false;
+  }
+
+  loadGameData(draft);
+  renderLinkedSessionBanner();
+  return true;
+}
 
 // ---------------------------
 // TIE INPUTS - MUTUALLY EXCLUSIVE
@@ -187,6 +299,7 @@ function recalc() {
   currentPot = carryover;
   updatePotDisplay();
   updateTotals();
+  persistLinkedGameDraft();
 }
 
 function updatePotDisplay() {
@@ -206,6 +319,7 @@ function updatePotDisplay() {
 function render() {
   if (holeTitle) holeTitle.innerText = `Hole ${hole}`;
   if (formatLabel) formatLabel.textContent = getFormatForHole(hole);
+  renderLinkedSessionBanner();
 
   if (hole >= 1 && hole <= 18) {
     const { team1, team2 } = getTeamsForHole(hole);
@@ -227,6 +341,7 @@ function render() {
   }
 
   updateTotals();
+  persistLinkedGameDraft();
 }
 
 function updateTotals() {
@@ -384,12 +499,18 @@ function showResultsSummary() {
     }
 
     try {
-      await firebase.firestore()
+      const linkedSession = getLinkedSession();
+      const docRef = await firebase.firestore()
         .collection("users")
         .doc(user.uid)
         .collection("savedGames")
         .add({
           gameType: "666",
+          sessionId: linkedSession?.sessionId || null,
+          sessionMode: linkedSession?.sessionId ? "round+game" : "game-only",
+          linkedCourseName: linkedSession?.courseName || null,
+          linkedTeeName: linkedSession?.teeName || null,
+          linkedRoundDate: linkedSession?.roundDate || null,
           hole,
           holes,
           totals,
@@ -404,7 +525,25 @@ function showResultsSummary() {
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-      alert("666 game saved!");
+      let message = "666 game saved!";
+      if (linkedSession?.sessionId && sessionApi) {
+        const completion = sessionApi.completeSessionPart("game", { docId: docRef.id });
+        if (completion.completed) {
+          linkedSessionId = "";
+          renderLinkedSessionBanner();
+          message = "666 game saved! Round + game session complete.";
+        } else {
+          sessionApi.clearGameDraft("666", linkedSession.sessionId);
+          sessionApi.updateActiveSession({
+            sessionId: linkedSession.sessionId,
+            gameSaved: true,
+            gameDocId: docRef.id,
+            gameType: "666"
+          });
+        }
+      }
+
+      alert(message);
     } catch (err) {
       console.error(err);
       alert("Error saving 666 game.");
@@ -450,6 +589,10 @@ function runConfetti() {
 // AUTOLOAD
 // ---------------------------
 function loadGameData(data) {
+  if (data?.sessionId) {
+    linkedSessionId = data.sessionId;
+  }
+
   hole = data?.hole || 1;
   holes = data?.holes || {};
   totals = data?.totals || [0, 0, 0, 0];
@@ -472,6 +615,13 @@ function loadGameData(data) {
 
   render();
   recalc();
+  renderLinkedSessionBanner();
+
+  if (hole === 19) {
+    showResultsSummary();
+  } else {
+    hideResultsSummary();
+  }
 }
 
 (function autoLoadFromHomePage() {
@@ -485,6 +635,7 @@ function loadGameData(data) {
     const gameType = (payload.gameType || "").toLowerCase();
     if (gameType !== "666") return;
 
+    loadedFromSavedGame = true;
     loadGameData(payload.data);
     sessionStorage.removeItem("gfg_savedGame");
     alert("Loaded saved 666 game!");
@@ -563,6 +714,8 @@ document.addEventListener("DOMContentLoaded", () => {
 render();
 recalc();
 syncSelfPlayerOptions();
+restoreLinkedGameDraft();
+renderLinkedSessionBanner();
 
 window.GFG_666 = { loadGameData };
 

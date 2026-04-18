@@ -1467,7 +1467,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function getScoreMoneyPairs(games, rounds) {
     const roundBuckets = rounds.reduce((map, round) => {
-      const key = getRoundDateKey(round);
+      const key = String(round?.sessionId || "").trim();
       const score = Number(round?.totalScore);
       if (!key || !Number.isFinite(score) || score <= 0) return map;
 
@@ -1480,7 +1480,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }, new Map());
 
     return getOrderedGames(games).reduce((pairs, game, index) => {
-      const key = getGameDateKey(game);
+      const key = String(game?.sessionId || "").trim();
       const scores = roundBuckets.get(key);
       if (!key || !scores?.length) return pairs;
 
@@ -1968,11 +1968,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const scoreMoneyPairs = getScoreMoneyPairs(orderedGames, rounds);
     gameAnalyticsSummary.textContent = scoreMoneyPairs.length
-      ? `Comparing saved round scores against game money on ${scoreMoneyPairs.length} matching day${scoreMoneyPairs.length === 1 ? "" : "s"}.`
-      : "Save rounds and games on the same day to build your score-vs-money correlation chart.";
+      ? `Comparing saved round scores against game money across ${scoreMoneyPairs.length} linked round + game session${scoreMoneyPairs.length === 1 ? "" : "s"}.`
+      : "Start a Round + Game session to build your score-vs-money correlation chart.";
     gameAnalyticsStatus.textContent = scoreMoneyPairs.length
       ? "Lower round scores paired with higher money will cluster toward the bottom-right of this chart."
-      : "This view matches each saved game with round scores from the same calendar day.";
+      : "This chart only uses rounds and games that were saved under the same shared session.";
 
     gameAnalyticsChartInstance = new Chart(ctx, {
       type: "scatter",

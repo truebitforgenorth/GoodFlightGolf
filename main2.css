@@ -806,6 +806,10 @@ footer {
   width: 100%;
 }
 
+.game-session-clear-btn {
+  background: rgba(19, 32, 51, 0.92) !important;
+}
+
 .analytics-tab-strip {
   display: flex;
   align-items: center;

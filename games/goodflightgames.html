@@ -163,11 +163,29 @@
     </div>
   </section>
 
+  <section class="container gfg-section hidden" id="activeRoundSessionSection">
+    <div class="card p-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+        <div>
+          <h2 class="mb-2">Active Round Session</h2>
+          <p id="activeRoundSessionMeta" class="mb-0 text-muted">
+            Jump back into your scorecard or open a linked game for this round.
+          </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <a id="continueScorecardSessionBtn" class="gfg-pill-btn" href="../rounds/scorecard.html">Back to Scorecard</a>
+          <button id="clearActiveRoundSessionBtn" type="button" class="gfg-pill-btn game-session-clear-btn">Clear Session</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Games grid -->
   <section class="container gfg-section">
     <div class="feature-icons mt-4" id="game-features">
       <div class="icon-box">
-        <a href="Wolf.html">
+        <a href="Wolf.html" class="gfg-game-link" data-game-type="wolf">
         <h1> <img src="../photos/icons/Wolf-icon1.png" alt="Wolf Game Icon" class="wolf-hero-icon mb-3">
         </h1>
         <h5>Wolf</h5>
@@ -175,28 +193,28 @@
         <p>Track Wolf scoring, payouts, and hole-by-hole results while playing one of the most popular golf betting
           games for foursomes.</p>
         <div class="mt-3 d-flex justify-content-center">
-          <a class="gfg-pill-btn" href="Wolf.html">Open Wolf</a>
+          <a class="gfg-pill-btn gfg-game-link" href="Wolf.html" data-game-type="wolf">Open Wolf</a>
         </div>
       </div>
       <div class="icon-box">
-        <a href="666.html"><img src="../photos/icons/666-icon1.png" alt="Six-Six-Six Game Icon"
+        <a href="666.html" class="gfg-game-link" data-game-type="666"><img src="../photos/icons/666-icon1.png" alt="Six-Six-Six Game Icon"
           class="a666-hero-icon mb-3">
         <h5>Six-Six-Six</h5>
         </a>
         <p>Play the rotating-partner Six-Six-Six golf format and keep scores organized across each six-hole segment.</p>
         <div class="mt-3 d-flex justify-content-center">
-          <a class="gfg-pill-btn" href="666.html">Open 666</a>
+          <a class="gfg-pill-btn gfg-game-link" href="666.html" data-game-type="666">Open 666</a>
         </div>
       </div>
       <div class="icon-box">
-        <a href="bbb.html"><img src="../photos/icons/Bingo-Bango-Bongo-icon1.png" alt="Bingo-Bango-Bongo Game Icon"
+        <a href="bbb.html" class="gfg-game-link" data-game-type="bbb"><img src="../photos/icons/Bingo-Bango-Bongo-icon1.png" alt="Bingo-Bango-Bongo Game Icon"
           class="bbb-hero-icon mb-3">
         <h5>Bingo Bango Bongo</h5>
         </a>
         <p>Score Bingo Bango Bongo live and keep track of points for one of the best golf games for mixed-skill groups.
         </p>
         <div class="mt-3 d-flex justify-content-center">
-          <a class="gfg-pill-btn" href="bbb.html">Open BBB</a>
+          <a class="gfg-pill-btn gfg-game-link" href="bbb.html" data-game-type="bbb">Open BBB</a>
         </div>
       </div>
     </div>
@@ -379,7 +397,82 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Auth / shared scripts -->
+  <script src="../round-session.js"></script>
   <script src="../myscripts.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const sessionApi = window.GFGSession;
+      const sessionSection = document.getElementById("activeRoundSessionSection");
+      const sessionMeta = document.getElementById("activeRoundSessionMeta");
+      const continueScorecardBtn = document.getElementById("continueScorecardSessionBtn");
+      const clearSessionBtn = document.getElementById("clearActiveRoundSessionBtn");
+      const gameLinks = Array.from(document.querySelectorAll(".gfg-game-link[data-game-type]"));
+
+      if (!sessionApi) return;
+
+      function describeGameType(gameType) {
+        if (gameType === "666") return "Six-Six-Six";
+        if (gameType === "bbb") return "Bingo Bango Bongo";
+        if (gameType === "wolf") return "Wolf";
+        return "Not selected yet";
+      }
+
+      function renderActiveSession() {
+        const activeSession = sessionApi.getActiveSession();
+        const isVisible = !!(activeSession?.sessionId);
+        sessionSection?.classList.toggle("hidden", !isVisible);
+
+        if (!isVisible) return;
+
+        if (sessionMeta) {
+          const course = activeSession.courseName || "Current round";
+          const tee = activeSession.teeName ? ` - ${activeSession.teeName}` : "";
+          sessionMeta.textContent = `${course}${tee} - Linked game: ${describeGameType(activeSession.gameType)}`;
+        }
+
+        if (continueScorecardBtn) {
+          continueScorecardBtn.href = sessionApi.getScorecardUrl(activeSession.sessionId);
+        }
+      }
+
+      clearSessionBtn?.addEventListener("click", () => {
+        const activeSession = sessionApi.getActiveSession();
+        if (!activeSession?.sessionId) return;
+
+        const confirmed = window.confirm("Clear this active round session and remove the linked in-progress drafts?");
+        if (!confirmed) return;
+
+        sessionApi.clearSessionArtifacts(activeSession);
+        renderActiveSession();
+      });
+
+      gameLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+          const gameType = sessionApi.normalizeGameType(link.dataset.gameType);
+          const activeSession = sessionApi.getActiveSession();
+
+          if (!activeSession?.sessionId) return;
+
+          event.preventDefault();
+
+          if (activeSession.gameType && activeSession.gameType !== gameType) {
+            const confirmed = window.confirm(`This round is currently linked to ${describeGameType(activeSession.gameType)}. Switch it to ${describeGameType(gameType)}?`);
+            if (!confirmed) return;
+          }
+
+          const nextSession = sessionApi.updateActiveSession({
+            mode: "round+game",
+            gameType
+          });
+
+          window.location.href = sessionApi.getLinkedGameUrl(gameType, nextSession.sessionId);
+        });
+      });
+
+      renderActiveSession();
+    });
+  </script>
 
   <!-- Saved Games logic -->
   <script>
