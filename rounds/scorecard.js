@@ -1256,6 +1256,10 @@ function handleInlineGameSetupEvent(event) {
 
   recalcInlineLinkedGame();
   renderInlineLinkedGameUI();
+
+  if (currentHole === 19 && isResultsSummaryVisible()) {
+    showResultsSummary();
+  }
 }
 
 function handleInlineWolfHoleEvent(event) {
@@ -2022,6 +2026,7 @@ function render() {
     setRoundNextButtonLabel("results");
     updateScoreboard();
     renderInlineLinkedGameUI();
+    persistInlineGameDraft();
     persistRoundDraft();
     return;
   }
@@ -2097,6 +2102,10 @@ function hideResultsSummary() {
   if (inlineGameHoleCard && getSessionModeValue() === "round+game") inlineGameHoleCard.style.display = "block";
   if (inlineGameScoreboardCard && getSessionModeValue() === "round+game") inlineGameScoreboardCard.style.display = "block";
   syncFullscreenScrollLock();
+}
+
+function isResultsSummaryVisible() {
+  return !!resultsCard && !resultsCard.classList.contains("hidden");
 }
 
 async function saveRoundToAccount(statusEl) {
@@ -2209,6 +2218,8 @@ async function saveRoundToAccount(statusEl) {
 async function saveRoundAndLinkedGame(statusEl) {
   if (statusEl) statusEl.textContent = "";
 
+  persistInlineGameDraft();
+
   const user = firebase?.auth?.().currentUser;
   if (!user) {
     if (statusEl) statusEl.textContent = "Please log in to save the game!";
@@ -2260,14 +2271,12 @@ async function saveRoundAndLinkedGame(statusEl) {
 async function handleResultsSaveAction(statusEl, options = {}) {
   const redirectToLockerRoom = !!options.redirectToLockerRoom;
   const requiresJointSave = getSessionModeValue() === "round+game";
-  const linkedGameSummary = getLinkedGameDraftSummary();
-  const canSaveBoth = !!linkedGameSummary?.readyToSave;
 
   const saveResult = requiresJointSave
     ? await saveRoundAndLinkedGame(statusEl)
     : await saveRoundToAccount(statusEl);
 
-  if (redirectToLockerRoom && (!firebase?.auth?.().currentUser || saveResult)) {
+  if (redirectToLockerRoom && saveResult) {
     window.location.href = "../playerlog.html";
   }
 
@@ -2275,18 +2284,22 @@ async function handleResultsSaveAction(statusEl, options = {}) {
 }
 
 function showResultsSummary() {
+  persistInlineGameDraft();
+
   const summary = getRoundSummary();
   const courseName = getCourseDisplayName();
   const insights = buildFeedback(summary);
   const linkedGameSummary = getLinkedGameDraftSummary();
   const isRoundGame = getSessionModeValue() === "round+game";
   const canSaveBoth = !!linkedGameSummary?.readyToSave;
-  const linkedGameStatus = linkedGameSummary?.exists
-    ? linkedGameSummary.readyToSave
-      ? `${getLinkedGameLabel(linkedGameSummary.gameType)} is finished and ready to save with this round.`
-      : linkedGameSummary.finished
-        ? `Choose your player slot in ${getLinkedGameLabel(linkedGameSummary.gameType)} before saving both.`
-        : `Finish ${getLinkedGameLabel(linkedGameSummary.gameType)} to unlock one-tap save for both.`
+  const linkedGameStatus = isRoundGame
+    ? linkedGameSummary?.exists
+      ? linkedGameSummary.readyToSave
+        ? `${getLinkedGameLabel(linkedGameSummary.gameType)} is finished and ready to save with this round.`
+        : linkedGameSummary.finished
+          ? `Choose your player slot in ${getLinkedGameLabel(linkedGameSummary.gameType)} before saving both.`
+          : `Finish ${getLinkedGameLabel(linkedGameSummary.gameType)} to unlock one-tap save for both.`
+      : `Finish setting up ${getLinkedGameLabel()} below before saving both.`
     : "";
 
   if (holeSetupCard) holeSetupCard.style.display = "none";
@@ -2356,8 +2369,8 @@ function showResultsSummary() {
         ${linkedGameStatus ? `<div class="round-linked-game-note mb-3">${linkedGameStatus}</div>` : ""}
 
         <div class="gfg-results-actions round-results-actions mb-4">
-          <a id="resultsSaveRoundBtn" class="gfg-pill-btn">${isRoundGame ? "Save Round + Game To Locker Room" : "Save Round Data"}</a>
-          <a id="resultsBackToLockerRoomBtn" href="../playerlog.html" class="gfg-pill-btn">${isRoundGame ? "Locker Room" : "Back to Locker Room"}</a>
+          <button id="resultsSaveRoundBtn" type="button" class="gfg-pill-btn" ${isRoundGame && !canSaveBoth ? "disabled" : ""}>${isRoundGame ? "Save Round + Game To LabRoom" : "Save Round Data"}</button>
+          <button id="resultsBackToLockerRoomBtn" type="button" class="gfg-pill-btn" ${isRoundGame && !canSaveBoth ? "disabled" : ""}>${isRoundGame ? "LabRoom" : "Back to LabRoom"}</button>
           <a href="../index.html" class="gfg-pill-btn">Back to Home</a>
         </div>
         <div id="resultsSaveRoundStatus" class="text-center mb-4 fw-bold"></div>
@@ -2383,18 +2396,26 @@ function showResultsSummary() {
 
   if (resultsSaveRoundBtn) {
     resultsSaveRoundBtn.onclick = async () => {
+      resultsSaveRoundBtn.setAttribute("disabled", "disabled");
+      resultsBackToLockerRoomBtn?.setAttribute("disabled", "disabled");
       await handleResultsSaveAction(resultsSaveRoundStatus, {
         redirectToLockerRoom: isRoundGame
       });
+      resultsSaveRoundBtn.removeAttribute("disabled");
+      resultsBackToLockerRoomBtn?.removeAttribute("disabled");
     };
   }
 
   if (resultsBackToLockerRoomBtn) {
     resultsBackToLockerRoomBtn.onclick = async (event) => {
       event.preventDefault();
+      resultsSaveRoundBtn?.setAttribute("disabled", "disabled");
+      resultsBackToLockerRoomBtn.setAttribute("disabled", "disabled");
       await handleResultsSaveAction(resultsSaveRoundStatus, {
         redirectToLockerRoom: true
       });
+      resultsSaveRoundBtn?.removeAttribute("disabled");
+      resultsBackToLockerRoomBtn.removeAttribute("disabled");
     };
   }
 
