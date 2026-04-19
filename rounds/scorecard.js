@@ -103,6 +103,40 @@ const gfgCourses = [
     ]
   },
   {
+    id: "river-falls-golf-club",
+    name: "River Falls Golf Club",
+    city: "River Falls",
+    state: "WI",
+    tees: [
+      { name: "Blue", slope: 127, rating: 71.6 },
+      { name: "Blue/White", slope: 124, rating: 70.2 },
+      { name: "White", slope: 117, rating: 68.9 },
+      { name: "White/Gold", slope: 114, rating: 67.7 },
+      { name: "Gold", slope: 111, rating: 66.5 }
+    ],
+    parTotal: 71,
+    holes: [
+      { hole: 1, par: 4 },
+      { hole: 2, par: 3 },
+      { hole: 3, par: 4 },
+      { hole: 4, par: 4 },
+      { hole: 5, par: 4 },
+      { hole: 6, par: 3 },
+      { hole: 7, par: 4 },
+      { hole: 8, par: 4 },
+      { hole: 9, par: 5 },
+      { hole: 10, par: 4 },
+      { hole: 11, par: 3 },
+      { hole: 12, par: 5 },
+      { hole: 13, par: 4 },
+      { hole: 14, par: 4 },
+      { hole: 15, par: 5 },
+      { hole: 16, par: 3 },
+      { hole: 17, par: 4 },
+      { hole: 18, par: 4 }
+    ]
+  },
+  {
     id: "custom-course",
     name: "Course Not Listed",
     city: "",
@@ -1560,6 +1594,21 @@ function applyRoundDraft(draft) {
   return true;
 }
 
+function isFinishedRoundDraft(draft) {
+  return Number(draft?.currentHole) === 19;
+}
+
+function clearActiveRoundDraftState() {
+  if (!sessionApi || !activeRoundSessionId) return;
+
+  sessionApi.clearRoundDraft(activeRoundSessionId);
+  ["wolf", "666", "bbb"].forEach((gameType) => {
+    sessionApi.clearGameDraft?.(gameType, activeRoundSessionId);
+  });
+  sessionApi.clearActiveSession?.();
+  activeRoundSessionId = null;
+}
+
 function restoreActiveRoundSession() {
   if (!sessionApi || !activeRoundSessionId) return false;
 
@@ -1571,6 +1620,11 @@ function restoreActiveRoundSession() {
 
   const draft = sessionApi.loadRoundDraft(activeRoundSessionId);
   if (draft) {
+    if (isFinishedRoundDraft(draft)) {
+      clearActiveRoundDraftState();
+      return false;
+    }
+
     const restored = applyRoundDraft(draft);
     restoreInlineGameDraft();
     return restored;

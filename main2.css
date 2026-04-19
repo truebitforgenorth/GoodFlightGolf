@@ -201,7 +201,7 @@ input[type="submit"] {
    SECTIONS / HERO
 ===================================================== */
 .gfg-section {
-  padding: 36px 0;
+  padding: 28px 0;
 }
 
 
@@ -349,6 +349,10 @@ input[type="submit"] {
   gap: 18px;
 }
 
+.feature-icons.mt-4 {
+  margin-top: 8px !important;
+}
+
 .feature-icons .icon-box {
   display: flex;
   flex: 1 1 260px;
@@ -383,6 +387,32 @@ input[type="submit"] {
 
 .feature-icons .icon-box .mt-3 {
   margin-top: auto !important;
+}
+
+section.container.gfg-section + section.container.gfg-section {
+  padding-top: 10px;
+}
+
+.container.gfg-section > .gfg-section:first-child {
+  padding-top: 0;
+}
+
+.container.gfg-section > .gfg-section:last-child {
+  padding-bottom: 0;
+}
+
+.container.gfg-section .card.text-center .card-body {
+  padding-top: 26px;
+  padding-bottom: 24px;
+}
+
+.container.gfg-section .card.text-center .card-text {
+  margin-bottom: 0.65rem;
+  line-height: 1.5;
+}
+
+.container.gfg-section .card.text-center .card-text:last-child {
+  margin-bottom: 0;
 }
 
 .icon-box h5 {
@@ -545,6 +575,58 @@ input[type="submit"] {
 .gfg-lock-card p {
   margin-bottom: 18px;
   color: rgba(255, 255, 255, 0.88);
+}
+
+#playerDataSection,
+#savedGameDataSection,
+#handicapDataSection,
+#clubDistanceSection {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+#playerDataSection > .mb-3,
+#savedGameDataSection > .mb-3,
+#handicapDataSection > .mb-3,
+#clubDistanceSection > .mb-3 {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px !important;
+}
+
+#playerDataSection .gfg-section-title,
+#savedGameDataSection .gfg-section-title,
+#handicapDataSection .gfg-section-title,
+#clubDistanceSection .gfg-section-title {
+  line-height: 1.06;
+}
+
+#playerDataSection .gfg-section-sub,
+#savedGameDataSection .gfg-section-sub,
+#handicapDataSection .gfg-section-sub,
+#clubDistanceSection .gfg-section-sub {
+  margin: 0;
+  line-height: 1.45;
+}
+
+#playerDataSection .gfg-locked-shell,
+#savedGameDataSection .gfg-locked-shell,
+#handicapDataSection .gfg-locked-shell,
+#clubDistanceSection .gfg-locked-shell {
+  margin-top: 8px;
+}
+
+#playerDataShell,
+#savedGameDataShell {
+  min-height: 420px !important;
+}
+
+#playerDataSection + hr.my-5,
+#savedGameDataSection + hr.my-5,
+#handicapDataSection + hr.my-5,
+#clubDistanceSection + hr.my-5 {
+  margin-top: 1.75rem !important;
+  margin-bottom: 1.75rem !important;
 }
 
 /* =====================================================
@@ -1315,6 +1397,10 @@ body.fullscreen-active #foot {
     gap: 14px;
   }
 
+  .feature-icons.mt-4 {
+    margin-top: 6px !important;
+  }
+
   .feature-icons .icon-box {
     padding: 18px;
   }
@@ -1330,7 +1416,15 @@ body.fullscreen-active #foot {
   }
 
   .gfg-section {
-    padding: 24px 0;
+    padding: 20px 0;
+  }
+
+  #playerDataSection,
+  #savedGameDataSection,
+  #handicapDataSection,
+  #clubDistanceSection {
+    padding-top: 18px;
+    padding-bottom: 18px;
   }
 
   #playerDataSection > .mb-3,
@@ -1338,6 +1432,8 @@ body.fullscreen-active #foot {
   #handicapDataSection > .mb-3,
   #clubDistanceSection > .mb-3 {
     padding-inline: 14px;
+    gap: 5px;
+    margin-bottom: 12px !important;
   }
 
   #playerDataSection hr.my-5,
@@ -1349,7 +1445,7 @@ body.fullscreen-active #foot {
 
   #playerDataShell,
   #savedGameDataShell {
-    min-height: 360px !important;
+    min-height: 320px !important;
   }
 
   .gfg-locked-shell.is-locked > .row,
@@ -1374,6 +1470,8 @@ body.fullscreen-active #foot {
   #handicapDataSection > .mb-3,
   #clubDistanceSection > .mb-3 {
     padding-inline: 16px;
+    gap: 4px;
+    margin-bottom: 10px !important;
   }
 
   .gfg-section-title,
