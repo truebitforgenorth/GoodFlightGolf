@@ -35,6 +35,10 @@
     return Date.now();
   }
 
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
   function normalizeGameType(type) {
     const raw = String(type || "").toLowerCase();
     if (raw.includes("wolf")) return "wolf";
@@ -203,6 +207,148 @@
     return `../rounds/scorecard.html${sessionId ? `?sessionId=${encodeURIComponent(sessionId)}` : ""}`;
   }
 
+  function getActiveSessionForId(sessionId) {
+    const activeSession = getActiveSession();
+    return activeSession?.sessionId === sessionId ? activeSession : null;
+  }
+
+  function getGameDraftSummary(gameType, sessionId) {
+    const normalized = normalizeGameType(gameType);
+    const draft = loadGameDraft(normalized, sessionId);
+
+    if (!draft) {
+      return {
+        exists: false,
+        readyToSave: false,
+        gameType: normalized,
+        draft: null
+      };
+    }
+
+    const trackedPlayerIndex = Number.isInteger(draft.trackedPlayerIndex) ? draft.trackedPlayerIndex : null;
+    const finished = Number(draft.hole) === 19;
+
+    return {
+      exists: true,
+      readyToSave: finished && trackedPlayerIndex !== null,
+      finished,
+      hasTrackedPlayer: trackedPlayerIndex !== null,
+      trackedPlayerIndex,
+      gameType: normalized,
+      draft
+    };
+  }
+
+  async function saveLinkedGameForCurrentUser(gameType, sessionId) {
+    const normalized = normalizeGameType(gameType);
+    const draftSummary = getGameDraftSummary(normalized, sessionId);
+
+    if (!normalized) {
+      return { ok: false, code: "invalid-game", message: "Choose a valid linked game first." };
+    }
+
+    if (!draftSummary.exists) {
+      return { ok: false, code: "missing-draft", message: "Open the linked game and enter the scores first." };
+    }
+
+    if (!draftSummary.finished) {
+      return { ok: false, code: "game-not-finished", message: "Finish the linked game before saving both." };
+    }
+
+    if (!draftSummary.hasTrackedPlayer) {
+      return { ok: false, code: "missing-player", message: "Choose your player slot in the linked game before saving both." };
+    }
+
+    const user = window.firebase?.auth?.().currentUser;
+    if (!user) {
+      return { ok: false, code: "auth-required", message: "Please log in to save the linked game." };
+    }
+
+    const firestore = window.firebase?.firestore?.();
+    const serverTimestamp = window.firebase?.firestore?.FieldValue?.serverTimestamp;
+    if (!firestore || !serverTimestamp) {
+      return { ok: false, code: "firebase-missing", message: "Firebase is not ready yet." };
+    }
+
+    const sessionMeta = getActiveSessionForId(sessionId);
+    const draft = draftSummary.draft || {};
+    const players = Array.isArray(draft.players) && draft.players.length ? draft.players : ["Player 1", "Player 2", "Player 3", "Player 4"];
+    const trackedPlayerIndex = draftSummary.trackedPlayerIndex;
+
+    const payload = {
+      gameType: normalized,
+      sessionId: sessionId || null,
+      sessionMode: sessionId ? "round+game" : "game-only",
+      linkedCourseName: sessionMeta?.courseName || null,
+      linkedTeeName: sessionMeta?.teeName || null,
+      linkedRoundDate: sessionMeta?.roundDate || null,
+      hole: Number(draft.hole) || 19,
+      holes: draft.holes || {},
+      totals: draft.totals || [0, 0, 0, 0],
+      players,
+      trackedPlayerIndex,
+      trackedPlayerName: players[trackedPlayerIndex] || `Player ${trackedPlayerIndex + 1}`,
+      trackedUserUid: user.uid,
+      timestamp: serverTimestamp()
+    };
+
+    if (normalized === "wolf") {
+      Object.assign(payload, {
+        base: Number(draft.base) || 0,
+        dollarValue: Number(draft.dollarValue) || 0,
+        loneWinPoints: Number(draft.loneWinPoints) || 0,
+        loneLosePoints: Number(draft.loneLosePoints) || 0,
+        dumpWinPoints: Number(draft.dumpWinPoints) || 0,
+        dumpLosePoints: Number(draft.dumpLosePoints) || 0,
+        blindWinPoints: Number(draft.blindWinPoints) || 0,
+        blindLosePoints: Number(draft.blindLosePoints) || 0,
+        tieSetPoints: Number(draft.tieSetPoints) || 0,
+        loneEnabled: !!draft.loneEnabled,
+        dumpEnabled: !!draft.dumpEnabled,
+        blindEnabled: !!draft.blindEnabled,
+        carryoverEnabled: !!draft.carryoverEnabled,
+        birdieDoubleEnabled: !!draft.birdieDoubleEnabled
+      });
+    } else if (normalized === "666") {
+      Object.assign(payload, {
+        base: Number(draft.base) || 0,
+        dollarValue: Number(draft.dollarValue) || 0,
+        tieSetPoints: draft.tieSetPoints !== null && draft.tieSetPoints !== undefined ? Number(draft.tieSetPoints) : null,
+        tieMultiplier: Number(draft.tieMultiplier) || 1
+      });
+    } else if (normalized === "bbb") {
+      Object.assign(payload, {
+        bet: Number(draft.bet) || 0
+      });
+    }
+
+    const docRef = await firestore
+      .collection("users")
+      .doc(user.uid)
+      .collection("savedGames")
+      .add(payload);
+
+    if (sessionId) {
+      const completion = completeSessionPart("game", { docId: docRef.id });
+      if (!completion.completed) {
+        clearGameDraft(normalized, sessionId);
+        updateActiveSession({
+          sessionId,
+          gameSaved: true,
+          gameDocId: docRef.id,
+          gameType: normalized
+        });
+      }
+    }
+
+    return {
+      ok: true,
+      code: "saved",
+      docId: docRef.id,
+      message: `${normalized.toUpperCase()} game saved.`
+    };
+  }
+
   function isInteractiveSwipeTarget(target) {
     return !!target?.closest?.("input, select, textarea, option");
   }
@@ -211,50 +357,210 @@
     const surface = config.surface;
     if (!surface) return () => {};
 
+    const direction = config.direction === "right" ? "right" : "left";
+    const previewSide = direction === "left" ? "right" : "left";
+    const prefersPointer = typeof window.PointerEvent === "function";
     let startX = 0;
     let startY = 0;
+    let currentX = 0;
     let tracking = false;
+    let dragging = false;
+    let activePointerId = null;
 
-    function onTouchStart(event) {
-      if (event.touches.length !== 1) return;
-      if (isInteractiveSwipeTarget(event.target)) return;
+    function getContentSurface() {
+      return surface.querySelector("#fullscreenContent") || surface;
+    }
+
+    function getSwipeThreshold() {
+      const width = surface.clientWidth || window.innerWidth || 390;
+      return Math.min(150, Math.max(84, width * 0.18));
+    }
+
+    function getPreviewLabel() {
+      if (typeof config.getPreviewLabel === "function") {
+        return config.getPreviewLabel() || "";
+      }
+
+      return direction === "left" ? "Continue" : "Back";
+    }
+
+    function ensureSwipePreview() {
+      let preview = surface.querySelector(".gfg-linked-swipe-preview");
+      if (!preview) {
+        preview = document.createElement("div");
+        preview.className = "gfg-linked-swipe-preview";
+        preview.setAttribute("aria-hidden", "true");
+        surface.appendChild(preview);
+      }
+
+      preview.className = `gfg-linked-swipe-preview gfg-linked-swipe-preview--${previewSide}`;
+      preview.textContent = getPreviewLabel();
+      return preview;
+    }
+
+    function resetSwipePreview() {
+      surface.classList.remove("gfg-linked-swipe-active");
+      surface.style.removeProperty("--gfg-linked-swipe-shift");
+      surface.style.removeProperty("--gfg-linked-swipe-progress");
+
+      const preview = surface.querySelector(".gfg-linked-swipe-preview");
+      preview?.classList.remove("is-visible");
+    }
+
+    function applySwipePreview(deltaX) {
+      const cappedDelta = clamp(direction === "left" ? Math.min(0, deltaX) : Math.max(0, deltaX), -180, 180);
+      const progress = Math.min(Math.abs(cappedDelta) / getSwipeThreshold(), 1);
+
+      surface.classList.add("gfg-linked-swipe-active");
+      surface.style.setProperty("--gfg-linked-swipe-shift", `${cappedDelta}px`);
+      surface.style.setProperty("--gfg-linked-swipe-progress", progress.toFixed(3));
+      ensureSwipePreview().classList.add("is-visible");
+    }
+
+    function beginTracking(clientX, clientY, target, pointerId = null) {
+      if (typeof config.isEnabled === "function" && !config.isEnabled()) return false;
+      if (isInteractiveSwipeTarget(target)) return false;
 
       tracking = true;
-      startX = event.touches[0].clientX;
-      startY = event.touches[0].clientY;
+      dragging = false;
+      activePointerId = pointerId;
+      startX = clientX;
+      startY = clientY;
+      currentX = clientX;
+      ensureSwipePreview();
+      return true;
+    }
+
+    function moveTracking(clientX, clientY, event) {
+      if (!tracking) return;
+
+      currentX = clientX;
+      const deltaX = clientX - startX;
+      const deltaY = clientY - startY;
+
+      if (!dragging) {
+        const verticalGesture = Math.abs(deltaY) > 18 && Math.abs(deltaY) > Math.abs(deltaX);
+        if (verticalGesture) {
+          tracking = false;
+          activePointerId = null;
+          resetSwipePreview();
+          return;
+        }
+
+        const horizontalGesture = Math.abs(deltaX) >= 14 && Math.abs(deltaX) > Math.abs(deltaY) + 8;
+        const directionMatches = direction === "left" ? deltaX < 0 : deltaX > 0;
+
+        if (!horizontalGesture || !directionMatches) return;
+        dragging = true;
+      }
+
+      if (event?.cancelable) {
+        event.preventDefault();
+      }
+
+      applySwipePreview(deltaX);
+    }
+
+    function endTracking(clientX = currentX) {
+      if (!tracking) return;
+
+      const deltaX = clientX - startX;
+      const enoughHorizontalTravel = Math.abs(deltaX) >= getSwipeThreshold();
+      const directionMatches = direction === "left" ? deltaX < 0 : deltaX > 0;
+      const targetUrl = typeof config.getTargetUrl === "function" ? config.getTargetUrl() : "";
+      const shouldNavigate = dragging && enoughHorizontalTravel && directionMatches && !!targetUrl;
+
+      tracking = false;
+      dragging = false;
+      activePointerId = null;
+      resetSwipePreview();
+
+      if (shouldNavigate) {
+        const contentSurface = getContentSurface();
+        contentSurface.style.transition = "transform 180ms ease";
+        contentSurface.style.transform = `translate3d(${direction === "left" ? "-100vw" : "100vw"}, 0, 0)`;
+        window.setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 120);
+      }
+    }
+
+    function onTouchStart(event) {
+      if (prefersPointer) return;
+      if (event.touches.length !== 1) return;
+
+      beginTracking(event.touches[0].clientX, event.touches[0].clientY, event.target);
+    }
+
+    function onTouchMove(event) {
+      if (prefersPointer) return;
+      const touch = event.touches?.[0];
+      if (!touch) return;
+
+      moveTracking(touch.clientX, touch.clientY, event);
     }
 
     function onTouchEnd(event) {
-      if (!tracking) return;
-      tracking = false;
-
-      if (typeof config.isEnabled === "function" && !config.isEnabled()) return;
-
+      if (prefersPointer) return;
       const touch = event.changedTouches?.[0];
-      if (!touch) return;
+      endTracking(touch?.clientX ?? currentX);
+    }
 
-      const deltaX = touch.clientX - startX;
-      const deltaY = touch.clientY - startY;
-      const direction = config.direction === "right" ? "right" : "left";
-      const enoughHorizontalTravel = Math.abs(deltaX) >= 90;
-      const mostlyHorizontal = Math.abs(deltaY) <= 70;
+    function onTouchCancel() {
+      tracking = false;
+      dragging = false;
+      activePointerId = null;
+      resetSwipePreview();
+    }
 
-      if (!enoughHorizontalTravel || !mostlyHorizontal) return;
-      if (direction === "left" && deltaX >= 0) return;
-      if (direction === "right" && deltaX <= 0) return;
+    function onPointerDown(event) {
+      if (!prefersPointer) return;
+      if (event.pointerType === "mouse" && event.button !== 0) return;
 
-      const targetUrl = typeof config.getTargetUrl === "function" ? config.getTargetUrl() : "";
-      if (!targetUrl) return;
+      beginTracking(event.clientX, event.clientY, event.target, event.pointerId);
+    }
 
-      window.location.href = targetUrl;
+    function onPointerMove(event) {
+      if (!prefersPointer || !tracking || event.pointerId !== activePointerId) return;
+
+      moveTracking(event.clientX, event.clientY, event);
+    }
+
+    function onPointerUp(event) {
+      if (!prefersPointer || event.pointerId !== activePointerId) return;
+
+      endTracking(event.clientX);
+    }
+
+    function onPointerCancel(event) {
+      if (!prefersPointer || event.pointerId !== activePointerId) return;
+
+      tracking = false;
+      dragging = false;
+      activePointerId = null;
+      resetSwipePreview();
     }
 
     surface.addEventListener("touchstart", onTouchStart, { passive: true });
+    surface.addEventListener("touchmove", onTouchMove, { passive: false });
     surface.addEventListener("touchend", onTouchEnd, { passive: true });
+    surface.addEventListener("touchcancel", onTouchCancel, { passive: true });
+
+    surface.addEventListener("pointerdown", onPointerDown, { passive: true });
+    surface.addEventListener("pointermove", onPointerMove, { passive: false });
+    surface.addEventListener("pointerup", onPointerUp, { passive: true });
+    surface.addEventListener("pointercancel", onPointerCancel, { passive: true });
 
     return function detachLinkedFullscreenSwipe() {
       surface.removeEventListener("touchstart", onTouchStart);
+      surface.removeEventListener("touchmove", onTouchMove);
       surface.removeEventListener("touchend", onTouchEnd);
+      surface.removeEventListener("touchcancel", onTouchCancel);
+      surface.removeEventListener("pointerdown", onPointerDown);
+      surface.removeEventListener("pointermove", onPointerMove);
+      surface.removeEventListener("pointerup", onPointerUp);
+      surface.removeEventListener("pointercancel", onPointerCancel);
+      resetSwipePreview();
     };
   }
 
@@ -277,6 +583,8 @@
     getSessionIdFromUrl,
     getLinkedGameUrl,
     getScorecardUrl,
+    getGameDraftSummary,
+    saveLinkedGameForCurrentUser,
     attachLinkedFullscreenSwipe
   };
 })();

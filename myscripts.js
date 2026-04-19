@@ -24,6 +24,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
   window.db = firebase.firestore();
 
+  const supportedAuthProtocols = new Set(["http:", "https:", "chrome-extension:"]);
+  const authSupportedHere = supportedAuthProtocols.has(window.location.protocol) && typeof window.localStorage !== "undefined";
+
+  if (!authSupportedHere) {
+    console.warn("Firebase Auth disabled in local file preview. Open the site over http:// or https:// to use login and signup.");
+    return;
+  }
+
   const auth = firebase.auth();
   const db = firebase.firestore();
 

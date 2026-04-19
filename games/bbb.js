@@ -33,6 +33,8 @@ fullscreenBtn?.addEventListener("click", () => {
     body.classList.remove("no-scroll");
     fullscreenBtn.innerText = "Fullscreen Selection";
   }
+
+  renderFullscreenSessionSwitchTab();
 });
 
 // ---------------------------
@@ -97,12 +99,37 @@ function getLinkedSession() {
   return null;
 }
 
+function renderFullscreenSessionSwitchTab() {
+  let tab = document.getElementById("gameFullscreenSessionTab");
+  const linkedSession = getLinkedSession();
+  const shouldShow = !!selectionWrapper?.classList.contains("fullscreen") && !!linkedSession?.sessionId;
+
+  if (!shouldShow) {
+    tab?.remove();
+    return;
+  }
+
+  if (!tab) {
+    tab = document.createElement("button");
+    tab.id = "gameFullscreenSessionTab";
+    tab.type = "button";
+    tab.className = "gfg-session-switch-tab";
+    selectionWrapper?.appendChild(tab);
+  }
+
+  tab.textContent = "Back to Round";
+  tab.onclick = () => {
+    window.location.href = sessionApi.getScorecardUrl(linkedSession.sessionId);
+  };
+}
+
 function renderLinkedSessionBanner() {
   let banner = document.getElementById("gfgLinkedRoundBanner");
   const linkedSession = getLinkedSession();
 
   if (!linkedSession?.sessionId) {
     banner?.remove();
+    renderFullscreenSessionSwitchTab();
     return;
   }
 
@@ -137,6 +164,8 @@ function renderLinkedSessionBanner() {
     linkedSessionId = "";
     renderLinkedSessionBanner();
   });
+
+  renderFullscreenSessionSwitchTab();
 }
 
 function getGameDraftPayload() {
@@ -638,8 +667,9 @@ renderLinkedSessionBanner();
 
 sessionApi?.attachLinkedFullscreenSwipe?.({
   surface: selectionWrapper,
-  direction: "left",
+  direction: "right",
   isEnabled: () => selectionWrapper?.classList.contains("fullscreen") && !!getLinkedSession()?.sessionId,
+  getPreviewLabel: () => "Back to Round",
   getTargetUrl: () => {
     const linkedSession = getLinkedSession();
     return linkedSession?.sessionId ? sessionApi.getScorecardUrl(linkedSession.sessionId) : "";

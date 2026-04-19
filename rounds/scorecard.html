@@ -198,6 +198,18 @@
           <a id="continueLinkedGameBtn" href="../games/goodflightgames.html" class="gfg-pill-btn hidden">Continue Linked Game</a>
         </div>
       </div>
+
+      <div id="inlineGameSetupCard" class="card game-card p-4 mt-4 hidden">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+          <div>
+            <h5 id="inlineGameSetupTitle" class="mb-1">Linked Game Setup</h5>
+            <p id="inlineGameSetupMeta" class="small text-muted mb-0">
+              Choose your game settings here. This game will move hole-for-hole with the round.
+            </p>
+          </div>
+        </div>
+        <div id="inlineGameSetupShell"></div>
+      </div>
     </section>
 
     <section id="selectionWrapper" class="card game-card p-4 mb-3">
@@ -346,6 +358,24 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="card game-card p-4 mb-3 hidden" id="inlineGameHoleCard">
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+            <div>
+              <h4 id="inlineGameHoleTitle" class="mb-1">Linked Game Hole</h4>
+              <div id="inlineGameHoleMeta" class="small text-muted">Round hole and game hole move together.</div>
+            </div>
+          </div>
+          <div id="inlineGameHoleShell"></div>
+        </div>
+
+        <div class="card game-card p-3 mb-3 hidden" id="inlineGameScoreboardCard">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+            <h4 id="inlineGameScoreboardTitle" class="text-center fs-6 mb-0">Linked Game Scoreboard</h4>
+            <div id="inlineGameScoreboardMeta" class="small text-muted"></div>
+          </div>
+          <div id="inlineGameScoreboardShell"></div>
         </div>
 
         <div class="card game-card p-2 round-summary-card" id="scoreboardCard">

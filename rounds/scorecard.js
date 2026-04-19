@@ -156,6 +156,18 @@ const clearRoundSessionBtn = $("clearRoundSessionBtn");
 const roundSessionStatus = $("roundSessionStatus");
 const sessionChoiceButtons = Array.from(document.querySelectorAll("[data-session-choice]"));
 const linkedGameButtons = Array.from(document.querySelectorAll("[data-linked-game]"));
+const inlineGameSetupCard = $("inlineGameSetupCard");
+const inlineGameSetupTitle = $("inlineGameSetupTitle");
+const inlineGameSetupMeta = $("inlineGameSetupMeta");
+const inlineGameSetupShell = $("inlineGameSetupShell");
+const inlineGameHoleCard = $("inlineGameHoleCard");
+const inlineGameHoleTitle = $("inlineGameHoleTitle");
+const inlineGameHoleMeta = $("inlineGameHoleMeta");
+const inlineGameHoleShell = $("inlineGameHoleShell");
+const inlineGameScoreboardCard = $("inlineGameScoreboardCard");
+const inlineGameScoreboardTitle = $("inlineGameScoreboardTitle");
+const inlineGameScoreboardMeta = $("inlineGameScoreboardMeta");
+const inlineGameScoreboardShell = $("inlineGameScoreboardShell");
 
 const listedTeeWrap = $("listedTeeWrap");
 const customCourseWrap = $("customCourseWrap");
@@ -168,6 +180,7 @@ const holeParSelect = $("holeParSelect");
 
 const fullscreenBtn = $("fullscreenBtn");
 const selectionWrapper = $("selectionWrapper");
+const fullscreenContent = $("fullscreenContent");
 const body = document.body;
 
 const prevHoleBtn = $("prevHoleBtn");
@@ -226,6 +239,8 @@ let activeRoundSessionId =
   sessionApi?.getSessionIdFromUrl() ||
   sessionApi?.getActiveSession()?.sessionId ||
   null;
+let lastRoundSessionTriggerEl = null;
+let inlineLinkedGameState = createDefaultInlineGameState();
 
 function getSessionModeValue() {
   return sessionModeSelect?.value === "roundGame" ? "round+game" : "round-only";
@@ -241,8 +256,1124 @@ function getLinkedGameLabel(gameType = getLinkedGameType()) {
   return "Wolf";
 }
 
+function createDefaultInlineGameState(gameType = "wolf") {
+  const normalized = sessionApi?.normalizeGameType(gameType) || gameType || "wolf";
+
+  return {
+    gameType: normalized,
+    players: ["Player 1", "Player 2", "Player 3", "Player 4"],
+    trackedPlayerIndex: null,
+    totals: [0, 0, 0, 0],
+    currentWolfIndex: 0,
+    currentPot: 0,
+    holes: {},
+    base: 2,
+    dollarValue: 0.25,
+    tieSetPoints: normalized === "666" ? null : 0,
+    tieMultiplier: 1,
+    bet: 0.25,
+    loneWinPoints: 6,
+    loneLosePoints: 6,
+    dumpWinPoints: 6,
+    dumpLosePoints: 6,
+    blindWinPoints: 8,
+    blindLosePoints: 8,
+    loneEnabled: true,
+    dumpEnabled: true,
+    blindEnabled: true,
+    carryoverEnabled: true,
+    birdieDoubleEnabled: false
+  };
+}
+
+function syncInlineGameType(forceReset = false) {
+  const nextType = getLinkedGameType();
+  if (!forceReset && inlineLinkedGameState?.gameType === nextType) {
+    return inlineLinkedGameState;
+  }
+
+  const previousPlayers = Array.isArray(inlineLinkedGameState?.players)
+    ? [...inlineLinkedGameState.players]
+    : ["Player 1", "Player 2", "Player 3", "Player 4"];
+  const previousTrackedPlayer = Number.isInteger(inlineLinkedGameState?.trackedPlayerIndex)
+    ? inlineLinkedGameState.trackedPlayerIndex
+    : null;
+
+  inlineLinkedGameState = createDefaultInlineGameState(nextType);
+  inlineLinkedGameState.players = previousPlayers.slice(0, 4);
+  while (inlineLinkedGameState.players.length < 4) {
+    inlineLinkedGameState.players.push(`Player ${inlineLinkedGameState.players.length + 1}`);
+  }
+  inlineLinkedGameState.trackedPlayerIndex = previousTrackedPlayer;
+
+  return inlineLinkedGameState;
+}
+
+function hasInlineGameData() {
+  const state = inlineLinkedGameState;
+  if (!state) return false;
+
+  if (Array.isArray(state.players) && state.players.some((player, idx) => (player || "").trim() !== `Player ${idx + 1}`)) {
+    return true;
+  }
+
+  return Object.keys(state.holes || {}).some((holeNum) => {
+    const holeState = state.holes?.[holeNum];
+    if (!holeState || typeof holeState !== "object") return false;
+
+    if (state.gameType === "bbb") {
+      return holeState.bingo !== null || holeState.bango !== null || holeState.bongo !== null;
+    }
+
+    if (state.gameType === "666") {
+      return !!holeState.result;
+    }
+
+    return !!holeState.mode || !!holeState.result || !!holeState.birdieDouble || holeState.partner !== null;
+  });
+}
+
+function getInlineGamePlayers() {
+  const players = Array.isArray(inlineLinkedGameState?.players) ? [...inlineLinkedGameState.players] : [];
+  while (players.length < 4) {
+    players.push(`Player ${players.length + 1}`);
+  }
+  return players.slice(0, 4);
+}
+
+function getInlineGameSafePlayerName(index) {
+  return getInlineGamePlayers()[index] || `Player ${index + 1}`;
+}
+
+function getInlineGameMoneyText(amount) {
+  const sign = amount >= 0 ? "+" : "-";
+  return `${sign}$${Math.abs(amount).toFixed(2)}`;
+}
+
+function getInlineGameStatusText() {
+  const type = getLinkedGameType();
+  if (type === "666") {
+    return "Teams rotate every six holes. The linked game stays on the same hole number as the scorecard.";
+  }
+  if (type === "bbb") {
+    return "Choose Bingo, Bango, and Bongo winners for the same hole you are scoring in the round.";
+  }
+  return "Set the Wolf play for this hole, then mark who won the hole. The game stays synced with the scorecard hole.";
+}
+
+function getInlineGameSetupMetaText() {
+  return `${getLinkedGameLabel()} is built right into this round. One hole for the scorecard, one matching hole for the game.`;
+}
+
+function getInlineGameScoreboardMetaText() {
+  if (getLinkedGameType() === "bbb") {
+    return "Points x bet";
+  }
+
+  return "Running game totals";
+}
+
+function getLinkedGameSaveLabel(gameType = getLinkedGameType()) {
+  const normalized = sessionApi?.normalizeGameType(gameType) || gameType || "wolf";
+  if (normalized === "666") return "666";
+  if (normalized === "bbb") return "BBB";
+  return "Wolf";
+}
+
+function getInlineGameRoundMeta() {
+  if (currentHole === 19) {
+    return "Round complete. Review the linked game totals below before saving.";
+  }
+
+  return `Round Hole ${currentHole} | Game Hole ${currentHole}`;
+}
+
+function resetInlineGameForSelectedType() {
+  syncInlineGameType(true);
+  persistInlineGameDraft();
+}
+
+function getInlineWolfHole(holeNumber = currentHole) {
+  if (!inlineLinkedGameState.holes[holeNumber]) {
+    inlineLinkedGameState.holes[holeNumber] = {
+      wolf: (holeNumber - 1) % 4,
+      partner: null,
+      mode: null,
+      result: null,
+      birdieDouble: false
+    };
+  }
+
+  return inlineLinkedGameState.holes[holeNumber];
+}
+
+function getInline666Hole(holeNumber = currentHole) {
+  if (!inlineLinkedGameState.holes[holeNumber]) {
+    inlineLinkedGameState.holes[holeNumber] = { result: null };
+  }
+
+  return inlineLinkedGameState.holes[holeNumber];
+}
+
+function getInlineBBBHole(holeNumber = currentHole) {
+  if (!inlineLinkedGameState.holes[holeNumber]) {
+    inlineLinkedGameState.holes[holeNumber] = { bingo: null, bango: null, bongo: null };
+  }
+
+  return inlineLinkedGameState.holes[holeNumber];
+}
+
+function getInline666FormatForHole(holeNumber = currentHole) {
+  if (holeNumber >= 1 && holeNumber <= 6) return "Best Ball";
+  if (holeNumber >= 7 && holeNumber <= 12) return "Total Score";
+  return "High / Low";
+}
+
+function getInline666TeamsForHole(holeNumber = currentHole) {
+  if (holeNumber >= 1 && holeNumber <= 6) return { team1: [0, 1], team2: [2, 3] };
+  if (holeNumber >= 7 && holeNumber <= 12) return { team1: [0, 2], team2: [1, 3] };
+  return { team1: [0, 3], team2: [1, 2] };
+}
+
+function recalcInlineWolfGame() {
+  const totals = [0, 0, 0, 0];
+  let carryover = 0;
+
+  Object.keys(inlineLinkedGameState.holes || {})
+    .map(Number)
+    .sort((a, b) => a - b)
+    .forEach((holeNumber) => {
+      const holeState = inlineLinkedGameState.holes[holeNumber];
+      if (!holeState?.result) return;
+
+      const birdieMultiplier = holeState.birdieDouble ? 2 : 1;
+      const allPlayers = [0, 1, 2, 3];
+
+      if (holeState.result === "push") {
+        carryover += inlineLinkedGameState.carryoverEnabled ? Number(inlineLinkedGameState.tieSetPoints) || 0 : 0;
+        return;
+      }
+
+      const pot = carryover;
+      carryover = 0;
+
+      if (holeState.result === "wolfTeam") {
+        if (holeState.partner === null || holeState.partner === undefined) return;
+        const each = ((Number(inlineLinkedGameState.base) || 0) / 2) * birdieMultiplier + (pot / 2);
+        totals[holeState.wolf] += each;
+        totals[holeState.partner] += each;
+        return;
+      }
+
+      if (holeState.result === "others") {
+        const winners = allPlayers.filter((idx) => idx !== holeState.wolf && idx !== holeState.partner);
+        const each = ((Number(inlineLinkedGameState.base) || 0) / 2) * birdieMultiplier + (pot / 2);
+        winners.forEach((idx) => {
+          totals[idx] += each;
+        });
+        return;
+      }
+
+      if (holeState.result === "loneWin" && holeState.mode === "lone") {
+        totals[holeState.wolf] += ((Number(inlineLinkedGameState.loneWinPoints) || 0) * birdieMultiplier) + pot;
+        return;
+      }
+
+      if (holeState.result === "loneLose" && holeState.mode === "lone") {
+        const winners = allPlayers.filter((idx) => idx !== holeState.wolf);
+        const each = (((Number(inlineLinkedGameState.loneLosePoints) || 0) * birdieMultiplier) / 3) + (pot / 3);
+        winners.forEach((idx) => {
+          totals[idx] += each;
+        });
+        return;
+      }
+
+      if (holeState.result === "loneWin" && holeState.mode === "blind") {
+        totals[holeState.wolf] += ((Number(inlineLinkedGameState.blindWinPoints) || 0) * birdieMultiplier) + pot;
+        return;
+      }
+
+      if (holeState.result === "loneLose" && holeState.mode === "blind") {
+        const winners = allPlayers.filter((idx) => idx !== holeState.wolf);
+        const each = (((Number(inlineLinkedGameState.blindLosePoints) || 0) * birdieMultiplier) / 3) + (pot / 3);
+        winners.forEach((idx) => {
+          totals[idx] += each;
+        });
+        return;
+      }
+
+      if (holeState.result === "dumpWin") {
+        if (holeState.partner === null || holeState.partner === undefined) return;
+        totals[holeState.partner] += ((Number(inlineLinkedGameState.dumpWinPoints) || 0) * birdieMultiplier) + pot;
+        return;
+      }
+
+      if (holeState.result === "dumpLose") {
+        if (holeState.partner === null || holeState.partner === undefined) return;
+        const winners = allPlayers.filter((idx) => idx !== holeState.partner);
+        const each = (((Number(inlineLinkedGameState.dumpLosePoints) || 0) * birdieMultiplier) / 3) + (pot / 3);
+        winners.forEach((idx) => {
+          totals[idx] += each;
+        });
+      }
+    });
+
+  inlineLinkedGameState.totals = totals;
+  inlineLinkedGameState.currentPot = carryover;
+}
+
+function recalcInline666Game() {
+  const totals = [0, 0, 0, 0];
+  let carryover = 0;
+  const base = Number(inlineLinkedGameState.base) || 0;
+
+  Object.keys(inlineLinkedGameState.holes || {})
+    .map(Number)
+    .sort((a, b) => a - b)
+    .forEach((holeNumber) => {
+      const holeState = inlineLinkedGameState.holes[holeNumber];
+      if (!holeState?.result) return;
+
+      if (holeState.result === "push") {
+        if (inlineLinkedGameState.tieSetPoints !== null && inlineLinkedGameState.tieSetPoints !== undefined && inlineLinkedGameState.tieSetPoints !== "") {
+          carryover += Number(inlineLinkedGameState.tieSetPoints) || 0;
+        } else if ((Number(inlineLinkedGameState.tieMultiplier) || 1) > 1) {
+          carryover += base * ((Number(inlineLinkedGameState.tieMultiplier) || 1) - 1);
+        } else {
+          carryover += base;
+        }
+        return;
+      }
+
+      const payout = base + carryover;
+      carryover = 0;
+      const { team1, team2 } = getInline666TeamsForHole(holeNumber);
+
+      if (holeState.result === "team1") {
+        team1.forEach((idx) => {
+          totals[idx] += payout;
+        });
+      }
+
+      if (holeState.result === "team2") {
+        team2.forEach((idx) => {
+          totals[idx] += payout;
+        });
+      }
+    });
+
+  inlineLinkedGameState.totals = totals;
+  inlineLinkedGameState.currentPot = carryover;
+}
+
+function recalcInlineBBBGame() {
+  const totals = [0, 0, 0, 0];
+
+  Object.keys(inlineLinkedGameState.holes || {})
+    .map(Number)
+    .sort((a, b) => a - b)
+    .forEach((holeNumber) => {
+      const holeState = inlineLinkedGameState.holes[holeNumber];
+      if (!holeState) return;
+
+      ["bingo", "bango", "bongo"].forEach((key) => {
+        const playerIndex = holeState[key];
+        if (playerIndex === 0 || playerIndex === 1 || playerIndex === 2 || playerIndex === 3) {
+          totals[playerIndex] += 1;
+        }
+      });
+    });
+
+  inlineLinkedGameState.totals = totals;
+  inlineLinkedGameState.currentPot = 0;
+}
+
+function recalcInlineLinkedGame() {
+  syncInlineGameType();
+
+  if (getLinkedGameType() === "666") {
+    recalcInline666Game();
+  } else if (getLinkedGameType() === "bbb") {
+    recalcInlineBBBGame();
+  } else {
+    recalcInlineWolfGame();
+  }
+
+  persistInlineGameDraft();
+}
+
+function getInlineGameDraftPayload() {
+  const players = getInlineGamePlayers();
+  const trackedPlayerIndex = Number.isInteger(inlineLinkedGameState.trackedPlayerIndex)
+    ? inlineLinkedGameState.trackedPlayerIndex
+    : null;
+  const payload = {
+    sessionId: activeRoundSessionId,
+    hole: currentHole,
+    holes: JSON.parse(JSON.stringify(inlineLinkedGameState.holes || {})),
+    totals: [...(inlineLinkedGameState.totals || [0, 0, 0, 0])],
+    players,
+    trackedPlayerIndex
+  };
+
+  if (getLinkedGameType() === "666") {
+    payload.base = Number(inlineLinkedGameState.base) || 0;
+    payload.dollarValue = Number(inlineLinkedGameState.dollarValue) || 0;
+    payload.tieSetPoints =
+      inlineLinkedGameState.tieSetPoints !== null &&
+      inlineLinkedGameState.tieSetPoints !== undefined &&
+      inlineLinkedGameState.tieSetPoints !== ""
+        ? Number(inlineLinkedGameState.tieSetPoints) || 0
+        : null;
+    payload.tieMultiplier = Number(inlineLinkedGameState.tieMultiplier) || 1;
+    return payload;
+  }
+
+  if (getLinkedGameType() === "bbb") {
+    payload.bet = Number(inlineLinkedGameState.bet) || 0;
+    return payload;
+  }
+
+  payload.currentWolfIndex = Number(inlineLinkedGameState.currentWolfIndex) || 0;
+  payload.base = Number(inlineLinkedGameState.base) || 0;
+  payload.dollarValue = Number(inlineLinkedGameState.dollarValue) || 0;
+  payload.loneWinPoints = Number(inlineLinkedGameState.loneWinPoints) || 0;
+  payload.loneLosePoints = Number(inlineLinkedGameState.loneLosePoints) || 0;
+  payload.dumpWinPoints = Number(inlineLinkedGameState.dumpWinPoints) || 0;
+  payload.dumpLosePoints = Number(inlineLinkedGameState.dumpLosePoints) || 0;
+  payload.blindWinPoints = Number(inlineLinkedGameState.blindWinPoints) || 0;
+  payload.blindLosePoints = Number(inlineLinkedGameState.blindLosePoints) || 0;
+  payload.tieSetPoints = Number(inlineLinkedGameState.tieSetPoints) || 0;
+  payload.loneEnabled = !!inlineLinkedGameState.loneEnabled;
+  payload.dumpEnabled = !!inlineLinkedGameState.dumpEnabled;
+  payload.blindEnabled = !!inlineLinkedGameState.blindEnabled;
+  payload.carryoverEnabled = !!inlineLinkedGameState.carryoverEnabled;
+  payload.birdieDoubleEnabled = !!inlineLinkedGameState.birdieDoubleEnabled;
+  return payload;
+}
+
+function persistInlineGameDraft() {
+  if (!sessionApi || !activeRoundSessionId || getSessionModeValue() !== "round+game") return;
+
+  sessionApi.saveGameDraft(getLinkedGameType(), activeRoundSessionId, getInlineGameDraftPayload());
+  syncActiveRoundSession({ gameType: getLinkedGameType(), currentGameHole: currentHole });
+}
+
+function applyInlineGameDraft(draft) {
+  if (!draft || typeof draft !== "object") {
+    syncInlineGameType(true);
+    recalcInlineLinkedGame();
+    return false;
+  }
+
+  const nextType = getLinkedGameType();
+  inlineLinkedGameState = createDefaultInlineGameState(nextType);
+  inlineLinkedGameState.players = Array.isArray(draft.players) && draft.players.length
+    ? draft.players.slice(0, 4)
+    : inlineLinkedGameState.players;
+  while (inlineLinkedGameState.players.length < 4) {
+    inlineLinkedGameState.players.push(`Player ${inlineLinkedGameState.players.length + 1}`);
+  }
+  inlineLinkedGameState.trackedPlayerIndex = Number.isInteger(draft.trackedPlayerIndex) ? draft.trackedPlayerIndex : null;
+  inlineLinkedGameState.holes = typeof draft.holes === "object" && draft.holes ? JSON.parse(JSON.stringify(draft.holes)) : {};
+  inlineLinkedGameState.totals = Array.isArray(draft.totals) ? [...draft.totals] : [0, 0, 0, 0];
+
+  if (nextType === "666") {
+    inlineLinkedGameState.base = Number(draft.base) || 0;
+    inlineLinkedGameState.dollarValue = Number(draft.dollarValue) || 0;
+    inlineLinkedGameState.tieSetPoints = draft.tieSetPoints ?? null;
+    inlineLinkedGameState.tieMultiplier = Number(draft.tieMultiplier) || 1;
+  } else if (nextType === "bbb") {
+    inlineLinkedGameState.bet = Number(draft.bet) || 0;
+  } else {
+    inlineLinkedGameState.currentWolfIndex = Number.isInteger(draft.currentWolfIndex) ? draft.currentWolfIndex : 0;
+    inlineLinkedGameState.base = Number(draft.base) || 0;
+    inlineLinkedGameState.dollarValue = Number(draft.dollarValue) || 0;
+    inlineLinkedGameState.loneWinPoints = Number(draft.loneWinPoints) || 0;
+    inlineLinkedGameState.loneLosePoints = Number(draft.loneLosePoints) || 0;
+    inlineLinkedGameState.dumpWinPoints = Number(draft.dumpWinPoints) || 0;
+    inlineLinkedGameState.dumpLosePoints = Number(draft.dumpLosePoints) || 0;
+    inlineLinkedGameState.blindWinPoints = Number(draft.blindWinPoints) || 0;
+    inlineLinkedGameState.blindLosePoints = Number(draft.blindLosePoints) || 0;
+    inlineLinkedGameState.tieSetPoints = Number(draft.tieSetPoints) || 0;
+    inlineLinkedGameState.loneEnabled = draft.loneEnabled !== false;
+    inlineLinkedGameState.dumpEnabled = draft.dumpEnabled !== false;
+    inlineLinkedGameState.blindEnabled = draft.blindEnabled !== false;
+    inlineLinkedGameState.carryoverEnabled = draft.carryoverEnabled !== false;
+    inlineLinkedGameState.birdieDoubleEnabled = !!draft.birdieDoubleEnabled;
+  }
+
+  recalcInlineLinkedGame();
+  return true;
+}
+
+function restoreInlineGameDraft() {
+  if (!sessionApi || !activeRoundSessionId || getSessionModeValue() !== "round+game") {
+    syncInlineGameType(true);
+    return false;
+  }
+
+  const draft = sessionApi.loadGameDraft(getLinkedGameType(), activeRoundSessionId);
+  if (!draft) {
+    syncInlineGameType(true);
+    recalcInlineLinkedGame();
+    return false;
+  }
+
+  return applyInlineGameDraft(draft);
+}
+
+function renderInlineGameSetupFields() {
+  const players = getInlineGamePlayers();
+  const trackedPlayerIndex = Number.isInteger(inlineLinkedGameState.trackedPlayerIndex)
+    ? inlineLinkedGameState.trackedPlayerIndex
+    : "";
+
+  const playersHtml = players.map((playerName, idx) => `
+    <div class="col-6">
+      <input
+        id="inlineGamePlayer${idx}"
+        class="form-control"
+        placeholder="Player ${idx + 1}"
+        data-inline-player-index="${idx}"
+        value="${playerName}">
+    </div>
+  `).join("");
+
+  const trackedOptions = players.map((playerName, idx) => `
+    <option value="${idx}" ${trackedPlayerIndex === idx ? "selected" : ""}>${playerName}</option>
+  `).join("");
+
+  if (getLinkedGameType() === "666") {
+    return `
+      <div class="inline-game-native-setup">
+        <div class="row g-2 mb-3">
+          ${playersHtml}
+        </div>
+
+        <div class="row g-2 mb-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label small" for="inlineGameTrackedPlayer">Your Player Slot</label>
+            <select id="inlineGameTrackedPlayer" class="form-select" data-inline-field="trackedPlayerIndex">
+              <option value="">Choose your player slot</option>
+              ${trackedOptions}
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-2">
+          <div class="col-6">
+            <label class="form-label small" for="inline666Base">Points Per Player Per Hole</label>
+            <input id="inline666Base" class="form-control" type="number" min="0" step="1" data-inline-field="base" value="${Number(inlineLinkedGameState.base) || 0}">
+          </div>
+          <div class="col-6">
+            <label class="form-label small" for="inline666DollarValue">$/Point</label>
+            <input id="inline666DollarValue" class="form-control" type="number" min="0" step="0.25" data-inline-field="dollarValue" value="${Number(inlineLinkedGameState.dollarValue) || 0}">
+          </div>
+          <div class="col-6 mt-2">
+            <label class="form-label small" for="inline666TieSetPoints">Tie Points (Fixed)</label>
+            <input id="inline666TieSetPoints" class="form-control" type="number" min="0" step="1" data-inline-field="tieSetPoints" value="${inlineLinkedGameState.tieSetPoints ?? ""}">
+          </div>
+          <div class="col-6 mt-2">
+            <label class="form-label small" for="inline666TieMultiplier">Tie Multiplier</label>
+            <input id="inline666TieMultiplier" class="form-control" type="number" min="1" step="1" data-inline-field="tieMultiplier" value="${Number(inlineLinkedGameState.tieMultiplier) || 1}">
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (getLinkedGameType() === "bbb") {
+    return `
+      <div class="inline-game-native-setup">
+        <div class="row g-2 mb-3">
+          ${playersHtml}
+        </div>
+
+        <div class="row g-2 mb-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label small" for="inlineGameTrackedPlayer">Your Player Slot</label>
+            <select id="inlineGameTrackedPlayer" class="form-select" data-inline-field="trackedPlayerIndex">
+              <option value="">Choose your player slot</option>
+              ${trackedOptions}
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-2">
+          <div class="col-6 col-md-3">
+            <label class="form-label small" for="inlineBBBBet">Bet Per Point ($)</label>
+            <input id="inlineBBBBet" class="form-control" type="number" min="0" step="0.25" data-inline-field="bet" value="${Number(inlineLinkedGameState.bet) || 0}">
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="inline-game-native-setup">
+      <div class="row g-2 mb-3">
+        ${playersHtml}
+      </div>
+
+      <div class="row g-2 mb-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label small" for="inlineGameTrackedPlayer">Your Player Slot</label>
+          <select id="inlineGameTrackedPlayer" class="form-select" data-inline-field="trackedPlayerIndex">
+            <option value="">Choose your player slot</option>
+            ${trackedOptions}
+          </select>
+        </div>
+      </div>
+
+      <div class="game-options-card">
+        <h3>Game Options</h3>
+
+        <div class="option-row">
+          <label for="inlineWolfToggleLone">Lone</label>
+          <label class="switch">
+            <input id="inlineWolfToggleLone" type="checkbox" data-inline-field="loneEnabled" ${inlineLinkedGameState.loneEnabled ? "checked" : ""}>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="option-row">
+          <label for="inlineWolfToggleDump">Dump</label>
+          <label class="switch">
+            <input id="inlineWolfToggleDump" type="checkbox" data-inline-field="dumpEnabled" ${inlineLinkedGameState.dumpEnabled ? "checked" : ""}>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="option-row">
+          <label for="inlineWolfToggleBlind">Blind</label>
+          <label class="switch">
+            <input id="inlineWolfToggleBlind" type="checkbox" data-inline-field="blindEnabled" ${inlineLinkedGameState.blindEnabled ? "checked" : ""}>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="option-row">
+          <label for="inlineWolfToggleCarryover">Tie Carryover</label>
+          <label class="switch">
+            <input id="inlineWolfToggleCarryover" type="checkbox" data-inline-field="carryoverEnabled" ${inlineLinkedGameState.carryoverEnabled ? "checked" : ""}>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="option-row">
+          <label for="inlineWolfToggleBirdieDouble">Birdie Double</label>
+          <label class="switch">
+            <input id="inlineWolfToggleBirdieDouble" type="checkbox" data-inline-field="birdieDoubleEnabled" ${inlineLinkedGameState.birdieDoubleEnabled ? "checked" : ""}>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="row g-2 inline-game-point-pair">
+        <div class="col-6">
+          <label class="form-label small" for="inlineWolfBase">Base Points</label>
+          <input id="inlineWolfBase" class="form-control" type="number" min="0" step="1" data-inline-field="base" value="${Number(inlineLinkedGameState.base) || 0}">
+        </div>
+        <div class="col-6">
+          <label class="form-label small" for="inlineWolfDollarValue">$/Point</label>
+          <input id="inlineWolfDollarValue" class="form-control" type="number" min="0" step="0.25" data-inline-field="dollarValue" value="${Number(inlineLinkedGameState.dollarValue) || 0}">
+        </div>
+      </div>
+
+      <div class="row g-2 mt-2 inline-game-point-single">
+        <div class="col-6">
+          <label class="form-label small" for="inlineWolfTieSetPoints">Tie Carryover Points</label>
+          <input id="inlineWolfTieSetPoints" class="form-control" type="number" min="0" step="1" data-inline-field="tieSetPoints" value="${Number(inlineLinkedGameState.tieSetPoints) || 0}">
+        </div>
+      </div>
+
+      <div class="row g-2 mt-2 inline-game-point-pair">
+        <div class="col-6">
+          <label class="form-label small" for="inlineWolfLoneWinPoints">Lone Win Points</label>
+          <input id="inlineWolfLoneWinPoints" class="form-control" type="number" min="0" step="1" data-inline-field="loneWinPoints" value="${Number(inlineLinkedGameState.loneWinPoints) || 0}">
+        </div>
+        <div class="col-6">
+          <label class="form-label small" for="inlineWolfLoneLosePoints">Lone Lose Points</label>
+          <input id="inlineWolfLoneLosePoints" class="form-control" type="number" min="0" step="1" data-inline-field="loneLosePoints" value="${Number(inlineLinkedGameState.loneLosePoints) || 0}">
+        </div>
+      </div>
+
+      <div class="row g-2 mt-2 inline-game-point-pair">
+        <div class="col-6">
+          <label class="form-label small" for="inlineWolfDumpWinPoints">Dump Win Points</label>
+          <input id="inlineWolfDumpWinPoints" class="form-control" type="number" min="0" step="1" data-inline-field="dumpWinPoints" value="${Number(inlineLinkedGameState.dumpWinPoints) || 0}">
+        </div>
+        <div class="col-6">
+          <label class="form-label small" for="inlineWolfDumpLosePoints">Dump Lose Points</label>
+          <input id="inlineWolfDumpLosePoints" class="form-control" type="number" min="0" step="1" data-inline-field="dumpLosePoints" value="${Number(inlineLinkedGameState.dumpLosePoints) || 0}">
+        </div>
+      </div>
+
+      <div class="row g-2 mt-2 inline-game-point-pair">
+        <div class="col-6">
+          <label class="form-label small" for="inlineWolfBlindWinPoints">Blind Win Points</label>
+          <input id="inlineWolfBlindWinPoints" class="form-control" type="number" min="0" step="1" data-inline-field="blindWinPoints" value="${Number(inlineLinkedGameState.blindWinPoints) || 0}">
+        </div>
+        <div class="col-6">
+          <label class="form-label small" for="inlineWolfBlindLosePoints">Blind Lose Points</label>
+          <input id="inlineWolfBlindLosePoints" class="form-control" type="number" min="0" step="1" data-inline-field="blindLosePoints" value="${Number(inlineLinkedGameState.blindLosePoints) || 0}">
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderInlineWolfHoleFields() {
+  const players = getInlineGamePlayers();
+  const holeState = getInlineWolfHole();
+  inlineLinkedGameState.currentWolfIndex = Number(holeState.wolf) || 0;
+
+  const setupOptions = [`<option value="">Select partner or play solo</option>`];
+  players.forEach((playerName, idx) => {
+    if (idx !== holeState.wolf) {
+      setupOptions.push(`<option value="partner-${idx}">Partner: ${playerName}</option>`);
+    }
+  });
+
+  if (inlineLinkedGameState.loneEnabled) {
+    setupOptions.push(`<option value="lone">Lone Wolf</option>`);
+  }
+
+  if (inlineLinkedGameState.blindEnabled) {
+    setupOptions.push(`<option value="blind">Blind Wolf</option>`);
+  }
+
+  let currentSetupValue = "";
+  if ((holeState.mode === "team" || holeState.mode === "dump") && holeState.partner !== null && holeState.partner !== undefined) {
+    currentSetupValue = `partner-${holeState.partner}`;
+  } else if (holeState.mode === "lone") {
+    currentSetupValue = "lone";
+  } else if (holeState.mode === "blind") {
+    currentSetupValue = "blind";
+  }
+
+  const selectedResult = holeState.result || "";
+  const dumpAvailable = inlineLinkedGameState.dumpEnabled && holeState.partner !== null && holeState.partner !== undefined;
+  const teamHidden = holeState.mode !== "team";
+  const loneHidden = holeState.mode !== "lone";
+  const dumpHidden = holeState.mode !== "dump";
+  const blindHidden = holeState.mode !== "blind";
+  const resultTextMap = {
+    wolfTeam: "Wolf Team Wins",
+    others: "Other Team Wins",
+    loneWin: "Lone Wolf Wins",
+    loneLose: "Lone Wolf Loses",
+    dumpWin: "Dump Wins",
+    dumpLose: "Others Win",
+    push: "Push"
+  };
+
+  return `
+    <div class="inline-game-native-hole">
+      <div class="row g-2 mb-3">
+        <div class="col-6">
+          <label class="small" for="inlineWolfHoleWolf">Wolf</label>
+          <select id="inlineWolfHoleWolf" class="form-select" data-inline-wolf-field="wolf">
+            ${players.map((playerName, idx) => `<option value="${idx}" ${idx === holeState.wolf ? "selected" : ""}>${playerName}</option>`).join("")}
+          </select>
+        </div>
+        <div class="col-6">
+          <label class="small" for="inlineWolfHoleSetup">Hole Setup</label>
+          <select id="inlineWolfHoleSetup" class="form-select" data-inline-wolf-field="setup">
+            ${setupOptions.join("")}
+          </select>
+        </div>
+      </div>
+
+      <div class="row g-2 mb-3">
+        <div class="col-6">
+          <button type="button" class="btn btn-warning w-100 ${selectedResult === "push" ? "selected" : ""}" data-inline-wolf-result="push">Push</button>
+        </div>
+        <div class="col-6">
+          <button
+            type="button"
+            class="btn btn-dark w-100 ${holeState.mode === "dump" ? "selected" : ""}"
+            data-inline-wolf-action="${holeState.mode === "dump" ? "team" : "dump"}"
+            ${dumpAvailable || holeState.mode === "dump" ? "" : "disabled"}>
+            Dump
+          </button>
+        </div>
+      </div>
+
+      <div class="d-grid gap-2 ${teamHidden ? "hidden" : ""}">
+        <button type="button" class="btn team-win ${selectedResult === "wolfTeam" ? "selected" : ""}" data-inline-wolf-result="wolfTeam">Wolf Team Wins</button>
+        <button type="button" class="btn team-lose ${selectedResult === "others" ? "selected" : ""}" data-inline-wolf-result="others">Other Team Wins</button>
+      </div>
+
+      <div class="d-grid gap-2 ${loneHidden ? "hidden" : ""}">
+        <button type="button" class="btn lone-win ${selectedResult === "loneWin" ? "selected" : ""}" data-inline-wolf-result="loneWin">Lone Wolf Wins</button>
+        <button type="button" class="btn lone-lose ${selectedResult === "loneLose" ? "selected" : ""}" data-inline-wolf-result="loneLose">Lone Wolf Loses</button>
+      </div>
+
+      <div class="d-grid gap-2 ${dumpHidden ? "hidden" : ""}">
+        <button type="button" class="btn dump-win ${selectedResult === "dumpWin" ? "selected" : ""}" data-inline-wolf-result="dumpWin">Dump Wins</button>
+        <button type="button" class="btn dump-lose ${selectedResult === "dumpLose" ? "selected" : ""}" data-inline-wolf-result="dumpLose">Others Win</button>
+      </div>
+
+      <div class="d-grid gap-2 ${blindHidden ? "hidden" : ""}">
+        <button type="button" class="btn lone-win ${selectedResult === "loneWin" ? "selected" : ""}" data-inline-wolf-result="loneWin">Blind Wolf Wins</button>
+        <button type="button" class="btn lone-lose ${selectedResult === "loneLose" ? "selected" : ""}" data-inline-wolf-result="loneLose">Blind Wolf Loses</button>
+      </div>
+
+      ${inlineLinkedGameState.birdieDoubleEnabled ? `
+        <div class="inline-birdie-question-wrap">
+          <div class="text-center fw-bold mb-2">Birdie Double?</div>
+          <div class="birdie-question-buttons">
+            <button type="button" class="btn btn-success ${holeState.birdieDouble ? "selected" : ""}" data-inline-wolf-birdie="yes">Yes</button>
+            <button type="button" class="btn btn-secondary ${holeState.birdieDouble ? "" : "selected"}" data-inline-wolf-birdie="no">No</button>
+          </div>
+        </div>
+      ` : ""}
+
+      <div class="inline-game-footer-row">
+        <div class="inline-game-status-pill">${selectedResult ? (resultTextMap[selectedResult] || selectedResult) : "No result set yet"}</div>
+        <div class="inline-game-pot">POT: ${inlineLinkedGameState.currentPot || 0} pts</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderInline666HoleFields() {
+  const { team1, team2 } = getInline666TeamsForHole();
+  const holeState = getInline666Hole();
+
+  return `
+    <div class="inline-game-native-hole">
+      <div class="gfg-team-box mb-3">
+        <div class="gfg-team-row">
+          <div class="gfg-team-pill gfg-team-pill--one">
+            <strong>Team 1</strong>
+            <span>${getInlineGameSafePlayerName(team1[0])} + ${getInlineGameSafePlayerName(team1[1])}</span>
+          </div>
+          <div class="gfg-team-pill gfg-team-pill--two">
+            <strong>Team 2</strong>
+            <span>${getInlineGameSafePlayerName(team2[0])} + ${getInlineGameSafePlayerName(team2[1])}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="inline-game-note mb-3">${getInline666FormatForHole(currentHole)}</div>
+
+      <div class="row g-2 mode-group">
+        <div class="col-6">
+          <button type="button" class="btn team-win inline-666-win w-100 ${holeState.result === "team1" ? "selected" : ""}" data-inline-666-result="team1">Team 1 Wins</button>
+        </div>
+        <div class="col-6">
+          <button type="button" class="btn team-lose inline-666-lose w-100 ${holeState.result === "team2" ? "selected" : ""}" data-inline-666-result="team2">Team 2 Wins</button>
+        </div>
+        <div class="col-12">
+          <button type="button" class="btn btn-warning w-100 ${holeState.result === "push" ? "selected" : ""}" data-inline-666-result="push">Push</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderInlineBBBHoleFields() {
+  const holeState = getInlineBBBHole();
+  const players = getInlineGamePlayers();
+  const options = players.map((playerName, idx) => `<option value="${idx}">${playerName}</option>`).join("");
+
+  return `
+    <div class="inline-game-native-hole">
+      <div class="row g-2 mb-2">
+        <div class="col-12 col-md-4">
+          <label class="form-label small" for="inlineBBBBingo">Bingo</label>
+          <select id="inlineBBBBingo" class="form-select" data-inline-bbb-field="bingo">
+            <option value="">-</option>
+            ${options}
+          </select>
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="form-label small" for="inlineBBBBango">Bango</label>
+          <select id="inlineBBBBango" class="form-select" data-inline-bbb-field="bango">
+            <option value="">-</option>
+            ${options}
+          </select>
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="form-label small" for="inlineBBBBongo">Bongo</label>
+          <select id="inlineBBBBongo" class="form-select" data-inline-bbb-field="bongo">
+            <option value="">-</option>
+            ${options}
+          </select>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderInlineGameScoreboard() {
+  if (!inlineGameScoreboardCard || !inlineGameScoreboardTitle || !inlineGameScoreboardShell) return;
+
+  const shouldShow = getSessionModeValue() === "round+game";
+  inlineGameScoreboardCard.classList.toggle("hidden", !shouldShow);
+  if (!shouldShow) return;
+
+  const players = getInlineGamePlayers();
+  const totals = Array.isArray(inlineLinkedGameState.totals) ? inlineLinkedGameState.totals : [0, 0, 0, 0];
+  const moneyMultiplier = getLinkedGameType() === "bbb"
+    ? Number(inlineLinkedGameState.bet) || 0
+    : Number(inlineLinkedGameState.dollarValue) || 0;
+
+  inlineGameScoreboardTitle.textContent =
+    getLinkedGameType() === "bbb"
+      ? "🪘 BBB Scoreboard"
+      : getLinkedGameType() === "666"
+        ? "666 Scoreboard"
+        : "🐺 Wolf Scoreboard";
+  if (inlineGameScoreboardMeta) {
+    inlineGameScoreboardMeta.textContent = getInlineGameScoreboardMetaText();
+  }
+
+  const renderScoreCell = (idx, spacerClass) => {
+    const net = (Number(totals[idx]) || 0) * moneyMultiplier;
+    return `
+      <div class="border rounded p-1 flex-fill ${spacerClass}">
+        <div class="fw-bold fs-6">${players[idx]}: ${Number(totals[idx]) || 0} pts</div>
+        <div class="fs-6 fw-bold" style="color:${net >= 0 ? "#359447" : "#d9534f"}">${getInlineGameMoneyText(net)}</div>
+      </div>
+    `;
+  };
+
+  inlineGameScoreboardShell.innerHTML = `
+    ${getLinkedGameType() !== "bbb" ? `
+      <div class="pot-banner inline-game-pot-banner ${inlineLinkedGameState.currentPot ? "" : "hidden"}">
+        POT: <span>${inlineLinkedGameState.currentPot || 0}</span> pts
+      </div>
+    ` : ""}
+    <div class="d-flex mb-1 text-center inline-game-score-row">
+      ${renderScoreCell(0, "me-1")}
+      ${renderScoreCell(1, "ms-1")}
+    </div>
+    <div class="d-flex text-center inline-game-score-row">
+      ${renderScoreCell(2, "me-1")}
+      ${renderScoreCell(3, "ms-1")}
+    </div>
+  `;
+}
+
+function renderInlineLinkedGameUI() {
+  const shouldShow = getSessionModeValue() === "round+game";
+
+  inlineGameSetupCard?.classList.toggle("hidden", !shouldShow);
+  inlineGameHoleCard?.classList.toggle("hidden", !shouldShow || currentHole === 19);
+  inlineGameScoreboardCard?.classList.toggle("hidden", !shouldShow);
+
+  if (!shouldShow) {
+    return;
+  }
+
+  syncInlineGameType();
+  recalcInlineLinkedGame();
+
+  if (inlineGameSetupTitle) {
+    inlineGameSetupTitle.textContent = getLinkedGameType() === "bbb" ? "Players & Bet" : "Players & Payouts";
+  }
+  if (inlineGameSetupMeta) {
+    inlineGameSetupMeta.textContent = getLinkedGameType() === "wolf"
+      ? "Use the same player, option, and payout layout as the Wolf page."
+      : getLinkedGameType() === "666"
+        ? "Use the same player and payout layout as the Six-Six-Six page."
+        : "Use the same player and bet layout as the BBB page.";
+  }
+  if (inlineGameSetupShell) {
+    inlineGameSetupShell.innerHTML = renderInlineGameSetupFields();
+  }
+
+  if (inlineGameHoleTitle) {
+    inlineGameHoleTitle.textContent = "Hole Setup & Results";
+  }
+  if (inlineGameHoleMeta) {
+    inlineGameHoleMeta.textContent = getInlineGameRoundMeta();
+  }
+
+  if (inlineGameHoleShell) {
+    if (getLinkedGameType() === "666") {
+      inlineGameHoleShell.innerHTML = renderInline666HoleFields();
+    } else if (getLinkedGameType() === "bbb") {
+      inlineGameHoleShell.innerHTML = renderInlineBBBHoleFields();
+      const holeState = getInlineBBBHole();
+      const bingoSelect = document.getElementById("inlineBBBBingo");
+      const bangoSelect = document.getElementById("inlineBBBBango");
+      const bongoSelect = document.getElementById("inlineBBBBongo");
+      if (bingoSelect) bingoSelect.value = holeState.bingo === null ? "" : String(holeState.bingo);
+      if (bangoSelect) bangoSelect.value = holeState.bango === null ? "" : String(holeState.bango);
+      if (bongoSelect) bongoSelect.value = holeState.bongo === null ? "" : String(holeState.bongo);
+    } else {
+      inlineGameHoleShell.innerHTML = renderInlineWolfHoleFields();
+      const holeState = getInlineWolfHole();
+      const setupSelect = document.getElementById("inlineWolfHoleSetup");
+      let currentSetupValue = "";
+      if ((holeState.mode === "team" || holeState.mode === "dump") && holeState.partner !== null && holeState.partner !== undefined) {
+        currentSetupValue = `partner-${holeState.partner}`;
+      } else if (holeState.mode === "lone") {
+        currentSetupValue = "lone";
+      } else if (holeState.mode === "blind") {
+        currentSetupValue = "blind";
+      }
+      if (setupSelect) setupSelect.value = currentSetupValue;
+    }
+  }
+
+  renderInlineGameScoreboard();
+}
+
+function handleInlineGameSetupEvent(event) {
+  const target = event.target;
+  if (!(target instanceof HTMLElement) || getSessionModeValue() !== "round+game") return;
+
+  syncInlineGameType();
+
+  if (target instanceof HTMLInputElement && target.dataset.inlinePlayerIndex) {
+    const playerIndex = Number(target.dataset.inlinePlayerIndex);
+    inlineLinkedGameState.players[playerIndex] = target.value.trim() || `Player ${playerIndex + 1}`;
+    recalcInlineLinkedGame();
+    renderInlineLinkedGameUI();
+    return;
+  }
+
+  if (!("dataset" in target) || !target.dataset.inlineField) return;
+
+  const field = target.dataset.inlineField;
+  if (field === "trackedPlayerIndex") {
+    inlineLinkedGameState.trackedPlayerIndex = target.value === "" ? null : Number(target.value);
+  } else if (target instanceof HTMLInputElement && target.type === "checkbox") {
+    inlineLinkedGameState[field] = target.checked;
+  } else if (field === "tieSetPoints") {
+    inlineLinkedGameState[field] = target.value === "" ? null : Number(target.value);
+  } else if (field === "bet" || field === "dollarValue") {
+    inlineLinkedGameState[field] = Number(target.value) || 0;
+  } else {
+    inlineLinkedGameState[field] = Number(target.value) || 0;
+  }
+
+  recalcInlineLinkedGame();
+  renderInlineLinkedGameUI();
+}
+
+function handleInlineWolfHoleEvent(event) {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+
+  const holeState = getInlineWolfHole();
+  const isChangeEvent = event.type === "change";
+
+  if (target instanceof HTMLSelectElement && target.dataset.inlineWolfField === "wolf") {
+    if (!isChangeEvent) return;
+    holeState.wolf = Number(target.value) || 0;
+    holeState.partner = null;
+    holeState.mode = null;
+    holeState.result = null;
+    inlineLinkedGameState.currentWolfIndex = holeState.wolf;
+    recalcInlineLinkedGame();
+    renderInlineLinkedGameUI();
+    return;
+  }
+
+  if (target instanceof HTMLSelectElement && target.dataset.inlineWolfField === "setup") {
+    if (!isChangeEvent) return;
+    const value = target.value;
+    holeState.result = null;
+
+    if (!value) {
+      holeState.mode = null;
+      holeState.partner = null;
+    } else if (value.startsWith("partner-")) {
+      holeState.mode = "team";
+      holeState.partner = Number(value.split("-")[1]);
+    } else if (value === "lone" && inlineLinkedGameState.loneEnabled) {
+      holeState.mode = "lone";
+      holeState.partner = null;
+    } else if (value === "blind" && inlineLinkedGameState.blindEnabled) {
+      holeState.mode = "blind";
+      holeState.partner = null;
+    } else {
+      holeState.mode = null;
+      holeState.partner = null;
+    }
+
+    recalcInlineLinkedGame();
+    renderInlineLinkedGameUI();
+    return;
+  }
+
+  if (target instanceof HTMLInputElement && target.dataset.inlineWolfField === "birdieDouble") {
+    if (!isChangeEvent) return;
+    holeState.birdieDouble = target.checked;
+    recalcInlineLinkedGame();
+    renderInlineGameScoreboard();
+    return;
+  }
+
+  if (target instanceof HTMLElement && target.dataset.inlineWolfBirdie) {
+    if (isChangeEvent) return;
+    holeState.birdieDouble = target.dataset.inlineWolfBirdie === "yes";
+    recalcInlineLinkedGame();
+    renderInlineLinkedGameUI();
+    return;
+  }
+
+  if (target instanceof HTMLElement && target.dataset.inlineWolfAction) {
+    if (isChangeEvent) return;
+    holeState.mode = target.dataset.inlineWolfAction === "dump" ? "dump" : "team";
+    holeState.result = null;
+    recalcInlineLinkedGame();
+    renderInlineLinkedGameUI();
+    return;
+  }
+
+  if (target instanceof HTMLElement && target.dataset.inlineWolfResult) {
+    if (isChangeEvent) return;
+    holeState.result = target.dataset.inlineWolfResult;
+    recalcInlineLinkedGame();
+    renderInlineLinkedGameUI();
+  }
+}
+
+function handleInline666HoleEvent(event) {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+
+  if (target.dataset.inline666Result) {
+    getInline666Hole().result = target.dataset.inline666Result;
+    recalcInlineLinkedGame();
+    renderInlineLinkedGameUI();
+  }
+}
+
+function handleInlineBBBHoleEvent(event) {
+  const target = event.target;
+  if (!(target instanceof HTMLSelectElement) || !target.dataset.inlineBbbField) return;
+
+  const field = target.dataset.inlineBbbField;
+  getInlineBBBHole()[field] = target.value === "" ? null : Number(target.value);
+  recalcInlineLinkedGame();
+  renderInlineLinkedGameUI();
+}
+
+function getLinkedGameDraftSummary() {
+  if (!sessionApi || !activeRoundSessionId || getSessionModeValue() !== "round+game") {
+    return null;
+  }
+
+  return sessionApi.getGameDraftSummary?.(getLinkedGameType(), activeRoundSessionId) || null;
+}
+
 function closeRoundSessionModal() {
   if (!roundSessionModalEl || !window.bootstrap?.Modal) return;
+
+  const activeEl = document.activeElement;
+  if (activeEl instanceof HTMLElement && roundSessionModalEl.contains(activeEl)) {
+    activeEl.blur();
+  }
+
   window.bootstrap.Modal.getOrCreateInstance(roundSessionModalEl).hide();
 }
 
@@ -322,38 +1453,34 @@ function renderRoundSessionUI() {
 
   syncRoundSessionPickerState();
   linkedGameTypeWrap?.classList.toggle("hidden", !isRoundGame);
-  continueLinkedGameBtn?.classList.toggle("hidden", !linkedSession);
+  continueLinkedGameBtn?.classList.add("hidden");
   clearRoundSessionBtn?.classList.toggle("hidden", !linkedSession);
 
   if (saveRoundSessionBtn) {
     saveRoundSessionBtn.textContent = isRoundGame ? "Save Session Setup" : "Keep Round Only";
   }
 
-  if (launchLinkedGameBtn) {
-    launchLinkedGameBtn.classList.toggle("hidden", !linkedSession);
-    launchLinkedGameBtn.textContent = `Open ${getLinkedGameLabel(activeGameType)}`;
-  }
-
   if (openRoundSessionModalBtn) {
     openRoundSessionModalBtn.textContent = linkedSession ? "Manage Linked Session" : "Round + Game Options";
   }
 
-  if (continueLinkedGameBtn && linkedSession) {
-    continueLinkedGameBtn.href = `../games/${sessionApi.getLinkedGameUrl(activeGameType, activeRoundSessionId)}`;
-    continueLinkedGameBtn.textContent = `Continue ${getLinkedGameLabel(activeGameType)}`;
+  if (launchLinkedGameBtn) {
+    launchLinkedGameBtn.classList.add("hidden");
   }
 
   if (!roundSessionStatus) return;
 
   if (linkedSession) {
     roundSessionStatus.textContent =
-      `Active session linked to ${getLinkedGameLabel(activeGameType)}. In fullscreen, swipe left to jump into the linked game.`;
+      `${getLinkedGameLabel(activeGameType)} is linked to this round and now runs directly inside the scorecard below.`;
+    renderInlineLinkedGameUI();
     return;
   }
 
   roundSessionStatus.textContent = isRoundGame
-    ? `Open ${getLinkedGameLabel()} to start tracking both at the same time.`
+    ? `${getLinkedGameLabel()} will appear right under Round Setup and use the same hole number as the scorecard.`
     : "Round only keeps your scorecard by itself. Round + Game links this round to Wolf, 666, or BBB.";
+  renderInlineLinkedGameUI();
 }
 
 function applyRoundDraft(draft) {
@@ -410,9 +1537,12 @@ function restoreActiveRoundSession() {
 
   const draft = sessionApi.loadRoundDraft(activeRoundSessionId);
   if (draft) {
-    return applyRoundDraft(draft);
+    const restored = applyRoundDraft(draft);
+    restoreInlineGameDraft();
+    return restored;
   }
 
+  restoreInlineGameDraft();
   renderRoundSessionUI();
   return false;
 }
@@ -431,6 +1561,7 @@ function ensureLinkedRoundSession() {
 
   activeRoundSessionId = nextSession.sessionId;
   persistRoundDraft();
+  restoreInlineGameDraft();
   renderRoundSessionUI();
   return nextSession;
 }
@@ -450,22 +1581,22 @@ function saveRoundSessionChoice() {
       activeRoundSessionId = null;
     }
 
+    syncInlineGameType(true);
     renderRoundSessionUI();
     closeRoundSessionModal();
     return true;
   }
 
   ensureLinkedRoundSession();
+  restoreInlineGameDraft();
   closeRoundSessionModal();
   return true;
 }
 
 function startOrContinueLinkedGame() {
-  if (!sessionApi) return;
-
   ensureLinkedRoundSession();
-
-  window.location.href = `../games/${sessionApi.getLinkedGameUrl(getLinkedGameType(), activeRoundSessionId)}`;
+  renderInlineLinkedGameUI();
+  inlineGameSetupCard?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function setRoundPrevButtonLabel() {
@@ -489,15 +1620,26 @@ function setRoundNextButtonLabel(mode = "next") {
   nextHoleBtn.innerHTML = `<span>Next</span><span class="nav-arrow" aria-hidden="true">&rarr;</span>`;
 }
 
+function renderFullscreenSessionSwitchTab() {
+  document.getElementById("roundFullscreenSessionTab")?.remove();
+}
+
 function syncFullscreenScrollLock() {
   const fullscreen = selectionWrapper?.classList.contains("fullscreen");
+  document.documentElement.classList.toggle("gfg-round-fullscreen-lock", !!fullscreen);
+  body.classList.toggle("fullscreen-active", !!fullscreen);
+  body.classList.toggle("no-scroll", !!fullscreen);
+
+  if (fullscreenContent) {
+    fullscreenContent.style.pointerEvents = "auto";
+  }
 
   if (!fullscreen) {
-    body.classList.remove("no-scroll");
+    renderFullscreenSessionSwitchTab();
     return;
   }
 
-  body.classList.add("no-scroll");
+  renderFullscreenSessionSwitchTab();
 }
 
 function createHoleData() {
@@ -584,12 +1726,11 @@ function getCountedHoleNumbers() {
 
 fullscreenBtn?.addEventListener("click", () => {
   selectionWrapper?.classList.toggle("fullscreen");
-  body.classList.toggle("fullscreen-active");
+  const fullscreen = selectionWrapper?.classList.contains("fullscreen");
 
-  if (selectionWrapper?.classList.contains("fullscreen")) {
+  if (fullscreen) {
     fullscreenBtn.innerText = "Close Fullscreen";
   } else {
-    body.classList.remove("no-scroll");
     fullscreenBtn.innerText = "Fullscreen Selection";
   }
 
@@ -880,6 +2021,7 @@ function render() {
     if (holeMeta) holeMeta.textContent = "Round Results";
     setRoundNextButtonLabel("results");
     updateScoreboard();
+    renderInlineLinkedGameUI();
     persistRoundDraft();
     return;
   }
@@ -892,12 +2034,14 @@ function render() {
   updateScoreboard();
 
   setRoundNextButtonLabel(currentHole < 18 ? "next" : "finish");
+  renderInlineLinkedGameUI();
   persistRoundDraft();
 }
 
 function recalc() {
   updateHoleSummary();
   updateScoreboard();
+  renderInlineLinkedGameUI();
   persistRoundDraft();
 }
 
@@ -950,6 +2094,8 @@ function hideResultsSummary() {
   if (holeSetupCard) holeSetupCard.style.display = "block";
   if (holeNavCard) holeNavCard.style.display = "block";
   if (scoreboardCard) scoreboardCard.style.display = "block";
+  if (inlineGameHoleCard && getSessionModeValue() === "round+game") inlineGameHoleCard.style.display = "block";
+  if (inlineGameScoreboardCard && getSessionModeValue() === "round+game") inlineGameScoreboardCard.style.display = "block";
   syncFullscreenScrollLock();
 }
 
@@ -1060,14 +2206,94 @@ async function saveRoundToAccount(statusEl) {
   }
 }
 
+async function saveRoundAndLinkedGame(statusEl) {
+  if (statusEl) statusEl.textContent = "";
+
+  const user = firebase?.auth?.().currentUser;
+  if (!user) {
+    if (statusEl) statusEl.textContent = "Please log in to save the game!";
+    return null;
+  }
+
+  const linkedSummary = getLinkedGameDraftSummary();
+  if (!linkedSummary?.exists) {
+    if (statusEl) statusEl.textContent = "Enter the linked game scores in the scorecard first.";
+    return null;
+  }
+
+  if (!linkedSummary.finished) {
+    if (statusEl) statusEl.textContent = `Finish ${getLinkedGameLabel(linkedSummary.gameType)} before saving both.`;
+    return null;
+  }
+
+  if (!linkedSummary.hasTrackedPlayer) {
+    if (statusEl) statusEl.textContent = `Choose your player slot in ${getLinkedGameLabel(linkedSummary.gameType)} before saving both.`;
+    return null;
+  }
+
+  if (statusEl) statusEl.textContent = "Saving round data...";
+  const roundDocId = await saveRoundToAccount(statusEl);
+  if (!roundDocId) return null;
+
+  if (statusEl) statusEl.textContent = `Saving ${getLinkedGameLabel(linkedSummary.gameType)} data...`;
+  try {
+    const result = await sessionApi.saveLinkedGameForCurrentUser?.(linkedSummary.gameType, activeRoundSessionId);
+    if (!result?.ok) {
+      if (statusEl) statusEl.textContent = result?.message || "Error saving linked game.";
+      return null;
+    }
+
+    activeRoundSessionId = null;
+    renderRoundSessionUI();
+    syncFullscreenScrollLock();
+    if (statusEl) {
+      statusEl.textContent = `${getLinkedGameSaveLabel(linkedSummary.gameType)} game saved! Round + game session complete.`;
+    }
+    return { roundDocId, gameDocId: result.docId };
+  } catch (error) {
+    console.error(error);
+    if (statusEl) statusEl.textContent = "Round saved, but there was an error saving the linked game.";
+    return null;
+  }
+}
+
+async function handleResultsSaveAction(statusEl, options = {}) {
+  const redirectToLockerRoom = !!options.redirectToLockerRoom;
+  const requiresJointSave = getSessionModeValue() === "round+game";
+  const linkedGameSummary = getLinkedGameDraftSummary();
+  const canSaveBoth = !!linkedGameSummary?.readyToSave;
+
+  const saveResult = requiresJointSave
+    ? await saveRoundAndLinkedGame(statusEl)
+    : await saveRoundToAccount(statusEl);
+
+  if (redirectToLockerRoom && (!firebase?.auth?.().currentUser || saveResult)) {
+    window.location.href = "../playerlog.html";
+  }
+
+  return saveResult;
+}
+
 function showResultsSummary() {
   const summary = getRoundSummary();
   const courseName = getCourseDisplayName();
   const insights = buildFeedback(summary);
+  const linkedGameSummary = getLinkedGameDraftSummary();
+  const isRoundGame = getSessionModeValue() === "round+game";
+  const canSaveBoth = !!linkedGameSummary?.readyToSave;
+  const linkedGameStatus = linkedGameSummary?.exists
+    ? linkedGameSummary.readyToSave
+      ? `${getLinkedGameLabel(linkedGameSummary.gameType)} is finished and ready to save with this round.`
+      : linkedGameSummary.finished
+        ? `Choose your player slot in ${getLinkedGameLabel(linkedGameSummary.gameType)} before saving both.`
+        : `Finish ${getLinkedGameLabel(linkedGameSummary.gameType)} to unlock one-tap save for both.`
+    : "";
 
   if (holeSetupCard) holeSetupCard.style.display = "none";
   if (holeNavCard) holeNavCard.style.display = "none";
   if (scoreboardCard) scoreboardCard.style.display = "none";
+  if (inlineGameHoleCard) inlineGameHoleCard.style.display = "none";
+  if (inlineGameScoreboardCard) inlineGameScoreboardCard.style.display = "none";
 
   if (!resultsCard) return;
 
@@ -1127,14 +2353,11 @@ function showResultsSummary() {
           </div>
         </div>
 
+        ${linkedGameStatus ? `<div class="round-linked-game-note mb-3">${linkedGameStatus}</div>` : ""}
+
         <div class="gfg-results-actions round-results-actions mb-4">
-          <a id="resultsSaveRoundBtn" class="gfg-pill-btn">Save Round Data</a>
-          ${
-            activeRoundSessionId && getSessionModeValue() === "round+game"
-              ? `<a id="resultsOpenLinkedGameBtn" class="gfg-pill-btn">Continue ${getLinkedGameLabel()}</a>`
-              : ""
-          }
-          <a id="resultsBackToLockerRoomBtn" href="../playerlog.html" class="gfg-pill-btn">Back to Locker Room</a>
+          <a id="resultsSaveRoundBtn" class="gfg-pill-btn">${isRoundGame ? "Save Round + Game To Locker Room" : "Save Round Data"}</a>
+          <a id="resultsBackToLockerRoomBtn" href="../playerlog.html" class="gfg-pill-btn">${isRoundGame ? "Locker Room" : "Back to Locker Room"}</a>
           <a href="../index.html" class="gfg-pill-btn">Back to Home</a>
         </div>
         <div id="resultsSaveRoundStatus" class="text-center mb-4 fw-bold"></div>
@@ -1153,7 +2376,6 @@ function showResultsSummary() {
   }
 
   const resultsSaveRoundBtn = document.getElementById("resultsSaveRoundBtn");
-  const resultsOpenLinkedGameBtn = document.getElementById("resultsOpenLinkedGameBtn");
   const resultsBackToLockerRoomBtn = document.getElementById("resultsBackToLockerRoomBtn");
   const resultsSaveRoundStatus = document.getElementById("resultsSaveRoundStatus");
 
@@ -1161,25 +2383,18 @@ function showResultsSummary() {
 
   if (resultsSaveRoundBtn) {
     resultsSaveRoundBtn.onclick = async () => {
-      await saveRoundToAccount(resultsSaveRoundStatus);
-    };
-  }
-
-  if (resultsOpenLinkedGameBtn && activeRoundSessionId && sessionApi) {
-    resultsOpenLinkedGameBtn.onclick = (event) => {
-      event.preventDefault();
-      startOrContinueLinkedGame();
+      await handleResultsSaveAction(resultsSaveRoundStatus, {
+        redirectToLockerRoom: isRoundGame
+      });
     };
   }
 
   if (resultsBackToLockerRoomBtn) {
     resultsBackToLockerRoomBtn.onclick = async (event) => {
       event.preventDefault();
-
-      const saveResult = await saveRoundToAccount(resultsSaveRoundStatus);
-      if (!firebase?.auth?.().currentUser || saveResult) {
-        window.location.href = "../playerlog.html";
-      }
+      await handleResultsSaveAction(resultsSaveRoundStatus, {
+        redirectToLockerRoom: true
+      });
     };
   }
 
@@ -1212,6 +2427,7 @@ customTeeName?.addEventListener("change", render);
 customCourseRating?.addEventListener("input", render);
 customSlopeRating?.addEventListener("input", render);
 openRoundSessionModalBtn?.addEventListener("click", () => {
+  lastRoundSessionTriggerEl = openRoundSessionModalBtn;
   renderRoundSessionUI();
 });
 sessionChoiceButtons.forEach((button) => {
@@ -1224,12 +2440,26 @@ sessionChoiceButtons.forEach((button) => {
 });
 linkedGameButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    if (linkedGameTypeSelect) {
-      linkedGameTypeSelect.value = button.dataset.linkedGame || "wolf";
+    const previousType = getLinkedGameType();
+    const nextType = sessionApi?.normalizeGameType(button.dataset.linkedGame || "wolf") || "wolf";
+
+    if (activeRoundSessionId && previousType !== nextType && hasInlineGameData()) {
+      const confirmed = window.confirm(`Switch linked game from ${getLinkedGameLabel(previousType)} to ${getLinkedGameLabel(nextType)} and clear the current linked game entries?`);
+      if (!confirmed) return;
+      sessionApi?.clearGameDraft(previousType, activeRoundSessionId);
     }
 
+    if (linkedGameTypeSelect) {
+      linkedGameTypeSelect.value = nextType;
+    }
+
+    syncInlineGameType(previousType !== nextType);
+
     if (activeRoundSessionId) {
-      syncActiveRoundSession({ gameType: getLinkedGameType() });
+      syncActiveRoundSession({ gameType: getLinkedGameType(), gameSaved: false, gameDocId: null });
+      if (previousType !== nextType) {
+        persistInlineGameDraft();
+      }
       persistRoundDraft();
     }
 
@@ -1248,8 +2478,11 @@ sessionModeSelect?.addEventListener("change", () => {
   renderRoundSessionUI();
 });
 linkedGameTypeSelect?.addEventListener("change", () => {
+  const nextType = getLinkedGameType();
+  syncInlineGameType(true);
   if (activeRoundSessionId) {
-    syncActiveRoundSession({ gameType: getLinkedGameType() });
+    syncActiveRoundSession({ gameType: nextType, gameSaved: false, gameDocId: null });
+    persistInlineGameDraft();
     persistRoundDraft();
   }
   renderRoundSessionUI();
@@ -1273,9 +2506,36 @@ clearRoundSessionBtn?.addEventListener("click", () => {
 
   sessionApi.clearSessionArtifacts(activeRoundSessionId);
   activeRoundSessionId = null;
+  syncInlineGameType(true);
   if (sessionModeSelect) sessionModeSelect.value = "roundOnly";
   renderRoundSessionUI();
   closeRoundSessionModal();
+});
+
+inlineGameSetupShell?.addEventListener("change", handleInlineGameSetupEvent);
+inlineGameHoleShell?.addEventListener("click", (event) => {
+  if (getLinkedGameType() === "666") {
+    handleInline666HoleEvent(event);
+    return;
+  }
+
+  if (getLinkedGameType() === "bbb") {
+    return;
+  }
+
+  handleInlineWolfHoleEvent(event);
+});
+inlineGameHoleShell?.addEventListener("change", (event) => {
+  if (getLinkedGameType() === "bbb") {
+    handleInlineBBBHoleEvent(event);
+    return;
+  }
+
+  if (getLinkedGameType() === "666") {
+    return;
+  }
+
+  handleInlineWolfHoleEvent(event);
 });
 
 holeParSelect?.addEventListener("change", () => {
@@ -1357,6 +2617,20 @@ nextHoleBtn?.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  roundSessionModalEl?.addEventListener("show.bs.modal", (event) => {
+    lastRoundSessionTriggerEl =
+      event.relatedTarget instanceof HTMLElement
+        ? event.relatedTarget
+        : openRoundSessionModalBtn;
+  });
+
+  roundSessionModalEl?.addEventListener("hidden.bs.modal", () => {
+    const fallbackTarget = lastRoundSessionTriggerEl || openRoundSessionModalBtn;
+    if (fallbackTarget instanceof HTMLElement) {
+      window.setTimeout(() => fallbackTarget.focus(), 0);
+    }
+  });
+
   populateCourseSelect();
   populateTeeSelect();
 
@@ -1373,18 +2647,6 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
     renderRoundSessionUI();
   }
-
-  sessionApi?.attachLinkedFullscreenSwipe?.({
-    surface: selectionWrapper,
-    direction: "right",
-    isEnabled: () => selectionWrapper?.classList.contains("fullscreen") && !!activeRoundSessionId,
-    getTargetUrl: () => {
-      if (!sessionApi || !activeRoundSessionId) return "";
-      const activeSession = sessionApi.getActiveSession();
-      const gameType = activeSession?.gameType || getLinkedGameType();
-      return `../games/${sessionApi.getLinkedGameUrl(gameType, activeRoundSessionId)}`;
-    }
-  });
 
   syncFullscreenScrollLock();
 });
