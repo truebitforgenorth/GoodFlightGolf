@@ -653,7 +653,13 @@ function getInlineGameDraftPayload() {
 }
 
 function persistInlineGameDraft() {
-  if (!sessionApi || !activeRoundSessionId || getSessionModeValue() !== "round+game") return;
+  if (!sessionApi || getSessionModeValue() !== "round+game") return;
+
+  if (!activeRoundSessionId) {
+    ensureInlineGameSessionTarget();
+  }
+
+  if (!activeRoundSessionId) return;
 
   sessionApi.saveGameDraft(getLinkedGameType(), activeRoundSessionId, getInlineGameDraftPayload());
   syncActiveRoundSession({ gameType: getLinkedGameType(), currentGameHole: currentHole });
@@ -1432,6 +1438,30 @@ function getRoundDraftPayload() {
 function persistRoundDraft() {
   if (!sessionApi || !activeRoundSessionId) return;
   sessionApi.saveRoundDraft(activeRoundSessionId, getRoundDraftPayload());
+}
+
+function ensureInlineGameSessionTarget() {
+  if (!sessionApi || getSessionModeValue() !== "round+game") return null;
+
+  if (activeRoundSessionId) {
+    return sessionApi.getActiveSession?.() || { sessionId: activeRoundSessionId };
+  }
+
+  const nextSession = sessionApi.startRoundSession({
+    mode: "round+game",
+    gameType: getLinkedGameType(),
+    roundSaved: false,
+    gameSaved: false,
+    ...getRoundSessionMeta()
+  });
+
+  activeRoundSessionId = nextSession?.sessionId || null;
+
+  if (activeRoundSessionId) {
+    persistRoundDraft();
+  }
+
+  return nextSession || null;
 }
 
 function syncActiveRoundSession(patch = {}) {

@@ -190,23 +190,6 @@
     }
   }
 
-  function getGamePath(gameType) {
-    const normalized = normalizeGameType(gameType);
-    if (normalized === "wolf") return "Wolf.html";
-    if (normalized === "666") return "666.html";
-    if (normalized === "bbb") return "bbb.html";
-    return "goodflightgames.html";
-  }
-
-  function getLinkedGameUrl(gameType, sessionId) {
-    const path = getGamePath(gameType);
-    return `${path}?sessionId=${encodeURIComponent(sessionId || "")}`;
-  }
-
-  function getScorecardUrl(sessionId) {
-    return `../rounds/scorecard.html${sessionId ? `?sessionId=${encodeURIComponent(sessionId)}` : ""}`;
-  }
-
   function getActiveSessionForId(sessionId) {
     const activeSession = getActiveSession();
     return activeSession?.sessionId === sessionId ? activeSession : null;
@@ -248,15 +231,15 @@
     }
 
     if (!draftSummary.exists) {
-      return { ok: false, code: "missing-draft", message: "Open the linked game and enter the scores first." };
+      return { ok: false, code: "missing-draft", message: "Set up the inline game in the scorecard first." };
     }
 
     if (!draftSummary.finished) {
-      return { ok: false, code: "game-not-finished", message: "Finish the linked game before saving both." };
+      return { ok: false, code: "game-not-finished", message: "Finish the inline game in the scorecard before saving both." };
     }
 
     if (!draftSummary.hasTrackedPlayer) {
-      return { ok: false, code: "missing-player", message: "Choose your player slot in the linked game before saving both." };
+      return { ok: false, code: "missing-player", message: "Choose your player slot in the inline game before saving both." };
     }
 
     const user = window.firebase?.auth?.().currentUser;
@@ -349,221 +332,6 @@
     };
   }
 
-  function isInteractiveSwipeTarget(target) {
-    return !!target?.closest?.("input, select, textarea, option");
-  }
-
-  function attachLinkedFullscreenSwipe(config = {}) {
-    const surface = config.surface;
-    if (!surface) return () => {};
-
-    const direction = config.direction === "right" ? "right" : "left";
-    const previewSide = direction === "left" ? "right" : "left";
-    const prefersPointer = typeof window.PointerEvent === "function";
-    let startX = 0;
-    let startY = 0;
-    let currentX = 0;
-    let tracking = false;
-    let dragging = false;
-    let activePointerId = null;
-
-    function getContentSurface() {
-      return surface.querySelector("#fullscreenContent") || surface;
-    }
-
-    function getSwipeThreshold() {
-      const width = surface.clientWidth || window.innerWidth || 390;
-      return Math.min(150, Math.max(84, width * 0.18));
-    }
-
-    function getPreviewLabel() {
-      if (typeof config.getPreviewLabel === "function") {
-        return config.getPreviewLabel() || "";
-      }
-
-      return direction === "left" ? "Continue" : "Back";
-    }
-
-    function ensureSwipePreview() {
-      let preview = surface.querySelector(".gfg-linked-swipe-preview");
-      if (!preview) {
-        preview = document.createElement("div");
-        preview.className = "gfg-linked-swipe-preview";
-        preview.setAttribute("aria-hidden", "true");
-        surface.appendChild(preview);
-      }
-
-      preview.className = `gfg-linked-swipe-preview gfg-linked-swipe-preview--${previewSide}`;
-      preview.textContent = getPreviewLabel();
-      return preview;
-    }
-
-    function resetSwipePreview() {
-      surface.classList.remove("gfg-linked-swipe-active");
-      surface.style.removeProperty("--gfg-linked-swipe-shift");
-      surface.style.removeProperty("--gfg-linked-swipe-progress");
-
-      const preview = surface.querySelector(".gfg-linked-swipe-preview");
-      preview?.classList.remove("is-visible");
-    }
-
-    function applySwipePreview(deltaX) {
-      const cappedDelta = clamp(direction === "left" ? Math.min(0, deltaX) : Math.max(0, deltaX), -180, 180);
-      const progress = Math.min(Math.abs(cappedDelta) / getSwipeThreshold(), 1);
-
-      surface.classList.add("gfg-linked-swipe-active");
-      surface.style.setProperty("--gfg-linked-swipe-shift", `${cappedDelta}px`);
-      surface.style.setProperty("--gfg-linked-swipe-progress", progress.toFixed(3));
-      ensureSwipePreview().classList.add("is-visible");
-    }
-
-    function beginTracking(clientX, clientY, target, pointerId = null) {
-      if (typeof config.isEnabled === "function" && !config.isEnabled()) return false;
-      if (isInteractiveSwipeTarget(target)) return false;
-
-      tracking = true;
-      dragging = false;
-      activePointerId = pointerId;
-      startX = clientX;
-      startY = clientY;
-      currentX = clientX;
-      ensureSwipePreview();
-      return true;
-    }
-
-    function moveTracking(clientX, clientY, event) {
-      if (!tracking) return;
-
-      currentX = clientX;
-      const deltaX = clientX - startX;
-      const deltaY = clientY - startY;
-
-      if (!dragging) {
-        const verticalGesture = Math.abs(deltaY) > 18 && Math.abs(deltaY) > Math.abs(deltaX);
-        if (verticalGesture) {
-          tracking = false;
-          activePointerId = null;
-          resetSwipePreview();
-          return;
-        }
-
-        const horizontalGesture = Math.abs(deltaX) >= 14 && Math.abs(deltaX) > Math.abs(deltaY) + 8;
-        const directionMatches = direction === "left" ? deltaX < 0 : deltaX > 0;
-
-        if (!horizontalGesture || !directionMatches) return;
-        dragging = true;
-      }
-
-      if (event?.cancelable) {
-        event.preventDefault();
-      }
-
-      applySwipePreview(deltaX);
-    }
-
-    function endTracking(clientX = currentX) {
-      if (!tracking) return;
-
-      const deltaX = clientX - startX;
-      const enoughHorizontalTravel = Math.abs(deltaX) >= getSwipeThreshold();
-      const directionMatches = direction === "left" ? deltaX < 0 : deltaX > 0;
-      const targetUrl = typeof config.getTargetUrl === "function" ? config.getTargetUrl() : "";
-      const shouldNavigate = dragging && enoughHorizontalTravel && directionMatches && !!targetUrl;
-
-      tracking = false;
-      dragging = false;
-      activePointerId = null;
-      resetSwipePreview();
-
-      if (shouldNavigate) {
-        const contentSurface = getContentSurface();
-        contentSurface.style.transition = "transform 180ms ease";
-        contentSurface.style.transform = `translate3d(${direction === "left" ? "-100vw" : "100vw"}, 0, 0)`;
-        window.setTimeout(() => {
-          window.location.href = targetUrl;
-        }, 120);
-      }
-    }
-
-    function onTouchStart(event) {
-      if (prefersPointer) return;
-      if (event.touches.length !== 1) return;
-
-      beginTracking(event.touches[0].clientX, event.touches[0].clientY, event.target);
-    }
-
-    function onTouchMove(event) {
-      if (prefersPointer) return;
-      const touch = event.touches?.[0];
-      if (!touch) return;
-
-      moveTracking(touch.clientX, touch.clientY, event);
-    }
-
-    function onTouchEnd(event) {
-      if (prefersPointer) return;
-      const touch = event.changedTouches?.[0];
-      endTracking(touch?.clientX ?? currentX);
-    }
-
-    function onTouchCancel() {
-      tracking = false;
-      dragging = false;
-      activePointerId = null;
-      resetSwipePreview();
-    }
-
-    function onPointerDown(event) {
-      if (!prefersPointer) return;
-      if (event.pointerType === "mouse" && event.button !== 0) return;
-
-      beginTracking(event.clientX, event.clientY, event.target, event.pointerId);
-    }
-
-    function onPointerMove(event) {
-      if (!prefersPointer || !tracking || event.pointerId !== activePointerId) return;
-
-      moveTracking(event.clientX, event.clientY, event);
-    }
-
-    function onPointerUp(event) {
-      if (!prefersPointer || event.pointerId !== activePointerId) return;
-
-      endTracking(event.clientX);
-    }
-
-    function onPointerCancel(event) {
-      if (!prefersPointer || event.pointerId !== activePointerId) return;
-
-      tracking = false;
-      dragging = false;
-      activePointerId = null;
-      resetSwipePreview();
-    }
-
-    surface.addEventListener("touchstart", onTouchStart, { passive: true });
-    surface.addEventListener("touchmove", onTouchMove, { passive: false });
-    surface.addEventListener("touchend", onTouchEnd, { passive: true });
-    surface.addEventListener("touchcancel", onTouchCancel, { passive: true });
-
-    surface.addEventListener("pointerdown", onPointerDown, { passive: true });
-    surface.addEventListener("pointermove", onPointerMove, { passive: false });
-    surface.addEventListener("pointerup", onPointerUp, { passive: true });
-    surface.addEventListener("pointercancel", onPointerCancel, { passive: true });
-
-    return function detachLinkedFullscreenSwipe() {
-      surface.removeEventListener("touchstart", onTouchStart);
-      surface.removeEventListener("touchmove", onTouchMove);
-      surface.removeEventListener("touchend", onTouchEnd);
-      surface.removeEventListener("touchcancel", onTouchCancel);
-      surface.removeEventListener("pointerdown", onPointerDown);
-      surface.removeEventListener("pointermove", onPointerMove);
-      surface.removeEventListener("pointerup", onPointerUp);
-      surface.removeEventListener("pointercancel", onPointerCancel);
-      resetSwipePreview();
-    };
-  }
-
   window.GFGSession = {
     normalizeGameType,
     createSessionId,
@@ -581,10 +349,7 @@
     clearSessionArtifacts,
     completeSessionPart,
     getSessionIdFromUrl,
-    getLinkedGameUrl,
-    getScorecardUrl,
     getGameDraftSummary,
-    saveLinkedGameForCurrentUser,
-    attachLinkedFullscreenSwipe
+    saveLinkedGameForCurrentUser
   };
 })();

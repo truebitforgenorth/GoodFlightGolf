@@ -81,106 +81,27 @@ let currentPot = 0;
 let currentWolfIndex = 0;
 let selectedSelfPlayerIndex = null;
 const sessionApi = window.GFGSession || null;
-let linkedSessionId = sessionApi?.getSessionIdFromUrl() || "";
 let loadedFromSavedGame = false;
 
 let pendingBirdieResult = null;
 let pendingBirdieMode = null;
 
 function getLinkedSession() {
-  if (!sessionApi) return null;
-
-  const activeSession = sessionApi.getActiveSession();
-  if (linkedSessionId) {
-    return activeSession?.sessionId === linkedSessionId
-      ? activeSession
-      : { sessionId: linkedSessionId };
-  }
-
-  if (loadedFromSavedGame) {
-    return null;
-  }
-
-  if (activeSession?.sessionId && sessionApi.normalizeGameType(activeSession.gameType) === "wolf") {
-    linkedSessionId = activeSession.sessionId;
-    return activeSession;
-  }
-
   return null;
 }
 
 function renderFullscreenSessionSwitchTab() {
-  let tab = document.getElementById("gameFullscreenSessionTab");
-  const linkedSession = getLinkedSession();
-  const shouldShow = !!selectionWrapper?.classList.contains("fullscreen") && !!linkedSession?.sessionId;
-
-  if (!shouldShow) {
-    tab?.remove();
-    return;
-  }
-
-  if (!tab) {
-    tab = document.createElement("button");
-    tab.id = "gameFullscreenSessionTab";
-    tab.type = "button";
-    tab.className = "gfg-session-switch-tab";
-    selectionWrapper?.appendChild(tab);
-  }
-
-  tab.textContent = "Back to Round";
-  tab.onclick = () => {
-    window.location.href = sessionApi.getScorecardUrl(linkedSession.sessionId);
-  };
+  document.getElementById("gameFullscreenSessionTab")?.remove();
 }
 
 function renderLinkedSessionBanner() {
-  let banner = document.getElementById("gfgLinkedRoundBanner");
-  const linkedSession = getLinkedSession();
-
-  if (!linkedSession?.sessionId) {
-    banner?.remove();
-    renderFullscreenSessionSwitchTab();
-    return;
-  }
-
-  if (!banner) {
-    banner = document.createElement("div");
-    banner.id = "gfgLinkedRoundBanner";
-    banner.className = "card game-card p-3 mb-3";
-    selectionWrapper?.parentElement?.insertBefore(banner, selectionWrapper);
-  }
-
-  const course = linkedSession.courseName || "Linked Round Session";
-  const tee = linkedSession.teeName ? ` - ${linkedSession.teeName}` : "";
-  banner.innerHTML = `
-    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
-      <div>
-        <h5 class="mb-1">Linked Round Session</h5>
-        <div class="small text-muted">${course}${tee}</div>
-      </div>
-
-      <div class="d-flex flex-wrap gap-2">
-        <a class="gfg-pill-btn" href="../rounds/scorecard.html?sessionId=${encodeURIComponent(linkedSession.sessionId)}">Back to Scorecard</a>
-        <button type="button" class="gfg-pill-btn game-session-clear-btn" id="clearLinkedGameSessionBtn">Clear Session</button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById("clearLinkedGameSessionBtn")?.addEventListener("click", () => {
-    const confirmed = window.confirm("Clear this linked round session and remove the in-progress shared drafts?");
-    if (!confirmed) return;
-
-    sessionApi?.clearSessionArtifacts(linkedSession.sessionId);
-    linkedSessionId = "";
-    renderLinkedSessionBanner();
-  });
-
+  document.getElementById("gfgLinkedRoundBanner")?.remove();
   renderFullscreenSessionSwitchTab();
 }
 
 function getGameDraftPayload() {
   return {
-    sessionId: linkedSessionId,
+    sessionId: null,
     hole,
     holes,
     totals,
@@ -205,15 +126,7 @@ function getGameDraftPayload() {
 }
 
 function persistLinkedGameDraft() {
-  if (!sessionApi || !linkedSessionId) return;
-
-  sessionApi.saveGameDraft("wolf", linkedSessionId, getGameDraftPayload());
-  sessionApi.updateActiveSession({
-    sessionId: linkedSessionId,
-    mode: "round+game",
-    gameType: "wolf",
-    currentGameHole: hole
-  });
+  return;
 }
 
 // =====================================================
@@ -964,18 +877,17 @@ function showResultsSummary() {
     }
 
     try {
-      const linkedSession = getLinkedSession();
       const docRef = await firebase.firestore()
         .collection("users")
         .doc(user.uid)
         .collection("savedGames")
         .add({
           gameType: "wolf",
-          sessionId: linkedSession?.sessionId || null,
-          sessionMode: linkedSession?.sessionId ? "round+game" : "game-only",
-          linkedCourseName: linkedSession?.courseName || null,
-          linkedTeeName: linkedSession?.teeName || null,
-          linkedRoundDate: linkedSession?.roundDate || null,
+          sessionId: null,
+          sessionMode: "game-only",
+          linkedCourseName: null,
+          linkedTeeName: null,
+          linkedRoundDate: null,
           hole,
           holes,
           totals,
@@ -1000,25 +912,7 @@ function showResultsSummary() {
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-      let message = "Wolf game saved!";
-      if (linkedSession?.sessionId && sessionApi) {
-        const completion = sessionApi.completeSessionPart("game", { docId: docRef.id });
-        if (completion.completed) {
-          linkedSessionId = "";
-          renderLinkedSessionBanner();
-          message = "Wolf game saved! Round + game session complete.";
-        } else {
-          sessionApi.clearGameDraft("wolf", linkedSession.sessionId);
-          sessionApi.updateActiveSession({
-            sessionId: linkedSession.sessionId,
-            gameSaved: true,
-            gameDocId: docRef.id,
-            gameType: "wolf"
-          });
-        }
-      }
-
-      alert(message);
+      alert("Wolf game saved!");
     } catch (err) {
       console.error(err);
       alert("Error saving Wolf game.");
@@ -1027,10 +921,6 @@ function showResultsSummary() {
 }
 
 function loadGameData(data) {
-  if (data?.sessionId) {
-    linkedSessionId = data.sessionId;
-  }
-
   hole = data?.hole || 1;
   holes = data?.holes || {};
   totals = data?.totals || [0, 0, 0, 0];
@@ -1064,7 +954,6 @@ function loadGameData(data) {
 
   render();
   recalc();
-  renderLinkedSessionBanner();
 
   if (hole === 19) {
     showResultsSummary();
@@ -1094,20 +983,6 @@ function loadGameData(data) {
 })();
 
 function restoreLinkedGameDraft() {
-  if (!sessionApi || loadedFromSavedGame) return false;
-
-  const linkedSession = getLinkedSession();
-  if (!linkedSession?.sessionId) return false;
-
-  linkedSessionId = linkedSession.sessionId;
-  const draft = sessionApi.loadGameDraft("wolf", linkedSessionId);
-  if (!draft) {
-    renderLinkedSessionBanner();
-    return false;
-  }
-
-  loadGameData(draft);
-  renderLinkedSessionBanner();
   return true;
 }
 
@@ -1269,19 +1144,6 @@ syncSelfPlayerOptions();
 render();
 recalc();
 hideBirdiePrompt();
-restoreLinkedGameDraft();
-renderLinkedSessionBanner();
-
-sessionApi?.attachLinkedFullscreenSwipe?.({
-  surface: selectionWrapper,
-  direction: "right",
-  isEnabled: () => selectionWrapper?.classList.contains("fullscreen") && !!getLinkedSession()?.sessionId,
-  getPreviewLabel: () => "Back to Round",
-  getTargetUrl: () => {
-    const linkedSession = getLinkedSession();
-    return linkedSession?.sessionId ? sessionApi.getScorecardUrl(linkedSession.sessionId) : "";
-  }
-});
 
 window.GFG_WOLF = { loadGameData };
 

@@ -165,24 +165,6 @@
     </div>
   </section>
 
-  <section class="container gfg-section hidden" id="activeRoundSessionSection">
-    <div class="card p-4">
-      <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
-        <div>
-          <h2 class="mb-2">Active Round Session</h2>
-          <p id="activeRoundSessionMeta" class="mb-0 text-muted">
-            Jump back into your scorecard or open a linked game for this round.
-          </p>
-        </div>
-
-        <div class="d-flex flex-wrap gap-2">
-          <a id="continueScorecardSessionBtn" class="gfg-pill-btn" href="../rounds/scorecard.html">Back to Scorecard</a>
-          <button id="clearActiveRoundSessionBtn" type="button" class="gfg-pill-btn game-session-clear-btn">Clear Session</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Games grid -->
   <section class="container gfg-section">
     <div class="feature-icons mt-4" id="game-features">
@@ -401,80 +383,6 @@
   <!-- Auth / shared scripts -->
   <script src="../round-session.js"></script>
   <script src="../myscripts.js"></script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const sessionApi = window.GFGSession;
-      const sessionSection = document.getElementById("activeRoundSessionSection");
-      const sessionMeta = document.getElementById("activeRoundSessionMeta");
-      const continueScorecardBtn = document.getElementById("continueScorecardSessionBtn");
-      const clearSessionBtn = document.getElementById("clearActiveRoundSessionBtn");
-      const gameLinks = Array.from(document.querySelectorAll(".gfg-game-link[data-game-type]"));
-
-      if (!sessionApi) return;
-
-      function describeGameType(gameType) {
-        if (gameType === "666") return "Six-Six-Six";
-        if (gameType === "bbb") return "Bingo Bango Bongo";
-        if (gameType === "wolf") return "Wolf";
-        return "Not selected yet";
-      }
-
-      function renderActiveSession() {
-        const activeSession = sessionApi.getActiveSession();
-        const isVisible = !!(activeSession?.sessionId);
-        sessionSection?.classList.toggle("hidden", !isVisible);
-
-        if (!isVisible) return;
-
-        if (sessionMeta) {
-          const course = activeSession.courseName || "Current round";
-          const tee = activeSession.teeName ? ` - ${activeSession.teeName}` : "";
-          sessionMeta.textContent = `${course}${tee} - Linked game: ${describeGameType(activeSession.gameType)}`;
-        }
-
-        if (continueScorecardBtn) {
-          continueScorecardBtn.href = sessionApi.getScorecardUrl(activeSession.sessionId);
-        }
-      }
-
-      clearSessionBtn?.addEventListener("click", () => {
-        const activeSession = sessionApi.getActiveSession();
-        if (!activeSession?.sessionId) return;
-
-        const confirmed = window.confirm("Clear this active round session and remove the linked in-progress drafts?");
-        if (!confirmed) return;
-
-        sessionApi.clearSessionArtifacts(activeSession);
-        renderActiveSession();
-      });
-
-      gameLinks.forEach((link) => {
-        link.addEventListener("click", (event) => {
-          const gameType = sessionApi.normalizeGameType(link.dataset.gameType);
-          const activeSession = sessionApi.getActiveSession();
-
-          if (!activeSession?.sessionId) return;
-
-          event.preventDefault();
-
-          if (activeSession.gameType && activeSession.gameType !== gameType) {
-            const confirmed = window.confirm(`This round is currently linked to ${describeGameType(activeSession.gameType)}. Switch it to ${describeGameType(gameType)}?`);
-            if (!confirmed) return;
-          }
-
-          const nextSession = sessionApi.updateActiveSession({
-            mode: "round+game",
-            gameType
-          });
-
-          window.location.href = sessionApi.getLinkedGameUrl(gameType, nextSession.sessionId);
-        });
-      });
-
-      renderActiveSession();
-    });
-  </script>
 
   <!-- Saved Games logic -->
   <script>
