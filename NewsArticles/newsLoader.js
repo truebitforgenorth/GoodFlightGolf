@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   const articles = [
     {
+      title: "Next Up on the PGA TOUR: Zurich Classic 2026 Preview, Past Winners, Course Notes and Betting Watch",
+      link: "zurich-classic-2026-preview-course-history-betting.html",
+      summary:
+        "A preview of the next PGA TOUR stop at TPC Louisiana, with the past five winners, course notes, and an early betting watchlist for the team event in New Orleans."
+    },
+    {
       title: "Matt Fitzpatrick Wins the 2026 RBC Heritage in a Playoff",
       link: "matt-fitzpatrick-rbc-heritage-2026-win.html",
       summary:
