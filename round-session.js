@@ -272,11 +272,13 @@
       trackedPlayerIndex,
       trackedPlayerName: players[trackedPlayerIndex] || `Player ${trackedPlayerIndex + 1}`,
       trackedUserUid: user.uid,
+      createdAt: serverTimestamp(),
       timestamp: serverTimestamp()
     };
 
     if (normalized === "wolf") {
       Object.assign(payload, {
+        currentWolfIndex: Number.isInteger(draft.currentWolfIndex) ? draft.currentWolfIndex : 0,
         base: Number(draft.base) || 0,
         dollarValue: Number(draft.dollarValue) || 0,
         loneWinPoints: Number(draft.loneWinPoints) || 0,

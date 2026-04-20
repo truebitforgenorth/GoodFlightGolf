@@ -78,6 +78,8 @@ let currentPot = 0;
 let selectedSelfPlayerIndex = null;
 const sessionApi = window.GFGSession || null;
 let loadedFromSavedGame = false;
+let savedGameDocId = null;
+let isSavingGame = false;
 
 function getLinkedSession() {
   return null;
@@ -413,9 +415,16 @@ function showResultsSummary() {
   if (!saveBtn) return;
 
   saveBtn.onclick = async () => {
+    if (isSavingGame) return;
+
     const user = firebase?.auth?.().currentUser;
     if (!user) {
       alert("Please log in to save the game!");
+      return;
+    }
+
+    if (savedGameDocId) {
+      alert("This 666 game is already saved.");
       return;
     }
 
@@ -427,6 +436,11 @@ function showResultsSummary() {
     }
 
     try {
+      isSavingGame = true;
+      saveBtn.textContent = "Saving Game...";
+      saveBtn.setAttribute("aria-disabled", "true");
+      saveBtn.classList.add("disabled");
+
       const docRef = await firebase.firestore()
         .collection("users")
         .doc(user.uid)
@@ -449,13 +463,21 @@ function showResultsSummary() {
           dollarValue: +dollarValueInput.value || 0,
           tieSetPoints: tieSetPoints.value !== "" ? +tieSetPoints.value : null,
           tieMultiplier: +tieMultiplier.value || 1,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
+      savedGameDocId = docRef.id;
+      saveBtn.textContent = "Game Saved";
       alert("666 game saved!");
     } catch (err) {
       console.error(err);
+      saveBtn.textContent = "Save Game Data";
+      saveBtn.removeAttribute("aria-disabled");
+      saveBtn.classList.remove("disabled");
       alert("Error saving 666 game.");
+    } finally {
+      isSavingGame = false;
     }
   };
 }
@@ -498,6 +520,8 @@ function runConfetti() {
 // AUTOLOAD
 // ---------------------------
 function loadGameData(data) {
+  savedGameDocId = data?.id || data?.docId || null;
+  isSavingGame = false;
   hole = data?.hole || 1;
   holes = data?.holes || {};
   totals = data?.totals || [0, 0, 0, 0];

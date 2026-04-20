@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   const articles = [
     {
+      title: "Matt Fitzpatrick Wins the 2026 RBC Heritage in a Playoff",
+      link: "matt-fitzpatrick-rbc-heritage-2026-win.html",
+      summary:
+        "Matt Fitzpatrick beat Scottie Scheffler in a playoff on April 19, 2026 to win his second RBC Heritage title and second PGA TOUR event of the season."
+    },
+    {
       title: "Collin Morikawa's Back Injury: Recovery, Augusta Grit, and What's Next",
       link: "collin-morikawa-back-injury-recovery-and-future.html",
       summary:

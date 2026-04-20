@@ -137,6 +137,73 @@ const gfgCourses = [
     ]
   },
   {
+    id: "manitou-ridge",
+    name: "Manitou Ridge Golf Course",
+    city: "White Bear Lake",
+    state: "MN",
+    tees: [
+      { name: "Black", slope: 127, rating: 70.7 },
+      { name: "White", slope: 121, rating: 69.1 },
+      { name: "Orange", slope: 118, rating: 68.2 },
+      { name: "Silver", slope: 115, rating: 66.5 }
+    ],
+    parTotal: 71,
+    holes: [
+      { hole: 1, par: 4 },
+      { hole: 2, par: 4 },
+      { hole: 3, par: 4 },
+      { hole: 4, par: 4 },
+      { hole: 5, par: 5 },
+      { hole: 6, par: 4 },
+      { hole: 7, par: 3 },
+      { hole: 8, par: 4 },
+      { hole: 9, par: 4 },
+      { hole: 10, par: 3 },
+      { hole: 11, par: 4 },
+      { hole: 12, par: 4 },
+      { hole: 13, par: 3 },
+      { hole: 14, par: 4 },
+      { hole: 15, par: 4 },
+      { hole: 16, par: 5 },
+      { hole: 17, par: 3 },
+      { hole: 18, par: 5 }
+    ]
+  },
+  {
+    id: "keller-golf-course",
+    name: "Keller Golf Course",
+    city: "Maplewood",
+    state: "MN",
+    tees: [
+      { name: "Black", slope: 133, rating: 72.2 },
+      { name: "Blue", slope: 131, rating: 70.0 },
+      { name: "Blue/White", slope: 128, rating: 67.9 },
+      { name: "White", slope: 123, rating: 66.2 },
+      { name: "Green", slope: 118, rating: 63.8 }
+    ],
+    parTotal: 72,
+    holes: [
+      { hole: 1, par: 4 },
+      { hole: 2, par: 4 },
+      { hole: 3, par: 5 },
+      { hole: 4, par: 3 },
+      { hole: 5, par: 4 },
+      { hole: 6, par: 3 },
+      { hole: 7, par: 4 },
+      { hole: 8, par: 4 },
+      { hole: 9, par: 4 },
+      { hole: 10, par: 5 },
+      { hole: 11, par: 4 },
+      { hole: 12, par: 5 },
+      { hole: 13, par: 3 },
+      { hole: 14, par: 4 },
+      { hole: 15, par: 3 },
+      { hole: 16, par: 5 },
+      { hole: 17, par: 4 },
+      { hole: 18, par: 4 }
+    ]
+  },
+  {
     id: "custom-course",
     name: "Course Not Listed",
     city: "",
@@ -275,6 +342,7 @@ let activeRoundSessionId =
   null;
 let lastRoundSessionTriggerEl = null;
 let inlineLinkedGameState = createDefaultInlineGameState();
+let isRestoringRoundSession = false;
 
 function getSessionModeValue() {
   return sessionModeSelect?.value === "roundGame" ? "round+game" : "round-only";
@@ -687,6 +755,7 @@ function getInlineGameDraftPayload() {
 }
 
 function persistInlineGameDraft() {
+  if (isRestoringRoundSession) return;
   if (!sessionApi || getSessionModeValue() !== "round+game") return;
 
   if (!activeRoundSessionId) {
@@ -1612,6 +1681,7 @@ function clearActiveRoundDraftState() {
 function restoreActiveRoundSession() {
   if (!sessionApi || !activeRoundSessionId) return false;
 
+  isRestoringRoundSession = true;
   const activeSession = sessionApi.getActiveSession();
   if (sessionModeSelect) sessionModeSelect.value = "roundGame";
   if (linkedGameTypeSelect && activeSession?.gameType) {
@@ -1622,15 +1692,23 @@ function restoreActiveRoundSession() {
   if (draft) {
     if (isFinishedRoundDraft(draft)) {
       clearActiveRoundDraftState();
+      isRestoringRoundSession = false;
       return false;
     }
 
     const restored = applyRoundDraft(draft);
     restoreInlineGameDraft();
+    isRestoringRoundSession = false;
+    if (currentHole === 19 && isResultsSummaryVisible()) {
+      showResultsSummary();
+    } else {
+      render();
+    }
     return restored;
   }
 
   restoreInlineGameDraft();
+  isRestoringRoundSession = false;
   renderRoundSessionUI();
   return false;
 }
@@ -2755,5 +2833,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   syncFullscreenScrollLock();
 });
-
-

@@ -72,6 +72,8 @@ let totals = [0, 0, 0, 0];
 let selectedSelfPlayerIndex = null;
 const sessionApi = window.GFGSession || null;
 let loadedFromSavedGame = false;
+let savedGameDocId = null;
+let isSavingGame = false;
 
 // holes[n] = { bingo: idx|null, bango: idx|null, bongo: idx|null }
 let holes = {};
@@ -377,9 +379,16 @@ function showResultsSummary() {
   if (!saveBtn) return;
 
   saveBtn.onclick = async () => {
+    if (isSavingGame) return;
+
     const user = firebase?.auth?.().currentUser;
     if (!user) {
       alert("Please log in to save the game!");
+      return;
+    }
+
+    if (savedGameDocId) {
+      alert("This BBB game is already saved.");
       return;
     }
 
@@ -391,6 +400,11 @@ function showResultsSummary() {
     }
 
     try {
+      isSavingGame = true;
+      saveBtn.textContent = "Saving Game...";
+      saveBtn.setAttribute("aria-disabled", "true");
+      saveBtn.classList.add("disabled");
+
       const docRef = await firebase.firestore()
         .collection("users")
         .doc(user.uid)
@@ -410,13 +424,21 @@ function showResultsSummary() {
           trackedPlayerName: selectedSelfPlayerIndex !== null ? (players[selectedSelfPlayerIndex] || `Player ${selectedSelfPlayerIndex + 1}`) : null,
           trackedUserUid: user.uid,
           bet: +betInput?.value || 0,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
+      savedGameDocId = docRef.id;
+      saveBtn.textContent = "Game Saved";
       alert("BBB game saved!");
     } catch (err) {
       console.error(err);
+      saveBtn.textContent = "Save Game Data";
+      saveBtn.removeAttribute("aria-disabled");
+      saveBtn.classList.remove("disabled");
       alert("Error saving BBB game.");
+    } finally {
+      isSavingGame = false;
     }
   };
 }
@@ -425,6 +447,8 @@ function showResultsSummary() {
 // AUTOLOAD FROM HOME (optional, same sessionStorage key as other games)
 // ---------------------------
 function loadGameData(data) {
+  savedGameDocId = data?.id || data?.docId || null;
+  isSavingGame = false;
   hole = data?.hole || 1;
   holes = data?.holes || {};
   totals = data?.totals || [0, 0, 0, 0];

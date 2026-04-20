@@ -585,11 +585,12 @@
       const buildSavedItem = (docId, data) => {
         const gameLabel = getGameLabel(data);
         const when = getTimestampLabel(data);
+        const dataWithId = { id: docId, ...data };
 
         const item = document.createElement("div");
         item.className = "gfg-saved-item";
         item.dataset.docId = docId;
-        item.__data = data;
+        item.__data = dataWithId;
 
         item.innerHTML = `
       <div style="width:100%;">
