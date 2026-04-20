@@ -84,7 +84,11 @@
           <li class="nav-item"><a class="nav-link" href="../games/goodflightgames.html">GoodFlight<span style="color:#fad02e;">Games</span></a></li>
         <li class="nav-item"><a class="nav-link" href="../playerlog.html">The Lab<span style="color:#fad02e;">Room</span></a></li>
           <li class="nav-item"><a class="nav-link" href="../NewsArticles/social&news.html">The Club<span style="color:#fad02e;">house</span></a></li>
-          <li class="nav-item"><a class="nav-link" href="../index.html">Login / <span style="color:#fad02e;">Signup</span></a></li>
+          <li class="nav-item">
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / <span style="color:#fad02e;">Signup</span>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -136,7 +140,12 @@
       <footer class="legal-footer">© 2026 GoodFlightGolf. All rights reserved. GoodFlightGolf is owned and operated by TrueBit Forge North LLC.</footer>
     </section>
   </main>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+  <script src="../authModalInjector.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../myscripts.js"></script>
 </body>
 </html>
 
