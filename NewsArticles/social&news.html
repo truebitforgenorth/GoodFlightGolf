@@ -334,12 +334,17 @@
       appId: "1:161862648502:web:3d59d3f6a8930197c26b16"
     };
 
-    if (!firebase.apps || !firebase.apps.length) {
-      firebase.initializeApp(pollFirebaseConfig);
+    const POLL_APP_NAME = "clubhousePollApp";
+    let pollApp;
+
+    try {
+      pollApp = firebase.app(POLL_APP_NAME);
+    } catch (error) {
+      pollApp = firebase.initializeApp(pollFirebaseConfig, POLL_APP_NAME);
     }
 
-    const pollAuth = firebase.auth();
-    const pollDb = firebase.firestore();
+    const pollAuth = pollApp.auth();
+    const pollDb = pollApp.firestore();
     const QUICK_POLL_DOC_ID = "gfgLogoGladiolusPoll";
     const QUICK_POLL_QUESTION = "Should the GFG logo keep the Gladiolus flower?";
     const QUICK_POLL_CHOICES = {

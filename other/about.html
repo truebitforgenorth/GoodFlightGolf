@@ -23,13 +23,7 @@
         }
 
         body.gfg-about-page .gfg-navbar {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(10, 18, 28, 0.84);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 14px 36px rgba(15, 23, 42, 0.14);
+            z-index: 1030;
         }
 
         body.gfg-about-page .gfg-navbar .navbar-brand,
@@ -648,7 +642,7 @@
         }
 
         body.gfg-about-page .gfg-about-stats--compact {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
         body.gfg-about-page .gfg-about-hero-right--simple {
@@ -656,6 +650,58 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 18px;
+        }
+
+        @media (max-width: 900px) {
+            body.gfg-about-page .gfg-about-stats--compact {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            body.gfg-about-page .gfg-about-hero {
+                padding: 58px 0 44px;
+            }
+
+            body.gfg-about-page .gfg-about-section {
+                padding: 44px 0;
+            }
+
+            body.gfg-about-page .gfg-about-title {
+                letter-spacing: -1.1px;
+            }
+
+            body.gfg-about-page .gfg-about-lead {
+                line-height: 1.7;
+            }
+
+            body.gfg-about-page .gfg-about-hero-actions,
+            body.gfg-about-page .gfg-about-cta-actions {
+                flex-direction: column;
+            }
+
+            body.gfg-about-page .gfg-about-btn {
+                width: 100%;
+            }
+
+            body.gfg-about-page .gfg-about-stats--compact {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            body.gfg-about-page .gfg-about-stat {
+                padding: 18px 16px;
+            }
+
+            body.gfg-about-page .gfg-about-stat strong {
+                font-size: 1.35rem;
+                margin-bottom: 4px;
+            }
+
+            body.gfg-about-page .gfg-about-stat span {
+                font-size: 0.92rem;
+                line-height: 1.45;
+            }
         }
     </style>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
