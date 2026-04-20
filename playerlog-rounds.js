@@ -2579,13 +2579,13 @@ window.addEventListener("DOMContentLoaded", () => {
         .collection("users")
         .doc(uid)
         .collection("savedGames")
-        .orderBy("timestamp", "desc")
         .get();
 
       allGames = snap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data()
-      }));
+      }))
+      .sort((a, b) => getGameSortValue(b) - getGameSortValue(a));
 
       updateGameTotals(allGames);
       renderSavedGames();

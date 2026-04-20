@@ -634,10 +634,27 @@
             .collection("users")
             .doc(user.uid)
             .collection("savedGames")
-            .orderBy("timestamp", "desc")
             .get();
 
-          if (snap.empty) {
+          const docs = snap.docs
+            .slice()
+            .sort((a, b) => {
+              const getTime = (value) => {
+                if (!value) return 0;
+                if (typeof value.toMillis === "function") return value.toMillis();
+                if (typeof value.seconds === "number") return value.seconds * 1000;
+                const parsed = Date.parse(value);
+                return Number.isNaN(parsed) ? 0 : parsed;
+              };
+
+              const aData = a.data() || {};
+              const bData = b.data() || {};
+              const aTime = getTime(aData.timestamp) || getTime(aData.createdAt);
+              const bTime = getTime(bData.timestamp) || getTime(bData.createdAt);
+              return bTime - aTime;
+            });
+
+          if (!docs.length) {
             list.innerHTML = `<div class="gfg-muted">No saved games yet.</div>`;
             return;
           }
@@ -645,7 +662,7 @@
           list.innerHTML = `<div class="gfg-saved-list"></div>`;
           const container = list.querySelector(".gfg-saved-list");
 
-          snap.forEach(doc => container.appendChild(buildSavedItem(doc.id, doc.data() || {})));
+          docs.forEach(doc => container.appendChild(buildSavedItem(doc.id, doc.data() || {})));
         } catch (err) {
           console.error("[SavedGames] Firestore error", err);
           list.innerHTML = `<div class="gfg-muted">Could not load saved games. Check console and Firestore rules.</div>`;

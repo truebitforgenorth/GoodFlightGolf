@@ -37,7 +37,7 @@ service cloud.firestore {
     }
 
     match /clubhouseQuickPollVotes/{userId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow create: if isOwner(userId);
       allow update, delete: if false;
     }
