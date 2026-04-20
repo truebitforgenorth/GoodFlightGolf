@@ -340,15 +340,15 @@
 
     const pollAuth = firebase.auth();
     const pollDb = firebase.firestore();
-    const QUICK_POLL_DOC_ID = "gfgLogoGladiolusPoll";
+    const QUICK_POLL_COLLECTION = "clubhouseQuickPollVotes";
     const QUICK_POLL_QUESTION = "Should the GFG logo keep the Gladiolus flower?";
     const QUICK_POLL_CHOICES = {
       keep: "Keep the Gladiolus",
       remove: "Remove the Gladiolus"
     };
 
-    function getQuickPollRef() {
-      return pollDb.collection("siteData").doc(QUICK_POLL_DOC_ID);
+    function getQuickPollVotesRef() {
+      return pollDb.collection(QUICK_POLL_COLLECTION);
     }
 
     function getQuickPollButtons() {
@@ -365,29 +365,8 @@
       });
     }
 
-    async function ensureQuickPollDoc() {
-      const pollRef = getQuickPollRef();
-      const snap = await pollRef.get();
-
-      if (!snap.exists) {
-        await pollRef.set({
-          keep: 0,
-          remove: 0,
-          question: QUICK_POLL_QUESTION
-        });
-      } else if ((snap.data()?.question || "") !== QUICK_POLL_QUESTION) {
-        await pollRef.set({
-          keep: Number(snap.data()?.keep) || 0,
-          remove: Number(snap.data()?.remove) || 0,
-          question: QUICK_POLL_QUESTION
-        }, { merge: true });
-      }
-
-      return pollRef;
-    }
-
     async function hasUserVoted(uid) {
-      const voteRef = getQuickPollRef().collection("votes").doc(uid);
+      const voteRef = getQuickPollVotesRef().doc(uid);
       const voteSnap = await voteRef.get();
       return voteSnap.exists;
     }
@@ -406,17 +385,21 @@
       }
 
       try {
-        const pollRef = await ensureQuickPollDoc();
-        const snap = await pollRef.get();
-        const poll = snap.data() || { keep: 0, remove: 0, question: QUICK_POLL_QUESTION };
+        const voteSnapshot = await getQuickPollVotesRef().get();
+        let keepVotes = 0;
+        let removeVotes = 0;
 
-        const keepVotes = Number(poll.keep) || 0;
-        const removeVotes = Number(poll.remove) || 0;
+        voteSnapshot.forEach((doc) => {
+          const choice = doc.data()?.choice;
+          if (choice === "keep") keepVotes += 1;
+          if (choice === "remove") removeVotes += 1;
+        });
+
         const total = keepVotes + removeVotes;
         const keepPercent = total ? Math.round((keepVotes / total) * 100) : 0;
         const removePercent = total ? Math.round((removeVotes / total) * 100) : 0;
 
-        questionEl.textContent = poll.question || QUICK_POLL_QUESTION;
+        questionEl.textContent = QUICK_POLL_QUESTION;
         totalVotesEl.textContent = `${total} vote${total === 1 ? "" : "s"}`;
         keepSummaryEl.textContent = `${keepVotes} vote${keepVotes === 1 ? "" : "s"} (${keepPercent}%)`;
         removeSummaryEl.textContent = `${removeVotes} vote${removeVotes === 1 ? "" : "s"} (${removePercent}%)`;
@@ -483,37 +466,20 @@
 
       try {
         setQuickPollButtonsDisabled(true);
-        const pollRef = await ensureQuickPollDoc();
-        const voteRef = pollRef.collection("votes").doc(user.uid);
+        const voteRef = getQuickPollVotesRef().doc(user.uid);
+        const existingVote = await voteRef.get();
 
-        await pollDb.runTransaction(async (transaction) => {
-          const voteSnap = await transaction.get(voteRef);
-          if (voteSnap.exists) {
-            throw new Error("already-voted");
-          }
+        if (existingVote.exists) {
+          throw new Error("already-voted");
+        }
 
-          const pollSnap = await transaction.get(pollRef);
-          if (!pollSnap.exists) {
-            transaction.set(pollRef, {
-              keep: 0,
-              remove: 0,
-              question: QUICK_POLL_QUESTION
-            });
-          }
-
-          transaction.set(voteRef, {
-            choice,
-            choiceLabel: QUICK_POLL_CHOICES[choice],
-            uid: user.uid,
-            email: user.email || "",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-
-          transaction.set(
-            pollRef,
-            { [choice]: firebase.firestore.FieldValue.increment(1) },
-            { merge: true }
-          );
+        await voteRef.set({
+          choice,
+          choiceLabel: QUICK_POLL_CHOICES[choice],
+          uid: user.uid,
+          email: user.email || "",
+          question: QUICK_POLL_QUESTION,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
         status.textContent = "Vote recorded!";
@@ -528,7 +494,10 @@
           await renderQuickPollResults();
         } else {
           setQuickPollButtonsDisabled(false);
-          status.textContent = "There was a problem submitting your vote.";
+          const errorText = (error && (error.code || error.message)) ? `${error.code || error.message}` : "";
+          status.textContent = errorText.includes("permission-denied")
+            ? "Voting is blocked by Firestore permissions right now."
+            : "There was a problem submitting your vote.";
           status.className = "quick-survey-status mt-3 mb-0 is-error";
         }
       }
