@@ -64,13 +64,14 @@
   <!-- Hero -->
   <section class="parallax-section2 gfg-merch-hero">
     <div class="parallax-content2">
-      <div style="color:#fad02e; font-weight:900;">Official Store</div>
+      <div style="color:#fad02e; font-weight:900;">Admin Merch Preview</div>
       <div id="welcomeMessage"></div>
       <h1 class="gfg-hero-title">
         <span class="gfg-green">GoodFlight</span><span class="gfg-yellow">Golf</span>⛳
       </h1>
+      <p class="gfg-hero-sub">Private storefront setup for the custom putter and putting mat rollout.</p>
 
-      <div class="mt-3 d-flex justify-content-center gap-2 flex-wrap">
+      <div id="merchHeroActions" class="mt-3 d-flex justify-content-center gap-2 flex-wrap d-none">
         <a class="gfg-pill-btn" href="#shop">Shop Now</a>
         <button id="scrollToFeatured" class="gfg-pill-btn gfg-pill-btn--ghost">⭐ Featured</button>          
         <div class="nav-item ms-lg-2">
@@ -82,6 +83,28 @@
     </div>
   </section>
 
+  <section id="merchAdminLoading" class="container gfg-section">
+    <div class="card text-center">
+      <div class="card-header">Checking Admin Access</div>
+      <div class="card-body">
+        <p class="mb-0">Verifying your merch permissions now.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="merchAdminDenied" class="container gfg-section d-none">
+    <div class="card text-center">
+      <div class="card-header">Admin Access Required</div>
+      <div class="card-body">
+        <p class="mb-3">This merch page is private right now and only visible to admin accounts.</p>
+        <p class="small text-muted mb-3">Grant access by adding an active admin record in Firebase under <code>siteData/adminConfig/adminUsers</code>.</p>
+        <a class="gfg-pill-btn" href="../index.html">Back to Home</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="adminMerchContent" class="d-none">
+
   <!-- Content -->
   <section id="shop" class="container gfg-section">
     <div class="row g-3 align-items-stretch">
@@ -89,22 +112,19 @@
       <!-- Left: filters -->
       <div class="col-lg-4">
         <div class="card h-100">
-          <div class="card-header">🧭 Find Your Gear</div>
+          <div class="card-header">Build Your Setup</div>
           <div class="card-body">
 
             <label class="form-label fw-bold">Search</label>
-            <input id="searchInput" class="form-control mb-3" placeholder="Hoodie, hat, polo..." />
+            <input id="searchInput" class="form-control mb-3" placeholder="Custom putter or putting mat..." />
 
             <div class="row g-2">
               <div class="col-6">
                 <label class="form-label fw-bold">Category</label>
                 <select id="categorySelect" class="form-select">
                   <option value="all">All</option>
-                  <option value="hoodies">Hoodies</option>
-                  <option value="hats">Hats</option>
-                  <option value="shirts">Shirts</option>
-                  <option value="polos">Polos</option>
-                  <option value="accessories">Accessories</option>
+                  <option value="custom-putters">Custom Putters</option>
+                  <option value="putting-mats">Putting Mats</option>
                 </select>
               </div>
               <div class="col-6">
@@ -130,9 +150,9 @@
 
             <label class="form-label fw-bold">Quick Picks</label>
             <div class="d-flex gap-2 flex-wrap">
-              <button class="gfg-pill-btn" data-chip="bestSellers">🔥 Best Sellers</button>
-              <button class="gfg-pill-btn" data-chip="newDrops">🆕 New Drops</button>
-              <button class="gfg-pill-btn" data-chip="under35">💸 Under $35</button>
+              <button class="gfg-pill-btn gfg-chip" data-chip="featured">Featured</button>
+              <button class="gfg-pill-btn gfg-chip" data-chip="putters">Custom Putters</button>
+              <button class="gfg-pill-btn gfg-chip" data-chip="mats">Putting Mats</button>
             </div>
 
             <hr class="my-3" />
@@ -143,7 +163,7 @@
             </div>
 
             <div class="mt-3 small text-muted">
-              Tip: Click any product to see details, pick size/color, then add to cart.
+              Tip: This page is ready for two products now and Shopify links later.
             </div>
 
           </div>
@@ -227,7 +247,7 @@
               </div>
 
               <div class="mt-3 small text-muted">
-                Orders are saved to your profile if you’re logged in.
+                Swap these actions to Shopify product links when your store is ready.
               </div>
             </div>
           </div>
@@ -253,7 +273,7 @@
 
         <div id="cartEmpty" class="gfg-empty-cart d-none">
           <div class="fw-bold">Your cart is empty.</div>
-          <div class="text-muted">Add a hoodie, hat, or polo and it’ll show up here.</div>
+          <div class="text-muted">Add your custom putter or putting mat and it will show up here.</div>
         </div>
       </div>
 
@@ -283,7 +303,8 @@
       </div>
     </div>
 
-    <div id="cartBackdrop" class="gfg-cart-backdrop" aria-hidden="true"></div>
+  <div id="cartBackdrop" class="gfg-cart-backdrop" aria-hidden="true"></div>
+  </div>
   </div>
 
 <!-- Login / Signup Modal -->
@@ -425,6 +446,7 @@
 
   <!-- Your global auth/login script -->
   <script src="../myscripts.js"></script>
+  <script src="../adminAccess.js"></script>
 
   <!-- Page JS -->
   <script src="merch.js"></script>

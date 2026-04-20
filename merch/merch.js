@@ -39,6 +39,10 @@
   const orderStatus = $("orderStatus");
 
   const scrollToFeatured = $("scrollToFeatured");
+  const merchHeroActions = $("merchHeroActions");
+  const merchAdminLoading = $("merchAdminLoading");
+  const merchAdminDenied = $("merchAdminDenied");
+  const adminMerchContent = $("adminMerchContent");
 
   // Modal
   const productModalEl = $("productModal");
@@ -55,85 +59,33 @@
   const addToCartBtn = $("addToCartBtn");
   const quickBuyBtn = $("quickBuyBtn");
 
-  // Demo products (swap images to your real merch photos anytime)
+  // Admin-only merch catalog. Replace these images and wire Shopify URLs when ready.
   const PRODUCTS = [
     {
-      id: "gfg-hoodie-01",
-      name: "GoodFlight Classic Hoodie",
-      category: "hoodies",
-      price: 55,
-      tag: "Best Seller",
-      isFeatured: true,
-      isNew: false,
-      sizes: ["S", "M", "L", "XL", "2XL"],
-      colors: ["Black", "Green", "Heather"],
-      img: "../photos/course.jpg",
-      desc: "Heavyweight comfort. Clean GoodFlight look. Perfect for cool mornings on the range."
-    },
-    {
-      id: "gfg-hat-01",
-      name: "GoodFlight Rope Hat",
-      category: "hats",
-      price: 32,
-      tag: "New",
+      id: "gfg-custom-putter-01",
+      name: "GoodFlight Custom Putter",
+      category: "custom-putters",
+      price: 349,
+      tag: "Custom Shop",
       isFeatured: true,
       isNew: true,
-      sizes: ["One Size"],
-      colors: ["White", "Black", "Green"],
+      sizes: ['33"', '34"', '35"'],
+      colors: ["Black PVD", "Silver", "Raw"],
       img: "../photos/ball.jpg",
-      desc: "Classic rope hat fit with a premium feel. Built for golf and everyday wear."
+      desc: "A private custom-shop putter slot built for premium head finishes, clean sight lines, and personalized specs."
     },
     {
-      id: "gfg-tee-01",
-      name: "GoodFlight Logo Tee",
-      category: "shirts",
-      price: 28,
-      tag: "Under $35",
+      id: "gfg-putting-mat-01",
+      name: "GoodFlight Putting Mat",
+      category: "putting-mats",
+      price: 129,
+      tag: "Home Practice",
       isFeatured: true,
-      isNew: false,
-      sizes: ["S", "M", "L", "XL", "2XL"],
-      colors: ["Black", "White", "Green"],
-      img: "../photos/course.jpg",
-      desc: "Soft cotton tee with a clean front logo. A simple staple."
-    },
-    {
-      id: "gfg-polo-01",
-      name: "Performance Polo",
-      category: "polos",
-      price: 62,
-      tag: "Premium",
-      isFeatured: false,
       isNew: true,
-      sizes: ["S", "M", "L", "XL", "2XL"],
-      colors: ["Black", "White", "Navy"],
-      img: "../photos/ball.jpg",
-      desc: "Lightweight performance polo. Breathable and clean for any tee time."
-    },
-    {
-      id: "gfg-towel-01",
-      name: "Magnetic Towel",
-      category: "accessories",
-      price: 24,
-      tag: "Gear",
-      isFeatured: false,
-      isNew: false,
-      sizes: ["One Size"],
-      colors: ["Black", "Green"],
+      sizes: ["Standard", "XL"],
+      colors: ["Green", "Black"],
       img: "../photos/course.jpg",
-      desc: "Magnetic golf towel for quick access. Simple and effective."
-    },
-    {
-      id: "gfg-beanie-01",
-      name: "Cold Round Beanie",
-      category: "hats",
-      price: 26,
-      tag: "Warm",
-      isFeatured: false,
-      isNew: false,
-      sizes: ["One Size"],
-      colors: ["Black", "Heather"],
-      img: "../photos/ball.jpg",
-      desc: "Warm beanie for chilly rounds. Fits clean under a hood."
+      desc: "A branded putting mat option for indoor reps, clean roll feedback, and a premium GoodFlight practice setup."
     }
   ];
 
@@ -226,19 +178,44 @@
   }
 
   function applyChip(chip) {
-    // quick presets
-    if (chip === "under35") {
+    if (chip === "featured") {
+      categorySelect.value = "all";
+      sortSelect.value = "featured";
       minPrice.value = "";
-      maxPrice.value = 35;
-      sortSelect.value = "priceLow";
+      maxPrice.value = "";
     }
-    if (chip === "newDrops") {
-      sortSelect.value = "newest";
+    if (chip === "putters") {
+      categorySelect.value = "custom-putters";
+      sortSelect.value = "featured";
     }
-    if (chip === "bestSellers") {
+    if (chip === "mats") {
+      categorySelect.value = "putting-mats";
       sortSelect.value = "featured";
     }
     renderProducts();
+  }
+
+  function setAdminViewState(mode) {
+    merchAdminLoading?.classList.toggle("d-none", mode !== "loading");
+    merchAdminDenied?.classList.toggle("d-none", mode !== "denied");
+    adminMerchContent?.classList.toggle("d-none", mode !== "granted");
+    merchHeroActions?.classList.toggle("d-none", mode !== "granted");
+  }
+
+  function waitForAdminState() {
+    return new Promise((resolve) => {
+      if (window.gfgAdminState?.ready) {
+        resolve(window.gfgAdminState);
+        return;
+      }
+
+      function handleState(event) {
+        window.removeEventListener("gfg-admin-state", handleState);
+        resolve(event.detail);
+      }
+
+      window.addEventListener("gfg-admin-state", handleState);
+    });
   }
 
   function renderProducts() {
@@ -474,7 +451,16 @@
   }
 
   // Events
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
+    setAdminViewState("loading");
+
+    const adminState = await waitForAdminState();
+    if (!adminState?.isAdmin) {
+      setAdminViewState("denied");
+      return;
+    }
+
+    setAdminViewState("granted");
     renderFeatured();
     renderProducts();
     renderCart();

@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /users/{userId}/savedRounds/{roundId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/savedGames/{gameId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/{document=**} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /feedback/{feedbackId} {
+      allow create: if isSignedIn();
+      allow read, update, delete: if false;
+    }
+
+    match /merchOrders/{orderId} {
+      allow create: if isSignedIn();
+      allow read, update, delete: if false;
+    }
+
+    match /clubhouseQuickPollVotes/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId);
+      allow update, delete: if false;
+    }
+
+    match /siteData/quickPoll {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    match /siteData/quickPoll/votes/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId);
+      allow update, delete: if false;
+    }
+
+    match /siteData/adminConfig/adminUsers/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+  }
+}
