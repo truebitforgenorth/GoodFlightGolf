@@ -49,6 +49,34 @@ window.addEventListener("DOMContentLoaded", () => {
     return String(value || "").trim().toLowerCase();
   }
 
+  function getRootRelativePath(fileName) {
+    const path = (window.location.pathname || "").toLowerCase();
+    const isSubPage = ["/newsarticles/", "/games/", "/rounds/", "/other/", "/terms/", "/merch/"]
+      .some((segment) => path.includes(segment));
+    return `${isSubPage ? "../" : ""}${fileName}`;
+  }
+
+  function ensureAccountNavLink() {
+    const loginLink = document.getElementById("loginLink");
+    const navList = loginLink?.closest("ul");
+    if (!navList || document.getElementById("myAccountNavItem")) return;
+
+    const item = document.createElement("li");
+    item.id = "myAccountNavItem";
+    item.className = "nav-item d-none";
+    item.innerHTML = `
+      <a class="nav-link" href="${getRootRelativePath("account.html")}">
+        My <span style="color:#fad02e;">Account</span>
+      </a>
+    `;
+
+    loginLink.closest("li")?.before(item);
+  }
+
+  function setAccountNavVisible(isVisible) {
+    document.getElementById("myAccountNavItem")?.classList.toggle("d-none", !isVisible);
+  }
+
   function setAuthMessage(el, message = "", type = "") {
     if (!el) return;
 
@@ -282,6 +310,8 @@ window.addEventListener("DOMContentLoaded", () => {
     logoutBtn.addEventListener("click", () => auth.signOut());
   }
 
+  ensureAccountNavLink();
+
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
       if (userEmail) {
@@ -290,6 +320,7 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       if (logoutBtn) logoutBtn.classList.add("d-none");
       if (loginBtnModal) loginBtnModal.classList.remove("d-none");
+      setAccountNavVisible(false);
 
       if (welcomeEl) {
         welcomeEl.textContent = "";
@@ -309,6 +340,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     if (logoutBtn) logoutBtn.classList.remove("d-none");
     if (loginBtnModal) loginBtnModal.classList.add("d-none");
+    setAccountNavVisible(true);
 
     if (welcomeEl) {
       welcomeEl.textContent = `Welcome back, ${displayName}!`;

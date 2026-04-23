@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>My Account | GoodFlightGolf</title>
+  <meta name="description" content="Manage your GoodFlightGolf account, username, and profile picture." />
+  <link rel="icon" href="photos/GFGlogo.png" type="image/png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="main2.css" />
+</head>
+
+<body>
+  <button type="button" id="btn-back-to-top" aria-label="Back to top">
+    <p>Back to Top</p>
+  </button>
+
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">GoodFlight<span>Golf</span>&#9971;</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item"><a class="nav-link" href="rounds/scorecard.html">The Score<span style="color:#fad02e;">card</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="games/goodflightgames.html">GoodFlight<span style="color:#fad02e;">Games</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="playerlog.html">The Lab<span style="color:#fad02e;">Room</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="NewsArticles/social&news.html">The Club<span style="color:#fad02e;">house</span></a></li>
+          <li class="nav-item">
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / <span style="color:#fad02e;">Signup</span>
+            </a>
+          </li>
+          <li class="nav-item d-flex align-items-center">
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="parallax-section2">
+    <div class="parallax-content2">
+      <div style="color:#fad02e;" id="welcomeMessage"></div>
+      <h1 class="gfg-hero-title">
+        <span class="gfg-green">My</span><span class="gfg-yellow">Account</span>&#9971;
+      </h1>
+      <p class="gfg-hero-sub">Set your public golfer profile for friends, invites, and community features.</p>
+    </div>
+  </section>
+
+  <main class="container gfg-section">
+    <section class="card gfg-account-card">
+      <div class="card-header">Profile Settings</div>
+      <div class="card-body">
+        <div id="accountLoggedOut" class="gfg-account-empty">
+          Log in to update your username and profile picture.
+        </div>
+
+        <div id="accountLoggedIn" class="gfg-account-shell d-none">
+          <div class="gfg-account-preview">
+            <div id="accountAvatarPreview" class="gfg-account-avatar">
+              <span>G</span>
+            </div>
+            <div>
+              <p class="gfg-account-kicker mb-1">Public Profile</p>
+              <h2 class="gfg-account-title mb-2">Your GoodFlightGolf identity</h2>
+              <p class="gfg-account-copy mb-0">
+                Your username and circular profile photo are visible to other golfers in friend requests and friend lists.
+              </p>
+            </div>
+          </div>
+
+          <div class="gfg-account-form">
+            <div class="mb-3">
+              <label class="form-label" for="accountEmail">Email</label>
+              <div id="accountEmail" class="gfg-account-email"></div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="accountUsername">Public Username</label>
+              <input id="accountUsername" class="form-control" type="text" placeholder="Your username" autocomplete="nickname" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Profile Picture</label>
+              <input id="accountPhotoInput" class="d-none" type="file" accept="image/*" />
+              <div class="d-flex gap-2 flex-wrap">
+                <button id="accountUploadBtn" class="gfg-pill-btn" type="button">Choose Photo</button>
+                <button id="accountSaveBtn" class="gfg-pill-btn" type="button">Save Account</button>
+              </div>
+              <p class="small text-muted mt-2 mb-0">Images are cropped, compressed, and shown as a circle with a GoodFlight green border. Max selected file size: 5 MB.</p>
+            </div>
+
+            <p id="accountStatus" class="gfg-account-status"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="gfg-footer" id="foot">
+    <div class="gfg-footer-container">
+      <div class="gfg-footer-logo">
+        <a href="https://www.TrueBitForgeNorth.com/"><img src="photos/TBFN2.png" alt="TrueBit Forge North LLC Logo"></a>
+      </div>
+      <div class="gfg-footer-content">
+        <p class="gfg-footer-copy">&copy; 2026 GoodFlightGolf. All rights reserved.</p>
+        <p class="gfg-footer-ownership">
+          GoodFlightGolf is owned and operated by
+          <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <button id="loginBtn" class="btn btn-primary mb-3">Login</button>
+          <div id="loginMessage" style="min-height:1.5em;"></div>
+
+          <hr class="my-4" />
+
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-3" placeholder="Password" />
+
+          <div class="signup-legal-box mb-3">
+            <h6 class="mb-2">Terms of Service, Privacy Policy, and Disclaimer</h6>
+            <div class="signup-legal-scroll">
+              <p><strong>Effective Date:</strong> March 15, 2026</p>
+              <p>By creating an account on GoodFlightGolf, you agree to these Terms of Service, Privacy Policy, and Disclaimer.</p>
+              <p>GoodFlightGolf provides golf-related games, tools, calculators, scorekeeping features, and account-based services for entertainment and informational purposes only.</p>
+              <p>We do not sell your personal information. We use trusted providers for authentication, hosting, database, email, analytics, maps, and related services needed to run GoodFlightGolf.</p>
+              <p>By checking the box below and creating your account, you acknowledge that you have reviewed and accepted these legal terms.</p>
+            </div>
+          </div>
+
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" id="signupTosCheckbox">
+            <label class="form-check-label" for="signupTosCheckbox">
+              I have read and agree to the Terms of Service, Privacy Policy, and Disclaimer.
+            </label>
+          </div>
+
+          <div id="signupMessage" class="mt-3" style="min-height:1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary mt-3">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script src="myscripts.js"></script>
+  <script src="account.js"></script>
+</body>
+
+</html>

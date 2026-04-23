@@ -20,6 +20,17 @@ service cloud.firestore {
         && request.resource.data.toUid == resource.data.toUid;
     }
 
+    function keepsSameFriendPair() {
+      return (
+          request.resource.data.fromUid == resource.data.fromUid
+          && request.resource.data.toUid == resource.data.toUid
+        )
+        || (
+          request.resource.data.fromUid == resource.data.toUid
+          && request.resource.data.toUid == resource.data.fromUid
+        );
+    }
+
     match /users/{userId} {
       allow read, write: if isOwner(userId);
     }
@@ -54,24 +65,50 @@ service cloud.firestore {
         && request.resource.data.status == "pending";
 
       allow update: if isSignedIn()
-        && keepsFriendRequestPair()
+        && keepsSameFriendPair()
         && (
           (
             resource.data.status == "pending"
+            && keepsFriendRequestPair()
             && resource.data.toUid == request.auth.uid
             && request.resource.data.status in ["accepted", "rejected"]
           )
           ||
           (
             resource.data.status == "pending"
+            && keepsFriendRequestPair()
             && resource.data.fromUid == request.auth.uid
             && request.resource.data.status == "cancelled"
           )
           ||
           (
             resource.data.status == "accepted"
+            && keepsFriendRequestPair()
             && (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid)
             && request.resource.data.status == "removed"
+          )
+          ||
+          (
+            resource.data.status in ["pending", "accepted"]
+            && keepsFriendRequestPair()
+            && (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid)
+            && request.resource.data.status == "blocked"
+            && request.resource.data.blockedByUid == request.auth.uid
+          )
+          ||
+          (
+            resource.data.status == "blocked"
+            && keepsFriendRequestPair()
+            && resource.data.blockedByUid == request.auth.uid
+            && request.resource.data.status == "removed"
+          )
+          ||
+          (
+            resource.data.status in ["removed", "rejected", "cancelled"]
+            && request.resource.data.status == "pending"
+            && request.resource.data.fromUid == request.auth.uid
+            && request.resource.data.toUid is string
+            && request.resource.data.toUid != request.auth.uid
           )
         );
 
