@@ -206,6 +206,11 @@
       return;
     }
 
+    if (usernameLower === normalizeUsername(currentUsername)) {
+      setStatus("That is your own username. Search a different GoodFlightGolf account.", "error");
+      return;
+    }
+
     try {
       setStatus("Searching...", "info");
       els.searchBtn.disabled = true;
@@ -214,7 +219,7 @@
       const targetDoc = await findPublicUser(usernameLower);
 
       if (!targetDoc) {
-        setStatus("No account found with that username yet.", "error");
+        setStatus("No account found with that username yet. If this is an older account, have that golfer log in once so their username becomes searchable.", "error");
         return;
       }
 
@@ -319,6 +324,9 @@
 
       currentUsername = await loadCurrentUsername(user);
       await ensurePublicProfile();
+      if (currentUsername) {
+        setStatus(`Your searchable username is ${currentUsername}. Search a different golfer to send a request.`, "info");
+      }
       await loadFriendData();
     });
   });
