@@ -36,6 +36,44 @@
     return window.firebase?.firestore?.() || null;
   }
 
+  function waitForFirebaseReady() {
+    return new Promise((resolve) => {
+      const ready = () => {
+        try {
+          window.gfgEnsureFirebaseApp?.();
+          return !!(window.firebase?.apps && window.firebase.apps.length);
+        } catch (error) {
+          return false;
+        }
+      };
+
+      if (ready()) {
+        resolve(true);
+        return;
+      }
+
+      const onReady = () => {
+        if (!ready()) return;
+        window.removeEventListener("gfg-firebase-ready", onReady);
+        resolve(true);
+      };
+
+      window.addEventListener("gfg-firebase-ready", onReady);
+
+      const poll = window.setInterval(() => {
+        if (!ready()) return;
+        window.clearInterval(poll);
+        window.removeEventListener("gfg-firebase-ready", onReady);
+        resolve(true);
+      }, 50);
+
+      window.setTimeout(() => {
+        window.clearInterval(poll);
+        resolve(ready());
+      }, 5000);
+    });
+  }
+
   function serverTimestamp() {
     return window.firebase?.firestore?.FieldValue?.serverTimestamp?.() || new Date();
   }
@@ -412,33 +450,36 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    if (!window.firebase?.auth || !window.firebase?.firestore) {
-      setStatus("Firebase is not ready yet.", "error");
-      return;
-    }
-
-    els.searchBtn?.addEventListener("click", sendFriendRequest);
-    els.searchInput?.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        sendFriendRequest();
+    (async () => {
+      const firebaseReady = await waitForFirebaseReady();
+      if (!firebaseReady || !window.firebase?.auth || !window.firebase?.firestore) {
+        setStatus("Firebase is not ready yet.", "error");
+        return;
       }
-    });
 
-    [els.friendsList, els.incomingList, els.outgoingList, els.blockedList].forEach((list) => {
-      list?.addEventListener("click", handleListClick);
-    });
+      els.searchBtn?.addEventListener("click", sendFriendRequest);
+      els.searchInput?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          sendFriendRequest();
+        }
+      });
 
-    firebase.auth().onAuthStateChanged(async (user) => {
-      setAuthView(user);
-      if (!user) return;
+      [els.friendsList, els.incomingList, els.outgoingList, els.blockedList].forEach((list) => {
+        list?.addEventListener("click", handleListClick);
+      });
 
-      currentUsername = await loadCurrentUsername(user);
-      await ensurePublicProfile();
-      if (currentUsername) {
-        setStatus(`Your searchable username is ${currentUsername}. Search a different golfer to send a request.`, "info");
-      }
-      await loadFriendData();
-    });
+      firebase.auth().onAuthStateChanged(async (user) => {
+        setAuthView(user);
+        if (!user) return;
+
+        currentUsername = await loadCurrentUsername(user);
+        await ensurePublicProfile();
+        if (currentUsername) {
+          setStatus(`Your searchable username is ${currentUsername}. Search a different golfer to send a request.`, "info");
+        }
+        await loadFriendData();
+      });
+    })();
   });
 })();
