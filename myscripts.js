@@ -45,6 +45,10 @@ window.addEventListener("DOMContentLoaded", () => {
   const loginMessageEl = document.getElementById("loginMessage");
   const signupMessageEl = document.getElementById("signupMessage");
 
+  function normalizeUsername(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
   function setAuthMessage(el, message = "", type = "") {
     if (!el) return;
 
@@ -109,6 +113,27 @@ window.addEventListener("DOMContentLoaded", () => {
     return displayName;
   }
 
+  async function syncPublicUserProfile(user, username) {
+    if (!user) return;
+
+    const cleanUsername = String(username || "").trim();
+    const usernameLower = normalizeUsername(cleanUsername);
+
+    // Public profiles are username-only so friends can find each other without exposing emails.
+    if (!cleanUsername || cleanUsername.includes("@")) return;
+
+    try {
+      await db.collection("publicUsers").doc(user.uid).set({
+        uid: user.uid,
+        username: cleanUsername,
+        usernameLower,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    } catch (error) {
+      console.error("Error syncing public profile:", error);
+    }
+  }
+
   let authModal = null;
   const authModalEl = document.getElementById("authModal");
   if (authModalEl && window.bootstrap) {
@@ -164,12 +189,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
         await db.collection("users").doc(cred.user.uid).set({
           username: nameToSave,
+          usernameLower: normalizeUsername(nameToSave),
           tosAccepted: true,
           privacyAccepted: true,
           disclaimerAccepted: true,
           legalVersion: "2026-03-15",
           legalAcceptedAt: new Date().toISOString()
         });
+
+        await syncPublicUserProfile(cred.user, nameToSave);
 
         if (window.emailjs) {
           await emailjs.send("service_6j5b7jm", "template_gtko0rj", {
@@ -211,6 +239,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     const displayName = await getDisplayNameForUser(user);
+    await syncPublicUserProfile(user, displayName);
 
     if (userEmail) {
       userEmail.textContent = displayName;
