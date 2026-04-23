@@ -67,6 +67,12 @@ service cloud.firestore {
             && resource.data.fromUid == request.auth.uid
             && request.resource.data.status == "cancelled"
           )
+          ||
+          (
+            resource.data.status == "accepted"
+            && (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid)
+            && request.resource.data.status == "removed"
+          )
         );
 
       allow delete: if false;

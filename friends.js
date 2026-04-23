@@ -98,16 +98,22 @@
       ? `
         <div class="clubhouse-friends-actions">
           <button class="gfg-pill-btn gfg-pill-btn--sm" type="button" data-friend-action="accept" data-request-id="${doc.id}">Accept</button>
-          <button class="gfg-pill-btn gfg-pill-btn--sm gfg-pill-btn--ghost" type="button" data-friend-action="reject" data-request-id="${doc.id}">Decline</button>
+          <button class="gfg-pill-btn gfg-pill-btn--sm clubhouse-friends-decline-btn" type="button" data-friend-action="reject" data-request-id="${doc.id}">Decline</button>
         </div>
       `
       : type === "outgoing"
         ? `
           <div class="clubhouse-friends-actions">
-            <button class="gfg-pill-btn gfg-pill-btn--sm gfg-pill-btn--ghost" type="button" data-friend-action="cancel" data-request-id="${doc.id}">Cancel</button>
+            <button class="gfg-pill-btn gfg-pill-btn--sm clubhouse-friends-decline-btn" type="button" data-friend-action="cancel" data-request-id="${doc.id}">Cancel</button>
           </div>
         `
-        : "";
+        : type === "friend"
+          ? `
+            <div class="clubhouse-friends-actions">
+              <button class="gfg-pill-btn gfg-pill-btn--sm clubhouse-friends-remove-btn" type="button" data-friend-action="remove" data-request-id="${doc.id}">Remove</button>
+            </div>
+          `
+          : "";
 
     return `
       <div class="clubhouse-friend-item">
@@ -249,6 +255,7 @@
       els.searchInput.value = "";
       setStatus("Friend request sent.", "success");
       await loadFriendData();
+      window.dispatchEvent(new CustomEvent("gfg-friend-requests-changed"));
     } catch (error) {
       console.error("Friend request failed:", error);
       setStatus(error?.code === "permission-denied"
@@ -280,13 +287,27 @@
       ? "accepted"
       : action === "reject"
         ? "rejected"
-        : "cancelled";
+        : action === "remove"
+          ? "removed"
+          : "cancelled";
+
+    if (action === "remove" && !window.confirm("Remove this golfer from your friends?")) {
+      return;
+    }
 
     try {
       button.disabled = true;
       await updateRequestStatus(requestIdValue, nextStatus);
-      setStatus(action === "accept" ? "Friend request accepted." : "Request updated.", action === "accept" ? "success" : "info");
+      setStatus(
+        action === "accept"
+          ? "Friend request accepted."
+          : action === "remove"
+            ? "Friend removed."
+            : "Request updated.",
+        action === "accept" ? "success" : "info"
+      );
       await loadFriendData();
+      window.dispatchEvent(new CustomEvent("gfg-friend-requests-changed"));
     } catch (error) {
       console.error("Could not update friend request:", error);
       setStatus("Could not update that request.", "error");
@@ -314,7 +335,7 @@
       }
     });
 
-    [els.incomingList, els.outgoingList].forEach((list) => {
+    [els.friendsList, els.incomingList, els.outgoingList].forEach((list) => {
       list?.addEventListener("click", handleListClick);
     });
 

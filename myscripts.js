@@ -134,6 +134,66 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function ensureFriendBadge(target, id, label) {
+    if (!target) return null;
+
+    let badge = document.getElementById(id);
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.id = id;
+      badge.className = "gfg-friend-request-badge d-none";
+      badge.setAttribute("aria-label", label);
+      target.appendChild(badge);
+    }
+
+    return badge;
+  }
+
+  function setFriendBadgeCount(count) {
+    const safeCount = Math.max(0, Number(count) || 0);
+    const display = safeCount > 9 ? "9+" : String(safeCount);
+
+    const toggler = document.querySelector(".gfg-navbar .navbar-toggler");
+    const clubhouseLink = Array.from(document.querySelectorAll(".gfg-navbar .nav-link"))
+      .find((link) => (link.getAttribute("href") || "").includes("social&news.html"));
+    const clubhouseHeader = document.querySelector(".clubhouse-friends-card .card-header");
+
+    [
+      ensureFriendBadge(toggler, "gfgNavFriendBadge", "Pending friend requests"),
+      ensureFriendBadge(clubhouseLink, "gfgClubhouseNavFriendBadge", "Pending friend requests"),
+      ensureFriendBadge(clubhouseHeader, "gfgClubhouseHeaderFriendBadge", "Pending friend requests")
+    ].forEach((badge) => {
+      if (!badge) return;
+      badge.textContent = display;
+      badge.classList.toggle("d-none", safeCount <= 0);
+      badge.setAttribute("title", `${safeCount} pending friend request${safeCount === 1 ? "" : "s"}`);
+    });
+  }
+
+  async function refreshFriendRequestBadge(user) {
+    if (!user) {
+      setFriendBadgeCount(0);
+      return;
+    }
+
+    try {
+      const snap = await db
+        .collection("friendRequests")
+        .where("toUid", "==", user.uid)
+        .where("status", "==", "pending")
+        .get();
+
+      setFriendBadgeCount(snap.size);
+    } catch (error) {
+      console.error("Error loading friend request badge:", error);
+      setFriendBadgeCount(0);
+    }
+  }
+
+  window.addEventListener("gfg-friend-requests-changed", () => {
+    refreshFriendRequestBadge(auth.currentUser);
+  });
+
   let authModal = null;
   const authModalEl = document.getElementById("authModal");
   if (authModalEl && window.bootstrap) {
@@ -235,11 +295,13 @@ window.addEventListener("DOMContentLoaded", () => {
         welcomeEl.textContent = "";
         welcomeEl.classList.add("d-none");
       }
+      await refreshFriendRequestBadge(null);
       return;
     }
 
     const displayName = await getDisplayNameForUser(user);
     await syncPublicUserProfile(user, displayName);
+    await refreshFriendRequestBadge(user);
 
     if (userEmail) {
       userEmail.textContent = displayName;
