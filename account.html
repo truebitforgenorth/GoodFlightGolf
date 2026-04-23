@@ -101,6 +101,62 @@
         </div>
       </div>
     </section>
+
+    <section id="clubhouseFriendsSection" class="card clubhouse-friends-card mt-4">
+      <div class="card-header">GoodFlight Friends</div>
+      <div class="card-body">
+        <div id="friendsLoggedOut" class="clubhouse-friends-empty">
+          Log in to find friends, send requests, and build your GoodFlightGolf crew.
+        </div>
+
+        <div id="friendsLoggedIn" class="d-none">
+          <div class="clubhouse-friends-hero">
+            <div>
+              <p class="clubhouse-friends-kicker mb-1">Find Golfers</p>
+              <h3 class="clubhouse-friends-title mb-1">Add friends by username</h3>
+              <p class="clubhouse-friends-copy mb-0">
+                Search another GoodFlightGolf account username, send a request, and manage your pending invites here.
+              </p>
+            </div>
+            <div class="clubhouse-friends-search">
+              <label for="friendSearchInput" class="form-label">Username</label>
+              <div class="clubhouse-friends-search-row">
+                <input id="friendSearchInput" class="form-control" type="text" placeholder="Example: test-tbfn" autocomplete="off" />
+                <button id="friendSearchBtn" class="gfg-pill-btn" type="button">Find Friend</button>
+              </div>
+              <p id="friendSearchStatus" class="clubhouse-friends-status mb-0"></p>
+            </div>
+          </div>
+
+          <div class="row g-3 mt-3">
+            <div class="col-lg-3">
+              <div class="clubhouse-friends-panel">
+                <div class="clubhouse-friends-panel-title">Friends</div>
+                <div id="friendsList" class="clubhouse-friends-list"></div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="clubhouse-friends-panel">
+                <div class="clubhouse-friends-panel-title">Incoming Requests</div>
+                <div id="incomingFriendsList" class="clubhouse-friends-list"></div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="clubhouse-friends-panel">
+                <div class="clubhouse-friends-panel-title">Sent Requests</div>
+                <div id="outgoingFriendsList" class="clubhouse-friends-list"></div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="clubhouse-friends-panel">
+                <div class="clubhouse-friends-panel-title">Blocked Golfers</div>
+                <div id="blockedFriendsList" class="clubhouse-friends-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="gfg-footer" id="foot">
@@ -171,6 +227,7 @@
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script src="myscripts.js"></script>
   <script src="account.js"></script>
+  <script src="friends.js"></script>
 </body>
 
 </html>

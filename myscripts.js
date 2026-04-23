@@ -35,6 +35,10 @@ window.addEventListener("DOMContentLoaded", () => {
   const auth = firebase.auth();
   const db = firebase.firestore();
 
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch((error) => {
+    console.error("Auth persistence setup failed:", error);
+  });
+
   const loginBtn = document.getElementById("loginBtn");
   const signupBtn = document.getElementById("signupBtn");
   const logoutBtn = document.getElementById("logoutBtn");
@@ -237,6 +241,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const password = passEl ? passEl.value : "";
 
       try {
+        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
         const cred = await auth.signInWithEmailAndPassword(email, password);
         const displayName = await getDisplayNameForUser(cred.user);
 
@@ -272,6 +277,7 @@ window.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
+        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
         const cred = await auth.createUserWithEmailAndPassword(email, password);
         const nameToSave = username || email;
 
