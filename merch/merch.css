@@ -60,8 +60,11 @@ body.gfg-merch-page .gfg-product-card:hover{
 body.gfg-merch-page .gfg-product-thumb{
   width: 100%;
   height: 160px;
-  object-fit: cover;
-  background: #f3f4f6;
+  object-fit: contain;
+  padding: 12px;
+  background:
+    radial-gradient(circle at top left, rgba(250,208,46,0.12), transparent 34%),
+    linear-gradient(180deg, #f8fbf8, #eef5f0);
 }
 
 body.gfg-merch-page .gfg-product-info{
@@ -123,7 +126,11 @@ body.gfg-merch-page .gfg-product-image-wrap{
 body.gfg-merch-page .gfg-product-image{
   width: 100%;
   height: 320px;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 18px;
+  background:
+    radial-gradient(circle at top left, rgba(250,208,46,0.12), transparent 34%),
+    linear-gradient(180deg, #f8fbf8, #eef5f0);
 }
 
 /* Quantity */
@@ -242,10 +249,13 @@ body.gfg-merch-page .gfg-cart-item{
 body.gfg-merch-page .gfg-cart-item img{
   width: 68px;
   height: 68px;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 6px;
   border-radius: 12px;
   border: 1px solid rgba(0,0,0,0.08);
-  background: #f3f4f6;
+  background:
+    radial-gradient(circle at top left, rgba(250,208,46,0.10), transparent 34%),
+    linear-gradient(180deg, #f8fbf8, #eef5f0);
 }
 
 body.gfg-merch-page .gfg-cart-item-title{

@@ -237,6 +237,15 @@ function resultLabelFromDiff(diff) {
   return `+${diff}`;
 }
 
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function isCustomCourse() {
   return currentCourseId === "custom-course";
 }
@@ -323,6 +332,7 @@ const sumPutts = $("sumPutts");
 const sumFir = $("sumFir");
 const sumGir = $("sumGir");
 const sumCourseMeta = $("sumCourseMeta");
+const liveRoundScorecard = $("liveRoundScorecard");
 
 const resultsCard = $("resultsCard");
 const roundResultsFeedbackCard = $("roundResultsFeedbackCard");
@@ -330,6 +340,11 @@ const roundResultsFeedbackInsights = $("roundResultsFeedbackInsights");
 const holeSetupCard = $("holeSetupCard");
 const holeNavCard = $("holeNavCard");
 const scoreboardCard = $("scoreboardCard");
+const inlineWolfConfirmModal = $("inlineWolfConfirmModal");
+const inlineWolfConfirmMeta = $("inlineWolfConfirmMeta");
+const inlineWolfConfirmBody = $("inlineWolfConfirmBody");
+const inlineWolfConfirmBackBtn = $("inlineWolfConfirmBackBtn");
+const inlineWolfConfirmApplyBtn = $("inlineWolfConfirmApplyBtn");
 
 let currentHole = 1;
 let currentCourseId = "oneka-ridge";
@@ -343,6 +358,7 @@ let activeRoundSessionId =
 let lastRoundSessionTriggerEl = null;
 let inlineLinkedGameState = createDefaultInlineGameState();
 let isRestoringRoundSession = false;
+let pendingInlineWolfConfirmation = null;
 
 function getSessionModeValue() {
   return sessionModeSelect?.value === "roundGame" ? "round+game" : "round-only";
@@ -704,6 +720,221 @@ function recalcInlineLinkedGame() {
   persistInlineGameDraft();
 }
 
+function getInlineWolfCarryoverBeforeHole(targetHole = currentHole) {
+  let carryover = 0;
+
+  Object.keys(inlineLinkedGameState.holes || {})
+    .map(Number)
+    .filter((holeNumber) => holeNumber < targetHole)
+    .sort((a, b) => a - b)
+    .forEach((holeNumber) => {
+      const holeState = inlineLinkedGameState.holes[holeNumber];
+      if (!holeState?.result) return;
+
+      if (holeState.result === "push") {
+        carryover += inlineLinkedGameState.carryoverEnabled ? Number(inlineLinkedGameState.tieSetPoints) || 0 : 0;
+        return;
+      }
+
+      carryover = 0;
+    });
+
+  return carryover;
+}
+
+function getInlineWolfResultLabel(result, mode) {
+  if (result === "push") return "Push";
+  if (result === "wolfTeam") return "Wolf Team Wins";
+  if (result === "others") return "Other Team Wins";
+  if (result === "dumpWin") return "Dump Wins";
+  if (result === "dumpLose") return "Others Win";
+  if (result === "loneWin") return mode === "blind" ? "Blind Wolf Wins" : "Lone Wolf Wins";
+  if (result === "loneLose") return mode === "blind" ? "Blind Wolf Loses" : "Lone Wolf Loses";
+  return "Confirm Hole Result";
+}
+
+function getInlineWolfOutcomePreview(holeState, holeNumber = currentHole) {
+  const allPlayers = [0, 1, 2, 3];
+  const moneyMultiplier = Number(inlineLinkedGameState.dollarValue) || 0;
+  const potApplied = getInlineWolfCarryoverBeforeHole(holeNumber);
+  const birdieMultiplier = holeState?.birdieDouble ? 2 : 1;
+  const payouts = [];
+  let copy = "";
+  let nextPot = 0;
+
+  if (!holeState?.result) {
+    return {
+      resultLabel: "No result selected",
+      copy: "Choose a hole winner before confirming.",
+      payouts,
+      potApplied: 0,
+      nextPot: 0
+    };
+  }
+
+  if (holeState.result === "push") {
+    nextPot = potApplied + (inlineLinkedGameState.carryoverEnabled ? Number(inlineLinkedGameState.tieSetPoints) || 0 : 0);
+    copy = inlineLinkedGameState.carryoverEnabled
+      ? `No winner on this hole. ${nextPot} pts roll forward to the next hole.`
+      : "No winner on this hole. No payout is added to the next hole.";
+  } else if (holeState.result === "wolfTeam" && holeState.partner !== null && holeState.partner !== undefined) {
+    const each = ((Number(inlineLinkedGameState.base) || 0) / 2) * birdieMultiplier + (potApplied / 2);
+    payouts.push({ playerIndex: holeState.wolf, points: each, money: each * moneyMultiplier });
+    payouts.push({ playerIndex: holeState.partner, points: each, money: each * moneyMultiplier });
+    copy = `${getInlineGameSafePlayerName(holeState.wolf)} and ${getInlineGameSafePlayerName(holeState.partner)} split the hole.`;
+  } else if (holeState.result === "others") {
+    const winners = allPlayers.filter((idx) => idx !== holeState.wolf && idx !== holeState.partner);
+    const each = ((Number(inlineLinkedGameState.base) || 0) / 2) * birdieMultiplier + (potApplied / 2);
+    winners.forEach((idx) => payouts.push({ playerIndex: idx, points: each, money: each * moneyMultiplier }));
+    copy = `${winners.map((idx) => getInlineGameSafePlayerName(idx)).join(" and ")} win the hole.`;
+  } else if (holeState.result === "loneWin" && holeState.mode === "lone") {
+    const points = ((Number(inlineLinkedGameState.loneWinPoints) || 0) * birdieMultiplier) + potApplied;
+    payouts.push({ playerIndex: holeState.wolf, points, money: points * moneyMultiplier });
+    copy = `${getInlineGameSafePlayerName(holeState.wolf)} wins as the Lone Wolf.`;
+  } else if (holeState.result === "loneLose" && holeState.mode === "lone") {
+    const winners = allPlayers.filter((idx) => idx !== holeState.wolf);
+    const each = (((Number(inlineLinkedGameState.loneLosePoints) || 0) * birdieMultiplier) / 3) + (potApplied / 3);
+    winners.forEach((idx) => payouts.push({ playerIndex: idx, points: each, money: each * moneyMultiplier }));
+    copy = `${winners.map((idx) => getInlineGameSafePlayerName(idx)).join(", ")} beat the Lone Wolf.`;
+  } else if (holeState.result === "loneWin" && holeState.mode === "blind") {
+    const points = ((Number(inlineLinkedGameState.blindWinPoints) || 0) * birdieMultiplier) + potApplied;
+    payouts.push({ playerIndex: holeState.wolf, points, money: points * moneyMultiplier });
+    copy = `${getInlineGameSafePlayerName(holeState.wolf)} wins as the Blind Wolf.`;
+  } else if (holeState.result === "loneLose" && holeState.mode === "blind") {
+    const winners = allPlayers.filter((idx) => idx !== holeState.wolf);
+    const each = (((Number(inlineLinkedGameState.blindLosePoints) || 0) * birdieMultiplier) / 3) + (potApplied / 3);
+    winners.forEach((idx) => payouts.push({ playerIndex: idx, points: each, money: each * moneyMultiplier }));
+    copy = `${winners.map((idx) => getInlineGameSafePlayerName(idx)).join(", ")} beat the Blind Wolf.`;
+  } else if (holeState.result === "dumpWin" && holeState.partner !== null && holeState.partner !== undefined) {
+    const points = ((Number(inlineLinkedGameState.dumpWinPoints) || 0) * birdieMultiplier) + potApplied;
+    payouts.push({ playerIndex: holeState.partner, points, money: points * moneyMultiplier });
+    copy = `${getInlineGameSafePlayerName(holeState.partner)} wins the dump hole.`;
+  } else if (holeState.result === "dumpLose" && holeState.partner !== null && holeState.partner !== undefined) {
+    const winners = allPlayers.filter((idx) => idx !== holeState.partner);
+    const each = (((Number(inlineLinkedGameState.dumpLosePoints) || 0) * birdieMultiplier) / 3) + (potApplied / 3);
+    winners.forEach((idx) => payouts.push({ playerIndex: idx, points: each, money: each * moneyMultiplier }));
+    copy = `${winners.map((idx) => getInlineGameSafePlayerName(idx)).join(", ")} beat the dump player.`;
+  }
+
+  return {
+    resultLabel: getInlineWolfResultLabel(holeState.result, holeState.mode),
+    copy,
+    payouts,
+    potApplied,
+    nextPot,
+    birdieDouble: !!holeState.birdieDouble
+  };
+}
+
+function closeInlineWolfConfirmModal() {
+  pendingInlineWolfConfirmation = null;
+  inlineWolfConfirmModal?.classList.add("hidden");
+  inlineWolfConfirmModal?.setAttribute("aria-hidden", "true");
+}
+
+function renderInlineWolfConfirmModal() {
+  if (!inlineWolfConfirmModal || !inlineWolfConfirmBody || !pendingInlineWolfConfirmation) return;
+
+  const { holeNumber, holeState } = pendingInlineWolfConfirmation;
+  const preview = getInlineWolfOutcomePreview(holeState, holeNumber);
+  const canUseBirdieDouble = !!inlineLinkedGameState.birdieDoubleEnabled && holeState.result !== "push";
+
+  if (inlineWolfConfirmMeta) {
+    inlineWolfConfirmMeta.textContent = `Round Hole ${holeNumber} | Game Hole ${holeNumber}`;
+  }
+
+  const birdieMarkup = canUseBirdieDouble ? `
+    <div class="round-inline-confirm-card round-inline-confirm-birdie">
+      <div class="round-inline-confirm-kicker">Birdie Double</div>
+      <div class="round-inline-confirm-copy">Did the winning side make birdie on this hole?</div>
+      <div class="round-inline-confirm-birdie-buttons">
+        <button type="button" class="btn btn-success round-inline-confirm-birdie-btn${holeState.birdieDouble ? " is-selected" : ""}" data-inline-wolf-confirm-birdie="yes">Yes, double it</button>
+        <button type="button" class="btn btn-secondary round-inline-confirm-birdie-btn${holeState.birdieDouble ? "" : " is-selected"}" data-inline-wolf-confirm-birdie="no">No, regular payout</button>
+      </div>
+    </div>
+  ` : "";
+
+  const payoutsMarkup = preview.payouts.length
+    ? `
+      <div class="round-inline-confirm-card">
+        <div class="round-inline-confirm-kicker">Winners & Payouts</div>
+        <div class="round-inline-confirm-payouts">
+          ${preview.payouts.map((entry) => `
+            <div class="round-inline-confirm-payout">
+              <div class="round-inline-confirm-payout-name">${escapeHtml(getInlineGameSafePlayerName(entry.playerIndex))}</div>
+              <div class="round-inline-confirm-payout-metrics">
+                <span class="round-inline-confirm-payout-points">+${Number(entry.points).toFixed(2)} pts</span>
+                <span class="round-inline-confirm-payout-money">${getInlineGameMoneyText(entry.money)}</span>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    `
+    : `
+      <div class="round-inline-confirm-card">
+        <div class="round-inline-confirm-kicker">Hole Outcome</div>
+        <div class="round-inline-confirm-copy">${escapeHtml(preview.copy)}</div>
+      </div>
+    `;
+
+  const potText = preview.nextPot > 0
+    ? `Carryover pot used: ${preview.potApplied} pts. Next hole starts with ${preview.nextPot} pts.`
+    : preview.potApplied > 0
+      ? `Carryover pot used: ${preview.potApplied} pts on this hole.`
+      : holeState.result === "push"
+        ? "No payout on this hole."
+        : "This hole uses the standard payout settings with no carryover pot.";
+
+  inlineWolfConfirmBody.innerHTML = `
+    <div class="round-inline-confirm-card">
+      <div class="round-inline-confirm-kicker">Result</div>
+      <div class="round-inline-confirm-result">${escapeHtml(preview.resultLabel)}</div>
+      <div class="round-inline-confirm-copy">${escapeHtml(preview.copy)}</div>
+    </div>
+    ${birdieMarkup}
+    ${payoutsMarkup}
+    <div class="round-inline-confirm-pot">${escapeHtml(potText)}</div>
+  `;
+
+  inlineWolfConfirmModal.classList.remove("hidden");
+  inlineWolfConfirmModal.setAttribute("aria-hidden", "false");
+}
+
+function openInlineWolfConfirmModal(holeState) {
+  pendingInlineWolfConfirmation = {
+    holeNumber: currentHole,
+    holeState: {
+      wolf: holeState.wolf,
+      partner: holeState.partner,
+      mode: holeState.mode,
+      result: holeState.result,
+      birdieDouble: !!holeState.birdieDouble
+    }
+  };
+
+  renderInlineWolfConfirmModal();
+}
+
+function confirmInlineWolfOutcome() {
+  if (!pendingInlineWolfConfirmation) return;
+
+  const holeState = getInlineWolfHole(pendingInlineWolfConfirmation.holeNumber);
+  holeState.wolf = pendingInlineWolfConfirmation.holeState.wolf;
+  holeState.partner = pendingInlineWolfConfirmation.holeState.partner;
+  holeState.mode = pendingInlineWolfConfirmation.holeState.mode;
+  holeState.result = pendingInlineWolfConfirmation.holeState.result;
+  holeState.birdieDouble = !!pendingInlineWolfConfirmation.holeState.birdieDouble;
+
+  closeInlineWolfConfirmModal();
+  recalcInlineLinkedGame();
+  renderInlineLinkedGameUI();
+
+  if (currentHole === 19 && isResultsSummaryVisible()) {
+    showResultsSummary();
+  }
+}
+
 function getInlineGameDraftPayload() {
   const players = getInlineGamePlayers();
   const trackedPlayerIndex = Number.isInteger(inlineLinkedGameState.trackedPlayerIndex)
@@ -837,17 +1068,23 @@ function renderInlineGameSetupFields() {
   const trackedPlayerIndex = Number.isInteger(inlineLinkedGameState.trackedPlayerIndex)
     ? inlineLinkedGameState.trackedPlayerIndex
     : "";
+  const suggestionHelperHtml = `<p id="inlineGameFriendSuggestionHint" class="game-friend-suggestion-note mb-3"></p>`;
 
-  const playersHtml = players.map((playerName, idx) => `
+  const playersHtml = players.map((playerName, idx) => {
+    const fallbackName = `Player ${idx + 1}`;
+    const inputValue = playerName === fallbackName ? "" : playerName;
+
+    return `
     <div class="col-6">
       <input
         id="inlineGamePlayer${idx}"
         class="form-control"
         placeholder="Player ${idx + 1}"
         data-inline-player-index="${idx}"
-        value="${playerName}">
+        value="${inputValue}">
     </div>
-  `).join("");
+  `;
+  }).join("");
 
   const trackedOptions = players.map((playerName, idx) => `
     <option value="${idx}" ${trackedPlayerIndex === idx ? "selected" : ""}>${playerName}</option>
@@ -859,6 +1096,7 @@ function renderInlineGameSetupFields() {
         <div class="row g-2 mb-3">
           ${playersHtml}
         </div>
+        ${suggestionHelperHtml}
 
         <div class="row g-2 mb-3">
           <div class="col-12 col-md-6">
@@ -898,6 +1136,7 @@ function renderInlineGameSetupFields() {
         <div class="row g-2 mb-3">
           ${playersHtml}
         </div>
+        ${suggestionHelperHtml}
 
         <div class="row g-2 mb-3">
           <div class="col-12 col-md-6">
@@ -924,6 +1163,7 @@ function renderInlineGameSetupFields() {
       <div class="row g-2 mb-3">
         ${playersHtml}
       </div>
+      ${suggestionHelperHtml}
 
       <div class="row g-2 mb-3">
         <div class="col-12 col-md-6">
@@ -1068,16 +1308,6 @@ function renderInlineWolfHoleFields() {
   const loneHidden = holeState.mode !== "lone";
   const dumpHidden = holeState.mode !== "dump";
   const blindHidden = holeState.mode !== "blind";
-  const resultTextMap = {
-    wolfTeam: "Wolf Team Wins",
-    others: "Other Team Wins",
-    loneWin: "Lone Wolf Wins",
-    loneLose: "Lone Wolf Loses",
-    dumpWin: "Dump Wins",
-    dumpLose: "Others Win",
-    push: "Push"
-  };
-
   return `
     <div class="inline-game-native-hole">
       <div class="row g-2 mb-3">
@@ -1130,18 +1360,7 @@ function renderInlineWolfHoleFields() {
         <button type="button" class="btn lone-lose ${selectedResult === "loneLose" ? "selected" : ""}" data-inline-wolf-result="loneLose">Blind Wolf Loses</button>
       </div>
 
-      ${inlineLinkedGameState.birdieDoubleEnabled ? `
-        <div class="inline-birdie-question-wrap">
-          <div class="text-center fw-bold mb-2">Birdie Double?</div>
-          <div class="birdie-question-buttons">
-            <button type="button" class="btn btn-success ${holeState.birdieDouble ? "selected" : ""}" data-inline-wolf-birdie="yes">Yes</button>
-            <button type="button" class="btn btn-secondary ${holeState.birdieDouble ? "" : "selected"}" data-inline-wolf-birdie="no">No</button>
-          </div>
-        </div>
-      ` : ""}
-
-      <div class="inline-game-footer-row">
-        <div class="inline-game-status-pill">${selectedResult ? (resultTextMap[selectedResult] || selectedResult) : "No result set yet"}</div>
+      <div class="inline-game-footer-row inline-game-footer-row--end">
         <div class="inline-game-pot">POT: ${inlineLinkedGameState.currentPot || 0} pts</div>
       </div>
     </div>
@@ -1294,6 +1513,11 @@ function renderInlineLinkedGameUI() {
   }
   if (inlineGameSetupShell) {
     inlineGameSetupShell.innerHTML = renderInlineGameSetupFields();
+    window.GFGGameFriends?.attachPlayerSuggestions({
+      inputSelector: "#inlineGameSetupShell [data-inline-player-index]",
+      helperId: "inlineGameFriendSuggestionHint",
+      listId: "inlineGameFriendSuggestions"
+    });
   }
 
   if (inlineGameHoleTitle) {
@@ -1380,6 +1604,7 @@ function handleInlineWolfHoleEvent(event) {
 
   if (target instanceof HTMLSelectElement && target.dataset.inlineWolfField === "wolf") {
     if (!isChangeEvent) return;
+    closeInlineWolfConfirmModal();
     holeState.wolf = Number(target.value) || 0;
     holeState.partner = null;
     holeState.mode = null;
@@ -1392,8 +1617,10 @@ function handleInlineWolfHoleEvent(event) {
 
   if (target instanceof HTMLSelectElement && target.dataset.inlineWolfField === "setup") {
     if (!isChangeEvent) return;
+    closeInlineWolfConfirmModal();
     const value = target.value;
     holeState.result = null;
+    holeState.birdieDouble = false;
 
     if (!value) {
       holeState.mode = null;
@@ -1425,18 +1652,12 @@ function handleInlineWolfHoleEvent(event) {
     return;
   }
 
-  if (target instanceof HTMLElement && target.dataset.inlineWolfBirdie) {
-    if (isChangeEvent) return;
-    holeState.birdieDouble = target.dataset.inlineWolfBirdie === "yes";
-    recalcInlineLinkedGame();
-    renderInlineLinkedGameUI();
-    return;
-  }
-
   if (target instanceof HTMLElement && target.dataset.inlineWolfAction) {
     if (isChangeEvent) return;
+    closeInlineWolfConfirmModal();
     holeState.mode = target.dataset.inlineWolfAction === "dump" ? "dump" : "team";
     holeState.result = null;
+    holeState.birdieDouble = false;
     recalcInlineLinkedGame();
     renderInlineLinkedGameUI();
     return;
@@ -1444,9 +1665,13 @@ function handleInlineWolfHoleEvent(event) {
 
   if (target instanceof HTMLElement && target.dataset.inlineWolfResult) {
     if (isChangeEvent) return;
-    holeState.result = target.dataset.inlineWolfResult;
-    recalcInlineLinkedGame();
-    renderInlineLinkedGameUI();
+    openInlineWolfConfirmModal({
+      wolf: holeState.wolf,
+      partner: holeState.partner,
+      mode: holeState.mode,
+      result: target.dataset.inlineWolfResult,
+      birdieDouble: false
+    });
   }
 }
 
@@ -2161,6 +2386,89 @@ function updateHoleSummary() {
   if (holePuttsSummaryValue) holePuttsSummaryValue.textContent = hole.putts;
 }
 
+function buildLiveRoundScorecardPanel(startHole, endHole, title) {
+  const countedHoles = new Set(getCountedHoleNumbers());
+  const holeNumbers = [];
+
+  for (let holeNumber = startHole; holeNumber <= endHole; holeNumber += 1) {
+    holeNumbers.push(holeNumber);
+  }
+
+  const parValues = holeNumbers.map((holeNumber) => getHolePar(holeNumber));
+  const scoreValues = holeNumbers.map((holeNumber) => countedHoles.has(holeNumber) ? H(holeNumber).strokes : null);
+  const diffValues = holeNumbers.map((holeNumber) => countedHoles.has(holeNumber) ? getHoleComputed(holeNumber).diff : null);
+
+  const outPar = parValues.reduce((total, value) => total + value, 0);
+  const outScore = scoreValues.reduce((total, value) => total + (value || 0), 0);
+  const outCount = scoreValues.filter((value) => value !== null).length;
+  const outParCounted = holeNumbers.reduce((total, holeNumber, index) => total + (countedHoles.has(holeNumber) ? parValues[index] : 0), 0);
+  const outDiff = outCount ? outScore - outParCounted : null;
+
+  const scoreCells = scoreValues.map((value, index) => {
+    const diff = diffValues[index];
+    const cls = value === null
+      ? "is-empty"
+      : diff === 0
+        ? "is-even"
+        : diff < 0
+          ? "is-under"
+          : "is-over";
+    return `<td class="round-live-scorecard-score ${cls}">${value === null ? "&mdash;" : value}</td>`;
+  }).join("");
+
+  const diffCells = diffValues.map((value) => {
+    const cls = value === null
+      ? "is-empty"
+      : value === 0
+        ? "is-even"
+        : value < 0
+          ? "is-under"
+          : "is-over";
+    return `<td class="round-live-scorecard-score ${cls}">${value === null ? "&mdash;" : formatVsPar(value)}</td>`;
+  }).join("");
+
+  return `
+    <div class="round-live-scorecard-panel">
+      <div class="round-live-scorecard-panel-title">${title}</div>
+      <div class="round-live-scorecard-scroll">
+        <table class="round-live-scorecard-table">
+          <tbody>
+            <tr>
+              <th>Hole</th>
+              ${holeNumbers.map((holeNumber) => `<th>${holeNumber}</th>`).join("")}
+              <th>${title === "Front 9" ? "Out" : "In"}</th>
+            </tr>
+            <tr>
+              <td>Par</td>
+              ${parValues.map((value) => `<td>${value}</td>`).join("")}
+              <td>${outPar}</td>
+            </tr>
+            <tr>
+              <td>Score</td>
+              ${scoreCells}
+              <td>${outCount ? outScore : "&mdash;"}</td>
+            </tr>
+            <tr>
+              <td>+/−</td>
+              ${diffCells}
+              <td class="round-live-scorecard-score ${outDiff === null ? "is-empty" : outDiff === 0 ? "is-even" : outDiff < 0 ? "is-under" : "is-over"}">${outDiff === null ? "&mdash;" : formatVsPar(outDiff)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function updateLiveRoundScorecard() {
+  if (!liveRoundScorecard) return;
+
+  liveRoundScorecard.innerHTML = `
+    ${buildLiveRoundScorecardPanel(1, 9, "Front 9")}
+    ${buildLiveRoundScorecardPanel(10, 18, "Back 9")}
+  `;
+}
+
 function updateScoreboard() {
   const summary = getRoundSummary();
   const selectedTee = getSelectedTee();
@@ -2173,6 +2481,7 @@ function updateScoreboard() {
   if (sumFir) sumFir.textContent = `${summary.firPct}%`;
   if (sumGir) sumGir.textContent = `${summary.girPct}%`;
   if (sumCourseMeta) sumCourseMeta.textContent = `${courseName} - ${selectedTee.name} Tees`;
+  updateLiveRoundScorecard();
 }
 
 function render() {
@@ -2197,7 +2506,6 @@ function render() {
   updateHoleMeta();
   updateCounters();
   updateSelects();
-  updateHoleSummary();
   updateScoreboard();
 
   setRoundNextButtonLabel(currentHole < 18 ? "next" : "finish");
@@ -2244,6 +2552,8 @@ function runConfetti() {
 }
 
 function hideResultsSummary() {
+  closeInlineWolfConfirmModal();
+
   if (resultsCard) {
     resultsCard.classList.add("hidden");
     resultsCard.innerHTML = "";
@@ -2350,14 +2660,19 @@ async function saveRoundToAccount(statusEl) {
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  try {
-    const docRef = await firebase.firestore()
-      .collection("users")
-      .doc(user.uid)
-      .collection("savedRounds")
-      .add(roundPayload);
+    try {
+      const docRef = await firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("savedRounds")
+        .add(roundPayload);
 
-    savedRoundDocId = docRef.id;
+      await window.GFGLeaderboard?.syncCurrentUserProfile?.({
+        user,
+        db: firebase.firestore()
+      });
+
+      savedRoundDocId = docRef.id;
     if (activeRoundSessionId && getSessionModeValue() === "round+game" && sessionApi) {
       const completion = sessionApi.completeSessionPart("round", { docId: docRef.id });
       if (completion.completed) {
@@ -2720,6 +3035,24 @@ inlineGameHoleShell?.addEventListener("change", (event) => {
 
   handleInlineWolfHoleEvent(event);
 });
+inlineWolfConfirmBody?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement) || !target.dataset.inlineWolfConfirmBirdie || !pendingInlineWolfConfirmation) return;
+
+  pendingInlineWolfConfirmation.holeState.birdieDouble = target.dataset.inlineWolfConfirmBirdie === "yes";
+  renderInlineWolfConfirmModal();
+});
+inlineWolfConfirmBackBtn?.addEventListener("click", () => {
+  closeInlineWolfConfirmModal();
+});
+inlineWolfConfirmApplyBtn?.addEventListener("click", () => {
+  confirmInlineWolfOutcome();
+});
+inlineWolfConfirmModal?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement) || !target.dataset.inlineWolfClose) return;
+  closeInlineWolfConfirmModal();
+});
 
 holeParSelect?.addEventListener("change", () => {
   H().customPar = Number(holeParSelect.value) || 4;
@@ -2778,6 +3111,7 @@ approachSelect?.addEventListener("change", () => {
 
 prevHoleBtn?.addEventListener("click", () => {
   if (currentHole > 1) {
+    closeInlineWolfConfirmModal();
     currentHole -= 1;
     hideResultsSummary();
     render();
@@ -2786,6 +3120,7 @@ prevHoleBtn?.addEventListener("click", () => {
 
 nextHoleBtn?.addEventListener("click", () => {
   if (currentHole < 18) {
+    closeInlineWolfConfirmModal();
     currentHole += 1;
     hideResultsSummary();
     render();
@@ -2793,6 +3128,7 @@ nextHoleBtn?.addEventListener("click", () => {
   }
 
   if (currentHole === 18) {
+    closeInlineWolfConfirmModal();
     currentHole = 19;
     render();
     showResultsSummary();

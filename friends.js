@@ -90,6 +90,16 @@
     }
   }
 
+  function setIncomingPanelBadge(count) {
+    const badge = document.getElementById("incomingFriendsPanelBadge");
+    if (!badge) return;
+
+    const safeCount = Math.max(0, Number(count) || 0);
+    badge.textContent = safeCount > 9 ? "9+" : String(safeCount);
+    badge.classList.toggle("d-none", safeCount <= 0);
+    badge.setAttribute("title", `${safeCount} incoming friend request${safeCount === 1 ? "" : "s"}`);
+  }
+
   function requestId(fromUid, toUid) {
     return `${fromUid}_${toUid}`;
   }
@@ -200,14 +210,18 @@
 
     return `
       <div class="clubhouse-friend-item">
-        <div class="clubhouse-friend-person">
-          ${avatar}
-          <div>
-            <div class="clubhouse-friend-name">${escapeHtml(otherName)}</div>
-            <div class="clubhouse-friend-meta">${escapeHtml(type === "friend" ? "Friend" : type === "blocked" ? "Blocked" : data.status || "pending")}</div>
+        <div class="clubhouse-friend-main">
+          <div class="clubhouse-friend-person">
+            ${avatar}
+            <div>
+              <div class="clubhouse-friend-name">${escapeHtml(otherName)}</div>
+              <div class="clubhouse-friend-meta">${escapeHtml(type === "friend" ? "Friend" : type === "blocked" ? "Blocked" : data.status || "pending")}</div>
+            </div>
           </div>
         </div>
-        ${actions}
+        <div class="clubhouse-friend-actions-wrap">
+          ${actions}
+        </div>
       </div>
     `;
   }
@@ -230,30 +244,46 @@
     setLoading(els.incomingList);
     setLoading(els.outgoingList);
     setLoading(els.blockedList);
+    setIncomingPanelBadge(0);
 
     try {
       const requests = db.collection("friendRequests");
-      const [incomingSnap, outgoingSnap, friendsFromSnap, friendsToSnap, blockedSnap] = await Promise.all([
-        requests.where("toUid", "==", currentUser.uid).where("status", "==", "pending").get(),
-        requests.where("fromUid", "==", currentUser.uid).where("status", "==", "pending").get(),
-        requests.where("fromUid", "==", currentUser.uid).where("status", "==", "accepted").get(),
-        requests.where("toUid", "==", currentUser.uid).where("status", "==", "accepted").get(),
-        requests.where("blockedByUid", "==", currentUser.uid).where("status", "==", "blocked").get()
+      const [incomingAllSnap, outgoingAllSnap] = await Promise.all([
+        requests.where("toUid", "==", currentUser.uid).get(),
+        requests.where("fromUid", "==", currentUser.uid).get()
       ]);
 
+      const incomingPendingDocs = incomingAllSnap.docs.filter((doc) => doc.data()?.status === "pending");
+      const outgoingPendingDocs = outgoingAllSnap.docs.filter((doc) => doc.data()?.status === "pending");
+
       const acceptedMap = new Map();
-      friendsFromSnap.docs.concat(friendsToSnap.docs).forEach((doc) => acceptedMap.set(doc.id, doc));
+      incomingAllSnap.docs
+        .filter((doc) => doc.data()?.status === "accepted")
+        .forEach((doc) => acceptedMap.set(doc.id, doc));
+      outgoingAllSnap.docs
+        .filter((doc) => doc.data()?.status === "accepted")
+        .forEach((doc) => acceptedMap.set(doc.id, doc));
+
+      const blockedMap = new Map();
+      incomingAllSnap.docs
+        .filter((doc) => doc.data()?.status === "blocked" && doc.data()?.blockedByUid === currentUser.uid)
+        .forEach((doc) => blockedMap.set(doc.id, doc));
+      outgoingAllSnap.docs
+        .filter((doc) => doc.data()?.status === "blocked" && doc.data()?.blockedByUid === currentUser.uid)
+        .forEach((doc) => blockedMap.set(doc.id, doc));
 
       renderList(els.friendsList, [...acceptedMap.values()], "No friends yet. Search a username to send your first request.", "friend");
-      renderList(els.incomingList, incomingSnap.docs, "No incoming requests.", "incoming");
-      renderList(els.outgoingList, outgoingSnap.docs, "No sent requests.", "outgoing");
-      renderList(els.blockedList, blockedSnap.docs, "No blocked golfers.", "blocked");
+      renderList(els.incomingList, incomingPendingDocs, "No incoming requests.", "incoming");
+      renderList(els.outgoingList, outgoingPendingDocs, "No sent requests.", "outgoing");
+      renderList(els.blockedList, [...blockedMap.values()], "No blocked golfers.", "blocked");
+      setIncomingPanelBadge(incomingPendingDocs.length);
     } catch (error) {
       console.error("Could not load friends:", error);
       setLoading(els.friendsList, "Could not load friends.");
       setLoading(els.incomingList, "Could not load requests.");
       setLoading(els.outgoingList, "Could not load sent requests.");
       setLoading(els.blockedList, "Could not load blocked golfers.");
+      setIncomingPanelBadge(0);
     }
   }
 
@@ -447,6 +477,9 @@
     currentUser = user || null;
     els.loggedOut.classList.toggle("d-none", !!user);
     els.loggedIn.classList.toggle("d-none", !user);
+    if (!user) {
+      setIncomingPanelBadge(0);
+    }
   }
 
   document.addEventListener("DOMContentLoaded", () => {

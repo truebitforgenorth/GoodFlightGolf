@@ -87,6 +87,18 @@
             </div>
 
             <div class="mb-3">
+              <div class="gfg-account-toggle">
+                <input id="accountLeaderboardOptIn" class="form-check-input" type="checkbox" />
+                <label class="form-check-label" for="accountLeaderboardOptIn">
+                  Show my username on leaderboards
+                </label>
+              </div>
+              <p class="small text-muted mt-2 mb-0">
+                When this is off, your leaderboard entry can still count, but it will show as a private golfer instead of your username.
+              </p>
+            </div>
+
+            <div class="mb-3">
               <label class="form-label">Profile Picture</label>
               <input id="accountPhotoInput" class="d-none" type="file" accept="image/*" />
               <div class="d-flex gap-2 flex-wrap">
@@ -137,7 +149,10 @@
             </div>
             <div class="col-lg-3">
               <div class="clubhouse-friends-panel">
-                <div class="clubhouse-friends-panel-title">Incoming Requests</div>
+                <div class="clubhouse-friends-panel-title clubhouse-friends-panel-title--badge">
+                  Incoming Requests
+                  <span id="incomingFriendsPanelBadge" class="gfg-friend-request-badge d-none" aria-label="Incoming friend requests"></span>
+                </div>
                 <div id="incomingFriendsList" class="clubhouse-friends-list"></div>
               </div>
             </div>
@@ -226,6 +241,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script src="myscripts.js"></script>
+  <script src="leaderboard.js"></script>
   <script src="account.js"></script>
   <script src="friends.js"></script>
 </body>

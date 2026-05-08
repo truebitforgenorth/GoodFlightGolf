@@ -10,6 +10,18 @@
   width: min(760px, 100%);
 }
 
+@media (min-width: 992px) {
+  .gfg-round-hero {
+    min-height: 48vh;
+  }
+
+  .gfg-round-hero-panel {
+    width: min(680px, 92vw);
+    max-height: min(72vh, 700px);
+    overflow-y: auto;
+  }
+}
+
 .gfg-round-page .gfg-hero-title {
   text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
@@ -286,6 +298,105 @@ html.gfg-round-fullscreen-lock body {
   line-height: 1.15;
 }
 
+.round-live-scorecard-shell {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(53, 148, 71, 0.14);
+}
+
+.round-live-scorecard-header {
+  margin-bottom: 10px;
+}
+
+.round-live-scorecard-title {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #1f2937;
+}
+
+.round-live-scorecard-sub {
+  margin-top: 2px;
+  color: #6b7280;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.round-live-scorecard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.round-live-scorecard-panel {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(53, 148, 71, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.round-live-scorecard-panel-title {
+  margin-bottom: 8px;
+  color: #1f2937;
+  font-size: 0.88rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.round-live-scorecard-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.round-live-scorecard-table {
+  width: 100%;
+  min-width: 360px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.round-live-scorecard-table th,
+.round-live-scorecard-table td {
+  padding: 7px 6px;
+  border: 1px solid rgba(53, 148, 71, 0.12);
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1f2937;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.round-live-scorecard-table th:first-child,
+.round-live-scorecard-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 52px;
+  background: #eef7ef;
+  font-weight: 900;
+}
+
+.round-live-scorecard-table tr:first-child th {
+  background: #e4f3e7;
+}
+
+.round-live-scorecard-score.is-over {
+  color: #b42318;
+}
+
+.round-live-scorecard-score.is-under {
+  color: #24843a;
+}
+
+.round-live-scorecard-score.is-even {
+  color: #1f2937;
+}
+
+.round-live-scorecard-score.is-empty {
+  color: #94a3b8;
+}
+
 .round-results-feedback {
   text-align: left;
 }
@@ -334,6 +445,10 @@ html.gfg-round-fullscreen-lock body {
 
   .round-summary-meta {
     font-size: 0.76rem;
+  }
+
+  .round-live-scorecard-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -394,6 +509,21 @@ html.gfg-round-fullscreen-lock body {
 
   .round-summary-pill-value {
     font-size: 0.94rem;
+  }
+
+  .round-live-scorecard-shell {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .round-live-scorecard-panel {
+    padding: 8px;
+  }
+
+  .round-live-scorecard-table th,
+  .round-live-scorecard-table td {
+    padding: 6px 5px;
+    font-size: 0.76rem;
   }
 }
 
@@ -951,6 +1081,10 @@ html.gfg-round-fullscreen-lock body {
   gap: 10px;
 }
 
+.inline-game-footer-row--end {
+  justify-content: flex-end;
+}
+
 .inline-game-note {
   padding: 12px 14px;
   border-radius: 16px;
@@ -992,5 +1126,186 @@ html.gfg-round-fullscreen-lock body {
 
   .inline-game-footer-row {
     align-items: stretch;
+  }
+}
+
+.round-inline-confirm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.round-inline-confirm-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.54);
+  backdrop-filter: blur(4px);
+}
+
+.round-inline-confirm-panel {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  max-height: min(88vh, 720px);
+  overflow-y: auto;
+  padding: 20px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(246, 250, 246, 0.98));
+  box-shadow: 0 28px 58px rgba(15, 23, 42, 0.28);
+}
+
+.round-inline-confirm-meta {
+  color: #6b7280;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.round-inline-confirm-body {
+  display: grid;
+  gap: 12px;
+}
+
+.round-inline-confirm-card {
+  padding: 14px;
+  border: 1px solid rgba(19, 32, 51, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.round-inline-confirm-kicker {
+  margin-bottom: 4px;
+  color: #359447;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.round-inline-confirm-result {
+  color: #1f2937;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.round-inline-confirm-copy {
+  margin-top: 6px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.round-inline-confirm-birdie {
+  display: grid;
+  gap: 10px;
+}
+
+.round-inline-confirm-birdie-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.round-inline-confirm-birdie-btn {
+  min-height: 46px;
+  border-radius: 14px;
+  font-weight: 800;
+}
+
+.round-inline-confirm-birdie-btn.is-selected {
+  outline: 3px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.round-inline-confirm-payouts {
+  display: grid;
+  gap: 10px;
+}
+
+.round-inline-confirm-payout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(53, 148, 71, 0.14);
+  border-radius: 16px;
+  background: rgba(248, 252, 248, 0.95);
+}
+
+.round-inline-confirm-payout-name {
+  color: #1f2937;
+  font-weight: 900;
+}
+
+.round-inline-confirm-payout-metrics {
+  text-align: right;
+}
+
+.round-inline-confirm-payout-points,
+.round-inline-confirm-payout-money {
+  display: block;
+  font-weight: 800;
+}
+
+.round-inline-confirm-payout-money {
+  color: #359447;
+}
+
+.round-inline-confirm-pot {
+  padding: 12px 14px;
+  border: 1px solid rgba(250, 208, 46, 0.32);
+  border-radius: 16px;
+  background: rgba(250, 208, 46, 0.12);
+  color: #1f2937;
+  font-weight: 800;
+}
+
+.round-inline-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+@media (max-width: 767px) {
+  .gfg-round-page #holeNavCard,
+  .gfg-round-page #holeSetupCard,
+  .gfg-round-page #inlineGameHoleCard,
+  .gfg-round-page #inlineGameScoreboardCard,
+  .gfg-round-page #scoreboardCard {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .round-inline-confirm-panel {
+    width: min(520px, 100%);
+    padding: 18px;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .round-inline-confirm-modal {
+    padding: 10px;
+  }
+
+  .round-inline-confirm-birdie-buttons,
+  .round-inline-confirm-actions {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .round-inline-confirm-payout {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .round-inline-confirm-payout-metrics {
+    text-align: left;
   }
 }

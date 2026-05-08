@@ -162,6 +162,12 @@ document.querySelectorAll(".player666").forEach((i, idx) => {
   };
 });
 
+window.GFGGameFriends?.attachPlayerSuggestions({
+  inputSelector: ".player666",
+  helperId: "sixesFriendSuggestionHint",
+  listId: "sixesFriendSuggestions"
+});
+
 selfPlayerSelect?.addEventListener("change", () => {
   selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
 });

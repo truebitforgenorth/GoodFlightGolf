@@ -218,6 +218,12 @@ Drop this where you want the unified Wolf guide to appear
               </p>
 
               <p>
+                The Wolf has to make that decision in real time. After each golfer hits, the Wolf must either pick that
+                drive before the next player tees off or pass on it. Once the next player hits, the previous player can
+                no longer be chosen.
+              </p>
+
+              <p>
                 The strategy comes from timing. The Wolf can choose a partner after seeing a shot they like, but once
                 the
                 choice is made, it is locked in. No take-backs, no “I didn’t mean it like that,” and no emotional
@@ -616,6 +622,7 @@ Drop this where you want the unified Wolf guide to appear
           <div class="col-6"><input class="form-control player" placeholder="Player 3"></div>
           <div class="col-6"><input class="form-control player" placeholder="Player 4"></div>
         </div>
+        <p id="wolfFriendSuggestionHint" class="game-friend-suggestion-note mb-3"></p>
 
         <div class="row g-2 mb-3">
           <div class="col-12 col-md-6">
@@ -838,8 +845,9 @@ Drop this where you want the unified Wolf guide to appear
 <section class="card game-card p-4 mb-3" aria-labelledby="howToPlayWolfHeading">
 <h2 id="howToPlayWolfHeading">How to Play Wolf Golf</h2>
 <p>
-Wolf is a golf game for four players where one golfer is the Wolf on each hole. After tee shots, the Wolf may
-choose a partner or play alone depending on the format your group uses.
+Wolf is a golf game for four players where one golfer is the Wolf on each hole. After each tee shot, the Wolf must
+choose that player before the next golfer hits or pass and move on. Once the next player tees off, the earlier player
+can no longer be selected as a partner.
 </p>
 <p>
 Many groups also use variations like <strong>Lone Wolf</strong>, <strong>Blind Wolf</strong>, and
@@ -1141,7 +1149,9 @@ scoring pressure, and flexible payout options.
   <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
 
   <script src="../myscripts.js"></script>
+  <script src="../leaderboard.js"></script>
   <script src="../round-session.js"></script>
+  <script src="game-friends.js"></script>
   <script src="wolf.js"></script>
   <script src="../terms/tos-guard.js"></script>
 

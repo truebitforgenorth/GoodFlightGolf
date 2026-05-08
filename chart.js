@@ -69,6 +69,12 @@ saveHandicapBtn.addEventListener('click', async () => {
       date: firebase.firestore.FieldValue.serverTimestamp()
     });
 
+    await window.GFGLeaderboard?.syncCurrentUserProfile?.({
+      user,
+      db: firebase.firestore(),
+      userData: { handicap: currentHandicapValue }
+    });
+
     updateSavedHandicapDisplay(currentHandicapValue);
     loadHandicapChart(); // Reload chart
   } catch (error) {

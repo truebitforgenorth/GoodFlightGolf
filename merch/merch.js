@@ -59,7 +59,7 @@
   const addToCartBtn = $("addToCartBtn");
   const quickBuyBtn = $("quickBuyBtn");
 
-  // Admin-only merch catalog. Replace these images and wire Shopify URLs when ready.
+  // Admin-only merch catalog. Swap these over to Shopify product data when the store is ready.
   const PRODUCTS = [
     {
       id: "gfg-custom-putter-01",
@@ -71,7 +71,7 @@
       isNew: true,
       sizes: ['33"', '34"', '35"'],
       colors: ["Black PVD", "Silver", "Raw"],
-      img: "../photos/ball.jpg",
+      img: "../photos/merch/goldputter.png",
       desc: "A private custom-shop putter slot built for premium head finishes, clean sight lines, and personalized specs."
     },
     {
@@ -84,7 +84,7 @@
       isNew: true,
       sizes: ["Standard", "XL"],
       colors: ["Green", "Black"],
-      img: "../photos/course.jpg",
+      img: "../photos/merch/puttingmat.png",
       desc: "A branded putting mat option for indoor reps, clean roll feedback, and a premium GoodFlight practice setup."
     }
   ];

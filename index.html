@@ -279,6 +279,14 @@
     </div>
   </section>
 
+  <section class="container gfg-section gfg-home-links-section">
+    <div class="gfg-home-links-shell">
+      <p class="gfg-home-links-kicker">Quick Links</p>
+      <h2 class="gfg-home-links-title">Jump straight into the part of the site you want.</h2>
+      <div id="homeQuickLinksTarget"></div>
+    </div>
+  </section>
+
   <!-- SECOND PARALLAX (optional) -->
   <section class="parallax-section">
     <div class="parallax-content">
@@ -396,6 +404,15 @@
         <p class="gfg-footer-copy">
           © 2026 GoodFlightGolf. All rights reserved.
         </p>
+
+        <div class="gfg-footer-links">
+          <a href="rounds/scorecard.html">The Scorecard</a>
+          <a href="games/goodflightgames.html">GoodFlight Games</a>
+          <a href="playerlog.html">The LabRoom</a>
+          <a href="NewsArticles/social&news.html">The Clubhouse</a>
+          <a href="other/about.html">About Us</a>
+          <a id="adminMerchFooterLink" class="d-none" href="merch/merch.html">Custom Gear Shop</a>
+        </div>
 
         <p class="gfg-footer-ownership">
           GoodFlightGolf is owned and operated by
@@ -529,12 +546,21 @@
   <script src="adminAccess.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const homeLinkList = document.getElementById("homelist");
+      const homeLinkTarget = document.getElementById("homeQuickLinksTarget");
       const heroMerchLink = document.getElementById("adminMerchHeroLink");
+      const footerMerchLink = document.getElementById("adminMerchFooterLink");
       const merchCard = document.getElementById("adminMerchCard");
+
+      if (homeLinkList && homeLinkTarget) {
+        homeLinkList.className = "gfg-home-links-grid";
+        homeLinkTarget.appendChild(homeLinkList);
+      }
 
       function syncAdminMerchVisibility(detail) {
         const showAdminMerch = !!detail?.isAdmin;
         heroMerchLink?.classList.toggle("d-none", !showAdminMerch);
+        footerMerchLink?.classList.toggle("d-none", !showAdminMerch);
         merchCard?.classList.toggle("d-none", !showAdminMerch);
       }
 

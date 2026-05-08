@@ -153,6 +153,12 @@ document.querySelectorAll(".bbb-player").forEach((input, idx) => {
   });
 });
 
+window.GFGGameFriends?.attachPlayerSuggestions({
+  inputSelector: ".bbb-player",
+  helperId: "bbbFriendSuggestionHint",
+  listId: "bbbFriendSuggestions"
+});
+
 selfPlayerSelect?.addEventListener("change", () => {
   selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
 });

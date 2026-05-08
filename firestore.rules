@@ -55,8 +55,7 @@ service cloud.firestore {
     }
 
     match /friendRequests/{requestId} {
-      allow get: if isSignedIn();
-      allow list: if isFriendRequestParticipant();
+      allow read: if isSignedIn();
 
       allow create: if isSignedIn()
         && request.resource.data.fromUid == request.auth.uid

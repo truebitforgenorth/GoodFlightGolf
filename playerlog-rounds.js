@@ -33,6 +33,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const gameTotalsLoggedIn = document.getElementById("gameTotalsLoggedIn");
   const gamesPlayedLoggedIn = document.getElementById("gamesPlayedLoggedIn");
+  const gameGolferResultsLoggedIn = document.getElementById("gameGolferResultsLoggedIn");
   const loginToUseGameData = document.getElementById("loginToUseGameData");
   const savedGameDataShell = document.getElementById("savedGameDataShell");
 
@@ -43,24 +44,28 @@ window.addEventListener("DOMContentLoaded", () => {
   const bbbMoneyTotal = document.getElementById("bbbMoneyTotal");
   const bbbPointsTotal = document.getElementById("bbbPointsTotal");
   const gamesPlayedList = document.getElementById("gamesPlayedList");
+  const gameGolferResultsList = document.getElementById("gameGolferResultsList");
 
   const loginToUsePlayerData = document.getElementById("loginToUsePlayerData");
   const playerDataShell = document.getElementById("playerDataShell");
+  const leaderboardAllList = document.getElementById("leaderboardAllList");
+  const leaderboardAllStatus = document.getElementById("leaderboardAllStatus");
+  const leaderboardFriendsList = document.getElementById("leaderboardFriendsList");
+  const leaderboardFriendsStatus = document.getElementById("leaderboardFriendsStatus");
 
-  const INITIAL_ROUNDS_TO_SHOW = 4;
-  const INITIAL_GAMES_TO_SHOW = 5;
+  const INITIAL_ROUNDS_TO_SHOW = 3;
+  const INITIAL_GAMES_TO_SHOW = 2;
 
   let currentUser = null;
   let allRounds = [];
   let allGames = [];
-  let roundsExpanded = false;
-  let gamesExpanded = false;
   let activeAnalyticsView = "drive";
   let analyticsChartInstance = null;
   let analyticsResizeTimeout = null;
-  let activeGameAnalyticsView = "moneyTime";
+  let activeGameAnalyticsView = "golferAverages";
   let gameAnalyticsChartInstance = null;
   let gameAnalyticsResizeTimeout = null;
+  let savedListResizeTimeout = null;
 
   const gameTotalsHeader = gameTotalsLoggedIn?.closest(".card")?.querySelector(".card-header");
   const gamesPlayedHeader = gamesPlayedLoggedIn?.closest(".card")?.querySelector(".card-header");
@@ -76,6 +81,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (gameDataLockIcon) {
     gameDataLockIcon.textContent = String.fromCodePoint(0x1F512);
+  }
+
+  const savedRoundsStatsRow = savedRoundsLoggedIn?.querySelector(".row.g-3.mb-4");
+
+  if (
+    savedRoundsStatsRow &&
+    courseDataLoggedIn &&
+    !courseDataLoggedIn.contains(savedRoundsStatsRow)
+  ) {
+    courseDataLoggedIn.prepend(savedRoundsStatsRow);
   }
 
   [
@@ -165,6 +180,214 @@ window.addEventListener("DOMContentLoaded", () => {
       sample.reduce((sum, value) => sum + value, 0) / sample.length;
 
     return Number(average.toFixed(1));
+  }
+
+  function formatLeaderboardMetric(value) {
+    const averagePoints = Number(value);
+    return Number.isFinite(averagePoints) ? averagePoints.toFixed(2) : "-";
+  }
+
+  function getLeaderboardDisplayName(profile, activeUid) {
+    if (profile?.uid && profile.uid === activeUid) {
+      return profile?.leaderboardOptIn && profile?.username
+        ? `You (${profile.username})`
+        : "You";
+    }
+
+    return profile?.leaderboardOptIn && profile?.username
+      ? profile.username
+      : "Private Golfer";
+  }
+
+  function getLeaderboardAvatarMarkup(profile, activeUid) {
+    const canShowIdentity = profile?.uid === activeUid || profile?.leaderboardOptIn;
+    const name = getLeaderboardDisplayName(profile, activeUid);
+    const initial = escapeHtml(String(name || "G").trim().charAt(0).toUpperCase() || "G");
+
+    if (canShowIdentity && profile?.photoURL) {
+      return `<div class="gfg-leaderboard-avatar"><img src="${escapeHtml(profile.photoURL)}" alt="${escapeHtml(name)} profile picture"></div>`;
+    }
+
+    return `<div class="gfg-leaderboard-avatar" aria-hidden="true">${initial}</div>`;
+  }
+
+  function normalizeLeaderboardProfiles(profiles, activeUid) {
+    return (Array.isArray(profiles) ? profiles : [])
+      .map((profile) => ({
+        uid: profile?.uid || "",
+        username: String(profile?.username || "").trim(),
+        photoURL: String(profile?.photoURL || "").trim(),
+        leaderboardOptIn: !!profile?.leaderboardOptIn,
+        leaderboardWolfAvgPoints: Number(profile?.leaderboardWolfAvgPoints),
+        leaderboardWolfGamesPlayed: Number(profile?.leaderboardWolfGamesPlayed) || 0,
+        leaderboardSource: String(profile?.leaderboardSource || ""),
+        isCurrentUser: profile?.uid === activeUid
+      }))
+      .filter((profile) => Number.isFinite(profile.leaderboardWolfAvgPoints))
+      .sort((a, b) => {
+        if (b.leaderboardWolfAvgPoints !== a.leaderboardWolfAvgPoints) {
+          return b.leaderboardWolfAvgPoints - a.leaderboardWolfAvgPoints;
+        }
+        if (b.leaderboardWolfGamesPlayed !== a.leaderboardWolfGamesPlayed) {
+          return b.leaderboardWolfGamesPlayed - a.leaderboardWolfGamesPlayed;
+        }
+        return (a.username || "").localeCompare(b.username || "");
+      });
+  }
+
+  function renderLeaderboardList(target, profiles, emptyMessage, activeUid) {
+    if (!target) return;
+
+    const normalized = normalizeLeaderboardProfiles(profiles, activeUid);
+    if (!normalized.length) {
+      target.innerHTML = `<div class="gfg-leaderboard-empty">${escapeHtml(emptyMessage)}</div>`;
+      return;
+    }
+
+      target.innerHTML = normalized.map((profile, index) => `
+        <div class="gfg-leaderboard-row">
+          <div class="gfg-leaderboard-rank">#${index + 1}</div>
+          <div class="gfg-leaderboard-player">
+            ${getLeaderboardAvatarMarkup(profile, activeUid)}
+            <div>
+              <div class="gfg-leaderboard-name">${escapeHtml(getLeaderboardDisplayName(profile, activeUid))}</div>
+              <div class="gfg-leaderboard-meta">${escapeHtml(`${profile.leaderboardWolfGamesPlayed} saved Wolf game${profile.leaderboardWolfGamesPlayed === 1 ? "" : "s"}`)}</div>
+            </div>
+          </div>
+          <div class="gfg-leaderboard-score">
+            <div class="gfg-leaderboard-score-value">${escapeHtml(formatLeaderboardMetric(profile.leaderboardWolfAvgPoints))}</div>
+            <div class="gfg-leaderboard-score-label">Avg Wolf Pts/Game</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+  async function loadAllUsersLeaderboard() {
+    if (!leaderboardAllList || !leaderboardAllStatus || !window.firebase?.firestore) return;
+
+    leaderboardAllStatus.textContent = "Loading Wolf leaderboard...";
+
+      try {
+        const snap = await firebase
+          .firestore()
+          .collection("publicUsers")
+          .orderBy("leaderboardWolfAvgPoints", "desc")
+          .limit(50)
+          .get();
+
+      const profiles = snap.docs.map((doc) => ({
+        uid: doc.id,
+        ...doc.data()
+      }));
+
+        renderLeaderboardList(
+          leaderboardAllList,
+          profiles,
+          "No Wolf leaderboard entries yet. Save a Wolf game to get the board started.",
+          currentUser?.uid || ""
+        );
+        leaderboardAllStatus.textContent = `${normalizeLeaderboardProfiles(profiles, currentUser?.uid || "").length} golfers on the public board.`;
+      } catch (error) {
+      console.error("Could not load all-users leaderboard:", error);
+        leaderboardAllStatus.textContent = "Could not load the public Wolf leaderboard.";
+      renderLeaderboardList(
+        leaderboardAllList,
+        [],
+        "The public leaderboard is unavailable right now.",
+        currentUser?.uid || ""
+      );
+    }
+  }
+
+  async function loadFriendsLeaderboard() {
+    if (!leaderboardFriendsList || !leaderboardFriendsStatus || !window.firebase?.firestore) return;
+
+      if (!currentUser) {
+        leaderboardFriendsStatus.textContent = "Log in to compare your Wolf average against your friends.";
+        renderLeaderboardList(
+          leaderboardFriendsList,
+          [],
+          "Your friends leaderboard appears here after you log in.",
+        ""
+      );
+      return;
+    }
+
+      leaderboardFriendsStatus.textContent = "Loading friends Wolf leaderboard...";
+
+    try {
+      const requests = firebase.firestore().collection("friendRequests");
+      const [incomingSnap, outgoingSnap] = await Promise.all([
+        requests.where("toUid", "==", currentUser.uid).get(),
+        requests.where("fromUid", "==", currentUser.uid).get()
+      ]);
+
+      const accepted = [...incomingSnap.docs, ...outgoingSnap.docs].filter(
+        (doc) => doc.data()?.status === "accepted"
+      );
+
+      const friendUids = new Set([currentUser.uid]);
+      accepted.forEach((doc) => {
+        const data = doc.data() || {};
+        if (data.fromUid) friendUids.add(data.fromUid);
+        if (data.toUid) friendUids.add(data.toUid);
+      });
+
+      const publicSnaps = await Promise.all(
+        Array.from(friendUids).map((uid) =>
+          firebase.firestore().collection("publicUsers").doc(uid).get()
+        )
+      );
+
+      const profiles = publicSnaps
+        .filter((snap) => snap.exists)
+        .map((snap) => ({
+          uid: snap.id,
+          ...snap.data()
+        }));
+
+        renderLeaderboardList(
+          leaderboardFriendsList,
+          profiles,
+          "Add friends with saved Wolf games to build your private leaderboard.",
+          currentUser.uid
+        );
+        leaderboardFriendsStatus.textContent = `${normalizeLeaderboardProfiles(profiles, currentUser.uid).length} golfers in your friends leaderboard.`;
+    } catch (error) {
+      console.error("Could not load friends leaderboard:", error);
+        leaderboardFriendsStatus.textContent = "Could not load your friends Wolf leaderboard.";
+      renderLeaderboardList(
+        leaderboardFriendsList,
+        [],
+        "Your friends leaderboard is unavailable right now.",
+        currentUser.uid
+      );
+    }
+  }
+
+  async function syncLeaderboardProfile(games) {
+    if (!currentUser || !window.GFGLeaderboard?.syncCurrentUserProfile || !window.firebase?.firestore) return;
+
+    try {
+      const syncOptions = {
+        user: currentUser,
+        db: firebase.firestore()
+      };
+
+      if (Array.isArray(games)) {
+        syncOptions.games = games;
+      }
+
+      await window.GFGLeaderboard.syncCurrentUserProfile(syncOptions);
+    } catch (error) {
+      console.warn("Could not sync leaderboard profile:", error);
+    }
+  }
+
+  async function refreshLeaderboards(games) {
+    await syncLeaderboardProfile(games);
+    await loadAllUsersLeaderboard();
+    await loadFriendsLeaderboard();
   }
 
   function getRoundHolesCount(round) {
@@ -1653,6 +1876,126 @@ window.addEventListener("DOMContentLoaded", () => {
     const moneyValues = orderedGames.map((game) => Number(getGameMoneyFromData(game).toFixed(2)));
     const totalMoney = moneyValues.reduce((sum, value) => sum + value, 0);
 
+    if (activeGameAnalyticsView === "golferAverages") {
+      const golferSummaries = buildGolferResultsSummary(orderedGames).slice(0, 8);
+
+      gameAnalyticsSummary.textContent = golferSummaries.length
+        ? "See who you partner with most and how many points you win per round with each golfer."
+        : "Save Wolf or 666 games with named golfers to build your partner analytics chart.";
+      gameAnalyticsStatus.textContent = golferSummaries.length
+        ? `Most frequent partner right now: ${golferSummaries[0]?.displayName || "None"}.`
+        : "This chart uses named golfers from saved Wolf and 666 games plus your tracked player slot.";
+
+      if (!golferSummaries.length) {
+        return;
+      }
+
+      gameAnalyticsChartInstance = new Chart(ctx, {
+        data: {
+          labels: golferSummaries.map((entry) => entry.displayName),
+          datasets: [
+            {
+              type: "bar",
+              label: "Partnered Rounds",
+              data: golferSummaries.map((entry) => entry.games),
+              backgroundColor: "rgba(53, 148, 71, 0.82)",
+              borderRadius: 12,
+              borderSkipped: false,
+              maxBarThickness: isMobileChart ? 34 : 46,
+              yAxisID: "yGames"
+            },
+            {
+              type: "line",
+              label: "Avg Partner Points / Round",
+              data: golferSummaries.map((entry) => entry.avgPoints),
+              borderColor: "#132033",
+              backgroundColor: "rgba(19, 32, 51, 0.12)",
+              pointBackgroundColor: "#132033",
+              pointBorderColor: "#ffffff",
+              pointBorderWidth: 2,
+              pointRadius: isMobileChart ? 3.5 : 4.5,
+              pointHoverRadius: isMobileChart ? 5 : 6,
+              borderWidth: 3,
+              tension: 0.28,
+              yAxisID: "yPoints"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: "index",
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              position: isMobileChart ? "bottom" : "top",
+              labels: {
+                usePointStyle: true,
+                padding: isMobileChart ? 10 : 14,
+                font: {
+                  size: isMobileChart ? 10 : 12
+                }
+              }
+            }
+          },
+          scales: {
+            yGames: {
+              position: "left",
+              beginAtZero: true,
+              ticks: {
+                precision: 0,
+                font: {
+                  size: isMobileChart ? 10 : 12
+                }
+              },
+              title: {
+                display: true,
+                text: "Partnered Rounds",
+                font: {
+                  size: isMobileChart ? 11 : 12
+                }
+              }
+            },
+            yPoints: {
+              position: "right",
+              beginAtZero: true,
+              grid: {
+                drawOnChartArea: false
+              },
+              ticks: {
+                font: {
+                  size: isMobileChart ? 10 : 12
+                }
+              },
+              title: {
+                display: true,
+                text: "Avg Partner Points / Round",
+                font: {
+                  size: isMobileChart ? 11 : 12
+                }
+              }
+            },
+            x: {
+              ticks: {
+                autoSkip: false,
+                maxRotation: isMobileChart ? 50 : 0,
+                minRotation: isMobileChart ? 50 : 0,
+                font: {
+                  size: isMobileChart ? 10 : 12
+                }
+              },
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+      return;
+    }
+
     if (activeGameAnalyticsView === "moneyTime") {
       const runningTotals = moneyValues.reduce((values, value) => {
         const lastValue = values.length ? values[values.length - 1] : 0;
@@ -2152,9 +2495,38 @@ window.addEventListener("DOMContentLoaded", () => {
     if (avgGirValue) avgGirValue.textContent = `${girPct}%`;
   }
 
-  function getVisibleRounds() {
-    if (roundsExpanded) return allRounds;
-    return allRounds.slice(0, INITIAL_ROUNDS_TO_SHOW);
+  function updateSavedListScrollHeights() {
+    syncScrollablePaneHeight(
+      document.getElementById("savedRoundsScrollPane"),
+      INITIAL_ROUNDS_TO_SHOW
+    );
+    syncScrollablePaneHeight(
+      document.getElementById("gamesPlayedScrollPane"),
+      INITIAL_GAMES_TO_SHOW
+    );
+  }
+
+  function syncScrollablePaneHeight(scrollPane, visibleCount) {
+    if (!scrollPane) return;
+
+    const cards = Array.from(scrollPane.children).filter(
+      (child) => child.classList?.contains("card")
+    );
+
+    scrollPane.style.maxHeight = "none";
+    scrollPane.classList.remove("is-scrollable");
+
+    if (cards.length <= visibleCount) return;
+
+    const lastVisibleCard = cards[visibleCount - 1];
+    const visibleHeight =
+      lastVisibleCard.offsetTop +
+      lastVisibleCard.offsetHeight -
+      cards[0].offsetTop +
+      4;
+
+    scrollPane.style.maxHeight = `${Math.ceil(visibleHeight)}px`;
+    scrollPane.classList.add("is-scrollable");
   }
 
   function renderSavedRounds() {
@@ -2171,9 +2543,7 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const visibleRounds = getVisibleRounds();
-
-    const roundsMarkup = visibleRounds
+    const roundsMarkup = allRounds
       .map(
         (round) => `
         <div class="card mb-3">
@@ -2251,28 +2621,17 @@ window.addEventListener("DOMContentLoaded", () => {
       )
       .join("");
 
-    const toggleMarkup =
-      allRounds.length > INITIAL_ROUNDS_TO_SHOW
-        ? `
-        <div class="d-flex justify-content-center mt-3">
-          <button type="button" id="toggleRoundsBtn" class="gfg-pill-btn">
-            ${roundsExpanded ? "Show Less Rounds" : `Show More Rounds (${allRounds.length - INITIAL_ROUNDS_TO_SHOW} more)`}
-          </button>
-        </div>
-      `
-        : "";
-
     savedRoundsList.innerHTML = `
-      <div class="mb-3">
-        <div class="small text-muted">
-          Showing ${visibleRounds.length} of ${allRounds.length} saved rounds
-        </div>
+      <div class="playerlog-list-meta small text-muted mb-3">
+        ${allRounds.length} saved round${allRounds.length === 1 ? "" : "s"}
       </div>
-      ${roundsMarkup}
-      ${toggleMarkup}
+      <div id="savedRoundsScrollPane" class="playerlog-scroll-pane">
+        ${roundsMarkup}
+      </div>
     `;
 
     bindRoundButtons();
+    window.requestAnimationFrame(updateSavedListScrollHeights);
   }
 
   function updateGameTotals(games) {
@@ -2304,9 +2663,270 @@ window.addEventListener("DOMContentLoaded", () => {
     if (bbbPointsTotal) bbbPointsTotal.textContent = `${totals.bbb.points} pts`;
   }
 
-  function getVisibleGames() {
-    if (gamesExpanded) return allGames;
-    return allGames.slice(0, INITIAL_GAMES_TO_SHOW);
+  function normalizeGolferName(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
+  function isPlaceholderGolferName(value) {
+    const trimmed = String(value || "").trim();
+    return !trimmed || /^player\s+\d+$/i.test(trimmed);
+  }
+
+  function getTrackedPlayerIdentifier(game) {
+    if (Number.isInteger(game?.trackedPlayerIndex)) {
+      return { index: game.trackedPlayerIndex, name: String(game?.players?.[game.trackedPlayerIndex] || "").trim() };
+    }
+
+    const trackedName = String(game?.trackedPlayerName || "").trim();
+    return { index: null, name: trackedName };
+  }
+
+  function getNormalizedPlayerNameMap(players) {
+    const playerMap = new Map();
+
+    players.forEach((playerName, idx) => {
+      const displayName = String(playerName || "").trim();
+      const normalizedName = normalizeGolferName(displayName);
+
+      if (isPlaceholderGolferName(displayName) || !normalizedName) return;
+      playerMap.set(idx, { displayName, normalizedName });
+    });
+
+    return playerMap;
+  }
+
+  function addPartnerGameEntry(partnerMap, playerInfo, points = 0) {
+    if (!playerInfo?.normalizedName) return;
+
+    if (!partnerMap.has(playerInfo.normalizedName)) {
+      partnerMap.set(playerInfo.normalizedName, {
+        displayName: playerInfo.displayName,
+        points: 0
+      });
+    }
+
+    const entry = partnerMap.get(playerInfo.normalizedName);
+    entry.points += Number(points) || 0;
+  }
+
+  function getWolfTeammateIndexForTrackedPlayer(hole, trackedIndex) {
+    if (!hole || !Number.isInteger(trackedIndex)) return null;
+
+    const wolfIndex = Number(hole?.wolf);
+    const partnerIndex = Number(hole?.partner);
+    const hasWolf = Number.isInteger(wolfIndex);
+    const hasPartner = Number.isInteger(partnerIndex);
+
+    if ((hole?.mode === "team" || !hole?.mode) && hasWolf && hasPartner) {
+      if (trackedIndex === wolfIndex) return partnerIndex;
+      if (trackedIndex === partnerIndex) return wolfIndex;
+
+      const others = [0, 1, 2, 3].filter((value) => value !== wolfIndex && value !== partnerIndex);
+      if (others.includes(trackedIndex)) {
+        return others.find((value) => value !== trackedIndex) ?? null;
+      }
+    }
+
+    return null;
+  }
+
+  function buildWolfPartnerGameSummary(game, trackedIndex) {
+    const players = Array.isArray(game?.players) ? game.players : [];
+    const playerMap = getNormalizedPlayerNameMap(players);
+    const partnerMap = new Map();
+    const holes = getGameHoleEntries(game);
+    let carryover = 0;
+
+    holes.forEach((hole) => {
+      const result = String(hole?.result || "");
+      const partnerIndex = getWolfTeammateIndexForTrackedPlayer(hole, trackedIndex);
+      const partnerInfo = playerMap.get(partnerIndex);
+      const birdieMultiplier = hole?.birdieDouble ? 2 : 1;
+
+      if (partnerInfo) {
+        addPartnerGameEntry(partnerMap, partnerInfo, 0);
+      }
+
+      if (!result) return;
+
+      if (result === "push") {
+        if (game?.carryoverEnabled !== false) {
+          carryover += Number(game?.tieSetPoints) || 0;
+        }
+        return;
+      }
+
+      const pot = carryover;
+      carryover = 0;
+
+      if (!partnerInfo) return;
+
+      const base = Number(game?.base) || 0;
+      const teamPoints = (base / 2) * birdieMultiplier;
+      const wolfIndex = Number(hole?.wolf);
+      const partnerSlotIndex = Number(hole?.partner);
+      const trackedWonWithPartner =
+        (result === "wolfTeam" && (trackedIndex === wolfIndex || trackedIndex === partnerSlotIndex)) ||
+        (result === "others" && trackedIndex !== wolfIndex && trackedIndex !== partnerSlotIndex);
+
+      if (trackedWonWithPartner) {
+        addPartnerGameEntry(partnerMap, partnerInfo, teamPoints + (pot / 2));
+      }
+    });
+
+    return partnerMap;
+  }
+
+  function buildSixesPartnerGameSummary(game, trackedIndex) {
+    const players = Array.isArray(game?.players) ? game.players : [];
+    const playerMap = getNormalizedPlayerNameMap(players);
+    const partnerMap = new Map();
+    const holes = getGameHoleEntries(game);
+    const base = Number(game?.base) || 0;
+    const tieSetPoints = Number(game?.tieSetPoints);
+    const tieMultiplier = Number(game?.tieMultiplier) || 1;
+    let carryover = 0;
+
+    holes.forEach((hole, index) => {
+      const holeNumber = index + 1;
+      const teams =
+        holeNumber >= 1 && holeNumber <= 6 ? { team1: [0, 1], team2: [2, 3] } :
+        holeNumber >= 7 && holeNumber <= 12 ? { team1: [0, 2], team2: [1, 3] } :
+        { team1: [0, 3], team2: [1, 2] };
+      const trackedTeam =
+        teams.team1.includes(trackedIndex) ? teams.team1 :
+        teams.team2.includes(trackedIndex) ? teams.team2 :
+        null;
+      const partnerIndex = trackedTeam?.find((value) => value !== trackedIndex) ?? null;
+      const partnerInfo = playerMap.get(partnerIndex);
+      const result = String(hole?.result || "");
+
+      if (partnerInfo) {
+        addPartnerGameEntry(partnerMap, partnerInfo, 0);
+      }
+
+      if (!result) return;
+
+      if (result === "push") {
+        if (Number.isFinite(tieSetPoints)) {
+          carryover += tieSetPoints;
+        } else if (tieMultiplier > 1) {
+          carryover += base * (tieMultiplier - 1);
+        } else {
+          carryover += base;
+        }
+        return;
+      }
+
+      if (!trackedTeam || !partnerInfo) {
+        carryover = 0;
+        return;
+      }
+
+      const winners = result === "team1" ? teams.team1 : result === "team2" ? teams.team2 : [];
+      const payout = base + carryover;
+      carryover = 0;
+
+      if (winners.includes(trackedIndex)) {
+        addPartnerGameEntry(partnerMap, partnerInfo, payout);
+      }
+    });
+
+    return partnerMap;
+  }
+
+  function getPartnerGameSummary(game) {
+    const trackedIndex = getTrackedPlayerIndex(game);
+    const gameType = normalizeGameType(game);
+
+    if (trackedIndex === null) return new Map();
+    if (gameType === "wolf") return buildWolfPartnerGameSummary(game, trackedIndex);
+    if (gameType === "666") return buildSixesPartnerGameSummary(game, trackedIndex);
+
+    return new Map();
+  }
+
+  function buildGolferResultsSummary(games) {
+    const summaryMap = new Map();
+
+    games.forEach((game) => {
+      const partnerSummary = getPartnerGameSummary(game);
+      if (!partnerSummary.size) return;
+
+      const gameTypeLabel = getSafeGameLabel({ gameType: normalizeGameType(game) });
+      const dollarValue = Number(game?.dollarValue) || 0;
+
+      partnerSummary.forEach((partnerEntry, normalizedName) => {
+        if (!summaryMap.has(normalizedName)) {
+          summaryMap.set(normalizedName, {
+            displayName: partnerEntry.displayName,
+            games: 0,
+            points: 0,
+            money: 0,
+            formats: new Set()
+          });
+        }
+
+        const entry = summaryMap.get(normalizedName);
+        entry.games += 1;
+        entry.points += partnerEntry.points;
+        entry.money += partnerEntry.points * dollarValue;
+        entry.formats.add(gameTypeLabel);
+      });
+    });
+
+    return Array.from(summaryMap.values()).map((entry) => ({
+      ...entry,
+      avgPoints: entry.games ? Number((entry.points / entry.games).toFixed(2)) : 0
+    })).sort((a, b) => {
+      if (b.games !== a.games) return b.games - a.games;
+      if (b.avgPoints !== a.avgPoints) return b.avgPoints - a.avgPoints;
+      return b.money - a.money;
+    });
+  }
+
+  function renderGameGolferResults(games) {
+    if (!gameGolferResultsList) return;
+
+    const summaries = buildGolferResultsSummary(games);
+    if (!summaries.length) {
+      gameGolferResultsList.innerHTML = `
+        <div class="card">
+          <div class="card-body">
+            <p class="mb-0">Save Wolf or 666 games with named golfers and this section will show how your partner points and money trend with each golfer you team up with.</p>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    gameGolferResultsList.innerHTML = `
+      <p class="game-golfer-results-summary">
+        These totals are based on the rounds where that golfer was your teammate in a saved Wolf or 666 game, using your tracked player slot for partner points and money.
+      </p>
+      <div class="game-golfer-results-grid">
+        ${summaries.map((entry) => `
+          <div class="game-golfer-results-card">
+            <div class="game-golfer-results-name">${escapeHtml(entry.displayName)}</div>
+            <div class="game-golfer-results-formats">${escapeHtml(Array.from(entry.formats).join(" · "))}</div>
+            <div class="game-golfer-results-metrics">
+              <div class="game-golfer-results-metric">
+                <div class="small text-muted">Partnered Rounds</div>
+                <div class="fw-bold">${entry.games}</div>
+              </div>
+              <div class="game-golfer-results-metric">
+                <div class="small text-muted">Partner Points Won</div>
+                <div class="fw-bold">${entry.points}</div>
+              </div>
+              <div class="game-golfer-results-metric">
+                <div class="small text-muted">Partner Money Won</div>
+                <div class="fw-bold">${formatMoney(entry.money)}</div>
+              </div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `;
   }
 
   function renderSavedGames() {
@@ -2323,9 +2943,7 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const visibleGames = getVisibleGames();
-
-    const html = visibleGames.map((game) => {
+    const html = allGames.map((game) => {
       const type = normalizeGameType(game);
       const label = getSafeGameLabel(game);
       const totals = Array.isArray(game?.totals) ? game.totals : [];
@@ -2395,44 +3013,20 @@ window.addEventListener("DOMContentLoaded", () => {
       `;
     }).join("");
 
-    const toggleMarkup =
-      allGames.length > INITIAL_GAMES_TO_SHOW
-        ? `
-          <div class="d-flex justify-content-center mt-3">
-            <button type="button" id="toggleGamesBtn" class="gfg-pill-btn">
-              ${gamesExpanded ? "Show Less Games" : `Show More Games (${allGames.length - INITIAL_GAMES_TO_SHOW} more)`}
-            </button>
-          </div>
-        `
-        : "";
-
     gamesPlayedList.innerHTML = `
-      <div class="mb-3">
-        <div class="small text-muted">
-          Showing ${visibleGames.length} of ${allGames.length} saved games
-        </div>
+      <div class="playerlog-list-meta small text-muted mb-3">
+        ${allGames.length} saved game${allGames.length === 1 ? "" : "s"}
       </div>
-      ${html}
-      ${toggleMarkup}
+      <div id="gamesPlayedScrollPane" class="playerlog-scroll-pane">
+        ${html}
+      </div>
     `;
 
     bindGameButtons();
+    window.requestAnimationFrame(updateSavedListScrollHeights);
   }
 
   function bindRoundButtons() {
-    const toggleBtn = document.getElementById("toggleRoundsBtn");
-    if (toggleBtn) {
-      toggleBtn.addEventListener("click", () => {
-        roundsExpanded = !roundsExpanded;
-        renderSavedRounds();
-
-        const section = document.getElementById("savedRoundsSection");
-        if (section) {
-          section.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      });
-    }
-
     const deleteButtons = document.querySelectorAll(".delete-round-btn");
     deleteButtons.forEach((button) => {
       button.addEventListener("click", async () => {
@@ -2459,15 +3053,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
           allRounds = allRounds.filter((round) => round.id !== roundId);
 
-          if (allRounds.length <= INITIAL_ROUNDS_TO_SHOW) {
-            roundsExpanded = false;
-          }
-
           updateSummaryStats(allRounds);
           renderSavedRounds();
           renderCourseData(allRounds);
           renderAnalyticsChart(allRounds);
           renderGameAnalyticsChart(allGames, allRounds);
+          refreshLeaderboards();
         } catch (error) {
           console.error("Error deleting round:", error);
           window.alert("There was an error deleting that round.");
@@ -2479,19 +3070,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function bindGameButtons() {
-    const toggleBtn = document.getElementById("toggleGamesBtn");
-    if (toggleBtn) {
-      toggleBtn.addEventListener("click", () => {
-        gamesExpanded = !gamesExpanded;
-        renderSavedGames();
-
-        const section = document.getElementById("savedGameDataSection");
-        if (section) {
-          section.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      });
-    }
-
     const deleteButtons = document.querySelectorAll(".delete-game-btn");
     deleteButtons.forEach((button) => {
       button.addEventListener("click", async () => {
@@ -2518,13 +3096,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
           allGames = allGames.filter((game) => game.id !== gameId);
 
-          if (allGames.length <= INITIAL_GAMES_TO_SHOW) {
-            gamesExpanded = false;
-          }
-
           updateGameTotals(allGames);
+          renderGameGolferResults(allGames);
           renderSavedGames();
           renderGameAnalyticsChart(allGames, allRounds);
+          refreshLeaderboards(allGames);
         } catch (error) {
           console.error("Error deleting game:", error);
           window.alert("There was an error deleting that saved game.");
@@ -2555,6 +3131,7 @@ window.addEventListener("DOMContentLoaded", () => {
       renderCourseData(allRounds);
       renderAnalyticsChart(allRounds);
       renderGameAnalyticsChart(allGames, allRounds);
+      refreshLeaderboards();
     } catch (error) {
       console.error("Error loading saved rounds:", error);
 
@@ -2569,6 +3146,7 @@ window.addEventListener("DOMContentLoaded", () => {
       }
 
       renderGameAnalyticsChart([], allRounds);
+      refreshLeaderboards();
     }
   }
 
@@ -2588,8 +3166,10 @@ window.addEventListener("DOMContentLoaded", () => {
       .sort((a, b) => getGameSortValue(b) - getGameSortValue(a));
 
       updateGameTotals(allGames);
+      renderGameGolferResults(allGames);
       renderSavedGames();
       renderGameAnalyticsChart(allGames, allRounds);
+      refreshLeaderboards(allGames);
     } catch (error) {
       console.error("Error loading saved games:", error);
 
@@ -2598,6 +3178,16 @@ window.addEventListener("DOMContentLoaded", () => {
           <div class="card">
             <div class="card-body text-danger">
               Error loading saved games.
+            </div>
+          </div>
+        `;
+      }
+
+      if (gameGolferResultsList) {
+        gameGolferResultsList.innerHTML = `
+          <div class="card">
+            <div class="card-body text-danger">
+              Error loading golfer results.
             </div>
           </div>
         `;
@@ -2633,6 +3223,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     if (gameTotalsLoggedIn) gameTotalsLoggedIn.classList.toggle("d-none", !loggedIn);
     if (gamesPlayedLoggedIn) gamesPlayedLoggedIn.classList.toggle("d-none", !loggedIn);
+    if (gameGolferResultsLoggedIn) gameGolferResultsLoggedIn.classList.toggle("d-none", !loggedIn);
     if (gameAnalyticsLoggedIn) gameAnalyticsLoggedIn.classList.toggle("d-none", !loggedIn);
     if (loginToUseGameData) loginToUseGameData.classList.toggle("d-none", loggedIn);
     if (savedGameDataShell) savedGameDataShell.classList.toggle("is-locked", !loggedIn);
@@ -2644,7 +3235,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function resetGameDisplays() {
     allGames = [];
-    gamesExpanded = false;
 
     if (wolfMoneyTotal) wolfMoneyTotal.textContent = "—";
     if (wolfPointsTotal) wolfPointsTotal.textContent = "—";
@@ -2653,8 +3243,11 @@ window.addEventListener("DOMContentLoaded", () => {
     if (bbbMoneyTotal) bbbMoneyTotal.textContent = "—";
     if (bbbPointsTotal) bbbPointsTotal.textContent = "—";
 
+    renderGameGolferResults([]);
     renderSavedGames();
     renderGameAnalyticsChart([], allRounds);
+    loadAllUsersLeaderboard();
+    loadFriendsLeaderboard();
   }
 
   function initPlayerLogRounds() {
@@ -2670,12 +3263,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
       if (!user) {
         allRounds = [];
-        roundsExpanded = false;
         updateSummaryStats([]);
         renderSavedRounds();
         renderCourseData([]);
         renderAnalyticsChart([]);
         resetGameDisplays();
+        loadAllUsersLeaderboard();
+        loadFriendsLeaderboard();
         return;
       }
 
@@ -2709,5 +3303,9 @@ window.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", () => {
     scheduleAnalyticsRender(120);
     scheduleGameAnalyticsRender(120);
+    window.clearTimeout(savedListResizeTimeout);
+    savedListResizeTimeout = window.setTimeout(() => {
+      updateSavedListScrollHeights();
+    }, 120);
   });
 });

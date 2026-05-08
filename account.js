@@ -6,6 +6,7 @@
     loggedIn: $("accountLoggedIn"),
     avatarPreview: $("accountAvatarPreview"),
     usernameInput: $("accountUsername"),
+    leaderboardOptIn: $("accountLeaderboardOptIn"),
     emailText: $("accountEmail"),
     photoInput: $("accountPhotoInput"),
     uploadBtn: $("accountUploadBtn"),
@@ -16,6 +17,44 @@
   let currentUser = null;
   let selectedFile = null;
   let currentPhotoURL = "";
+
+  function waitForFirebaseReady() {
+    return new Promise((resolve) => {
+      const ready = () => {
+        try {
+          window.gfgEnsureFirebaseApp?.();
+          return !!(window.firebase?.apps && window.firebase.apps.length);
+        } catch (error) {
+          return false;
+        }
+      };
+
+      if (ready()) {
+        resolve(true);
+        return;
+      }
+
+      const onReady = () => {
+        if (!ready()) return;
+        window.removeEventListener("gfg-firebase-ready", onReady);
+        resolve(true);
+      };
+
+      window.addEventListener("gfg-firebase-ready", onReady);
+
+      const poll = window.setInterval(() => {
+        if (!ready()) return;
+        window.clearInterval(poll);
+        window.removeEventListener("gfg-firebase-ready", onReady);
+        resolve(true);
+      }, 50);
+
+      window.setTimeout(() => {
+        window.clearInterval(poll);
+        resolve(ready());
+      }, 5000);
+    });
+  }
 
   function setStatus(message = "", type = "") {
     if (!els.status) return;
@@ -63,6 +102,9 @@
       currentPhotoURL = publicData.photoURL || privateData.photoURL || user.photoURL || "";
 
       els.usernameInput.value = username;
+      if (els.leaderboardOptIn) {
+        els.leaderboardOptIn.checked = !!(privateData.leaderboardOptIn ?? publicData.leaderboardOptIn);
+      }
       setAvatar(currentPhotoURL, username);
       setStatus("Your profile is ready.", "success");
     } catch (error) {
@@ -140,16 +182,26 @@
         username,
         usernameLower: normalizeUsername(username),
         photoURL: currentPhotoURL,
+        leaderboardOptIn: !!els.leaderboardOptIn?.checked,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      await Promise.all([
-        firebase.firestore().collection("users").doc(currentUser.uid).set(payload, { merge: true }),
-        firebase.firestore().collection("publicUsers").doc(currentUser.uid).set({
+      await firebase.firestore().collection("users").doc(currentUser.uid).set(payload, { merge: true });
+
+      if (window.GFGLeaderboard?.syncCurrentUserProfile) {
+        await window.GFGLeaderboard.syncCurrentUserProfile({
+          user: currentUser,
+          db: firebase.firestore(),
+          userData: payload,
+          username,
+          photoURL: currentPhotoURL
+        });
+      } else {
+        await firebase.firestore().collection("publicUsers").doc(currentUser.uid).set({
           uid: currentUser.uid,
           ...payload
-        }, { merge: true })
-      ]);
+        }, { merge: true });
+      }
 
       selectedFile = null;
       setAvatar(currentPhotoURL, username);
@@ -165,22 +217,25 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    if (!window.firebase?.auth || !window.firebase?.firestore) {
-      setStatus("Firebase is not ready yet.", "error");
-      return;
-    }
+    (async () => {
+      const firebaseReady = await waitForFirebaseReady();
+      if (!firebaseReady || !window.firebase?.auth || !window.firebase?.firestore) {
+        setStatus("Firebase is not ready yet.", "error");
+        return;
+      }
 
-    els.uploadBtn?.addEventListener("click", () => els.photoInput?.click());
-    els.photoInput?.addEventListener("change", () => {
-      selectedFile = els.photoInput.files?.[0] || null;
-      if (!selectedFile) return;
+      els.uploadBtn?.addEventListener("click", () => els.photoInput?.click());
+      els.photoInput?.addEventListener("change", () => {
+        selectedFile = els.photoInput.files?.[0] || null;
+        if (!selectedFile) return;
 
-      const previewUrl = URL.createObjectURL(selectedFile);
-      setAvatar(previewUrl, els.usernameInput?.value || "G");
-      setStatus("Preview ready. Save your account to upload it.", "info");
-    });
-    els.saveBtn?.addEventListener("click", saveAccount);
+        const previewUrl = URL.createObjectURL(selectedFile);
+        setAvatar(previewUrl, els.usernameInput?.value || "G");
+        setStatus("Preview ready. Save your account to upload it.", "info");
+      });
+      els.saveBtn?.addEventListener("click", saveAccount);
 
-    firebase.auth().onAuthStateChanged(loadAccount);
+      firebase.auth().onAuthStateChanged(loadAccount);
+    })();
   });
 })();

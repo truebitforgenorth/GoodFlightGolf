@@ -1,5 +1,30 @@
 // Main login (global) - safe on all pages
 
+const GFG_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAnfVHRG6zXhUHURD8-z_7Wiwy2pO4qxF8",
+  authDomain: "fairway-fusion-3a4d4.firebaseapp.com",
+  projectId: "fairway-fusion-3a4d4",
+  storageBucket: "fairway-fusion-3a4d4.appspot.com",
+  messagingSenderId: "161862648502",
+  appId: "1:161862648502:web:3d59d3f6a8930197c26b16"
+};
+
+window.gfgEnsureFirebaseApp = function gfgEnsureFirebaseApp() {
+  if (!window.firebase) return null;
+  if (!firebase.apps || !firebase.apps.length) {
+    firebase.initializeApp(GFG_FIREBASE_CONFIG);
+  }
+  window.db = firebase.firestore();
+  return firebase.app();
+};
+
+try {
+  window.gfgEnsureFirebaseApp();
+  window.dispatchEvent(new CustomEvent("gfg-firebase-ready"));
+} catch (error) {
+  console.error("Global Firebase init failed:", error);
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   try {
     if (window.emailjs) emailjs.init("CJRVHaDVYa2VCU89T");
@@ -7,19 +32,17 @@ window.addEventListener("DOMContentLoaded", () => {
     console.warn("EmailJS init skipped:", error);
   }
 
-  console.log("Firebase:", firebase);
+  console.log("Firebase:", window.firebase);
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAnfVHRG6zXhUHURD8-z_7Wiwy2pO4qxF8",
-    authDomain: "fairway-fusion-3a4d4.firebaseapp.com",
-    projectId: "fairway-fusion-3a4d4",
-    storageBucket: "fairway-fusion-3a4d4.appspot.com",
-    messagingSenderId: "161862648502",
-    appId: "1:161862648502:web:3d59d3f6a8930197c26b16"
-  };
+  ensureFooterQuickLinks();
+  window.requestAnimationFrame(() => ensureFooterQuickLinks());
+  window.setTimeout(() => ensureFooterQuickLinks(), 0);
 
-  if (!firebase.apps || !firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+  window.gfgEnsureFirebaseApp?.();
+
+  if (!window.firebase) {
+    console.warn("Firebase scripts are not available on this page.");
+    return;
   }
 
   window.db = firebase.firestore();
@@ -60,6 +83,62 @@ window.addEventListener("DOMContentLoaded", () => {
     return `${isSubPage ? "../" : ""}${fileName}`;
   }
 
+  function setFooterAdminLinksVisible(isVisible) {
+    document.querySelectorAll(".gfg-footer-admin-link, #adminMerchFooterLink").forEach((link) => {
+      link.classList.toggle("d-none", !isVisible);
+    });
+  }
+
+  function buildFooterLinksMarkup() {
+    return `
+      <div class="gfg-footer-links">
+        <a href="${getRootRelativePath("rounds/scorecard.html")}">The Scorecard</a>
+        <a href="${getRootRelativePath("games/goodflightgames.html")}">GoodFlight Games</a>
+        <a href="${getRootRelativePath("playerlog.html")}">The LabRoom</a>
+        <a href="${getRootRelativePath("NewsArticles/social&news.html")}">The Clubhouse</a>
+        <a href="${getRootRelativePath("other/about.html")}">About Us</a>
+        <a href="${getRootRelativePath("merch/merch.html")}" class="gfg-footer-admin-link d-none">Custom Gear Shop</a>
+      </div>
+    `;
+  }
+
+  function ensureFooterQuickLinks() {
+    const footerContainer = document.querySelector(".gfg-footer-container");
+    const existingLinks = document.querySelector(".gfg-footer-links");
+
+    if (footerContainer) {
+      if (existingLinks) {
+        footerContainer.prepend(existingLinks);
+      } else {
+        footerContainer.insertAdjacentHTML("afterbegin", buildFooterLinksMarkup());
+      }
+      return;
+    }
+
+    const footerContent = document.querySelector(".gfg-footer-content");
+    if (footerContent) {
+      if (!footerContent.querySelector(".gfg-footer-links")) {
+        const ownershipBlock = footerContent.querySelector(".gfg-footer-ownership");
+        ownershipBlock?.insertAdjacentHTML("beforebegin", buildFooterLinksMarkup());
+      }
+      return;
+    }
+
+    const legacyFooter = document.querySelector("footer#foot");
+    if (legacyFooter && !legacyFooter.querySelector(".gfg-footer-links")) {
+      legacyFooter.insertAdjacentHTML("afterbegin", `
+        <div class="gfg-footer-links gfg-footer-links--legacy">
+          <a href="${getRootRelativePath("rounds/scorecard.html")}">The Scorecard</a>
+          <a href="${getRootRelativePath("games/goodflightgames.html")}">Games</a>
+          <a href="${getRootRelativePath("playerlog.html")}">LabRoom</a>
+          <a href="${getRootRelativePath("NewsArticles/social&news.html")}">Clubhouse</a>
+          <a href="${getRootRelativePath("other/about.html")}">About</a>
+          <a href="${getRootRelativePath("merch/merch.html")}" class="gfg-footer-admin-link d-none">Custom Gear Shop</a>
+        </div>
+      `);
+    }
+  }
+
   function ensureAccountNavLink() {
     const loginLink = document.getElementById("loginLink");
     const navList = loginLink?.closest("ul");
@@ -70,7 +149,10 @@ window.addEventListener("DOMContentLoaded", () => {
     item.className = "nav-item d-none";
     item.innerHTML = `
       <a class="nav-link" href="${getRootRelativePath("account.html")}">
-        My <span style="color:#fad02e;">Account</span>
+        <span class="gfg-account-nav-label">
+          My <span style="color:#fad02e;">Account</span>
+          <span id="gfgAccountNavFriendBadge" class="gfg-friend-request-badge d-none" aria-label="Pending friend requests"></span>
+        </span>
       </a>
     `;
 
@@ -155,6 +237,20 @@ window.addEventListener("DOMContentLoaded", () => {
     if (!cleanUsername || cleanUsername.includes("@")) return;
 
     try {
+      const privateSnap = await db.collection("users").doc(user.uid).get();
+      const privateData = privateSnap.data() || {};
+
+      if (window.GFGLeaderboard?.syncCurrentUserProfile) {
+        await window.GFGLeaderboard.syncCurrentUserProfile({
+          user,
+          db,
+          userData: privateData,
+          username: cleanUsername,
+          photoURL: privateData.photoURL || ""
+        });
+        return;
+      }
+
       await db.collection("publicUsers").doc(user.uid).set({
         uid: user.uid,
         username: cleanUsername,
@@ -186,14 +282,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const display = safeCount > 9 ? "9+" : String(safeCount);
 
     const toggler = document.querySelector(".gfg-navbar .navbar-toggler");
-    const clubhouseLink = Array.from(document.querySelectorAll(".gfg-navbar .nav-link"))
-      .find((link) => (link.getAttribute("href") || "").includes("social&news.html"));
-    const clubhouseHeader = document.querySelector(".clubhouse-friends-card .card-header");
+    const accountNavLink = document.querySelector("#myAccountNavItem .nav-link");
 
     [
       ensureFriendBadge(toggler, "gfgNavFriendBadge", "Pending friend requests"),
-      ensureFriendBadge(clubhouseLink, "gfgClubhouseNavFriendBadge", "Pending friend requests"),
-      ensureFriendBadge(clubhouseHeader, "gfgClubhouseHeaderFriendBadge", "Pending friend requests")
+      ensureFriendBadge(accountNavLink, "gfgAccountNavFriendBadge", "Pending friend requests")
     ].forEach((badge) => {
       if (!badge) return;
       badge.textContent = display;
@@ -212,10 +305,10 @@ window.addEventListener("DOMContentLoaded", () => {
       const snap = await db
         .collection("friendRequests")
         .where("toUid", "==", user.uid)
-        .where("status", "==", "pending")
         .get();
 
-      setFriendBadgeCount(snap.size);
+      const pendingCount = snap.docs.filter((doc) => doc.data()?.status === "pending").length;
+      setFriendBadgeCount(pendingCount);
     } catch (error) {
       console.error("Error loading friend request badge:", error);
       setFriendBadgeCount(0);
@@ -284,6 +377,7 @@ window.addEventListener("DOMContentLoaded", () => {
         await db.collection("users").doc(cred.user.uid).set({
           username: nameToSave,
           usernameLower: normalizeUsername(nameToSave),
+          leaderboardOptIn: false,
           tosAccepted: true,
           privacyAccepted: true,
           disclaimerAccepted: true,
@@ -317,6 +411,14 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   ensureAccountNavLink();
+
+  if (window.gfgAdminState?.ready) {
+    setFooterAdminLinksVisible(!!window.gfgAdminState.isAdmin);
+  }
+
+  window.addEventListener("gfg-admin-state", (event) => {
+    setFooterAdminLinksVisible(!!event.detail?.isAdmin);
+  });
 
   auth.onAuthStateChanged(async (user) => {
     if (!user) {

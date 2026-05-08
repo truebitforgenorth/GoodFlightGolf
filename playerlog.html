@@ -187,6 +187,37 @@
         </div>
     </section>
 
+    <section id="leaderboardSection" class="container gfg-section">
+        <div class="mb-3">
+            <h2 class="gfg-section-title">Leaderboard</h2>
+            <p class="gfg-section-sub">Rankings are based on average points per saved Wolf game. Public usernames only show for golfers who opt in.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card gfg-leaderboard-card h-100">
+                    <div class="card-header">🏆 All Golfers</div>
+                    <div class="card-body">
+                        <p class="gfg-leaderboard-copy">A public Wolf leaderboard built from saved games, ranked by average points per game.</p>
+                        <div id="leaderboardAllStatus" class="gfg-leaderboard-status">Loading leaderboard...</div>
+                        <div id="leaderboardAllList" class="gfg-leaderboard-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card gfg-leaderboard-card h-100">
+                    <div class="card-header">👥 You + Friends</div>
+                    <div class="card-body">
+                        <p class="gfg-leaderboard-copy">See how your saved Wolf results compare against you and your accepted GoodFlight friends.</p>
+                        <div id="leaderboardFriendsStatus" class="gfg-leaderboard-status">Log in to load your friends leaderboard.</div>
+                        <div id="leaderboardFriendsList" class="gfg-leaderboard-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div class="container gfg-section">
 
         <!-- PLAYER DATA -->
@@ -197,12 +228,12 @@
             </div>
 
             <div id="playerDataShell" class="gfg-locked-shell is-locked" style="min-height: 500px;">
-                <div class="row g-4">
+                <div class="row g-4 playerlog-equal-row">
                     <div class="col-lg-6">
                         <section id="savedRoundsSection" class="h-100">
                             <div class="card h-100">
                                 <div class="card-header">📘 Round Data</div>
-                                <div class="card-body">
+                                <div class="card-body playerlog-panel-body">
                                     <div id="savedRoundsLoggedIn" class="d-none">
                                         <div class="row g-3 mb-4">
                                             <div class="col-md-4">
@@ -246,7 +277,7 @@
                         <section id="courseDataSection" class="h-100">
                             <div class="card h-100">
                                 <div class="card-header">⛳ Course Data (BETA)</div>
-                                <div class="card-body">
+                                <div class="card-body playerlog-panel-body">
                                     <div id="courseDataLoggedIn" class="d-none">
                                         <div class="row g-3 text-center">
                                             <div class="col-6 col-md-4">
@@ -316,7 +347,7 @@
                         <section id="analyticsSection">
                             <div class="card h-100">
                                 <div class="card-header">&#128202; Round Trends &amp; Charts</div>
-                                <div class="card-body">
+                                <div class="card-body playerlog-panel-body">
                                     <div id="analyticsLoggedIn" class="d-none">
                                         <div class="d-flex flex-wrap gap-2 justify-content-center mb-3 analytics-tab-strip">
                                             <button type="button" class="gfg-pill-btn analytics-tab is-active"
@@ -386,11 +417,11 @@
             </div>
 
             <div id="savedGameDataShell" class="gfg-locked-shell is-locked" style="min-height: 500px;">
-                <div class="row g-4">
+                <div class="row g-4 playerlog-equal-row">
                     <div class="col-lg-6">
-                        <div class="card h-100">
+                        <div class="card saved-game-panel-card h-100">
                             <div class="card-header">💰 Game Totals</div>
-                            <div class="card-body">
+                            <div class="card-body playerlog-panel-body">
                                 <div id="gameTotalsLoggedIn" class="d-none">
                                     <div class="row g-3">
                                         <div class="col-md-12">
@@ -435,9 +466,9 @@
                     </div>
 
                     <div class="col-lg-6">
-                        <div class="card h-100">
+                        <div class="card saved-game-panel-card h-100">
                             <div class="card-header">📝 Games Played</div>
-                            <div class="card-body">
+                            <div class="card-body playerlog-panel-body">
                                 <div id="gamesPlayedLoggedIn" class="d-none">
                                     <div id="gamesPlayedList">
                                         <div class="card">
@@ -458,10 +489,14 @@
                         <section id="gameAnalyticsSection">
                             <div class="card h-100">
                                 <div class="card-header">&#128200; Personal Game Analytics</div>
-                                <div class="card-body">
+                                <div class="card-body playerlog-panel-body">
                                     <div id="gameAnalyticsLoggedIn" class="d-none">
                                         <div class="d-flex flex-wrap gap-2 justify-content-center mb-3 analytics-tab-strip">
                                             <button type="button" class="gfg-pill-btn game-analytics-tab is-active"
+                                                data-game-analytics-view="golferAverages">
+                                                Golfer Averages
+                                            </button>
+                                            <button type="button" class="gfg-pill-btn game-analytics-tab"
                                                 data-game-analytics-view="moneyTime">
                                                 Money Over Time
                                             </button>
@@ -844,7 +879,7 @@
                                     <div id="collapseTwo" class="accordion-collapse collapse show">
                                         <div class="weather-embed-wrap">
                                             <iframe
-                                                src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=in&metricTemp=°F&metricWind=mph&zoom=5&overlay=wind&product=ecmwf&level=surface&lat=42.261&lon=-92.549&detailLat=45.123&detailLon=-92.537&marker=true&pressure=true&message=true"
+                                                src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=in&metricTemp=°F&metricWind=mph&zoom=4&overlay=wind&product=ecmwf&level=surface&lat=39.8283&lon=-98.5795&detailLat=39.8283&detailLon=-98.5795&marker=false&pressure=true&message=true"
                                                 frameborder="0">
                                             </iframe>
                                         </div>
@@ -980,6 +1015,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
     <script src="myscripts.js"></script>
+    <script src="leaderboard.js"></script>
     <script src="clubDistance.js"></script>
     <script src="shotcal.js"></script>
     <script src="feedback.js"></script>

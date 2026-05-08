@@ -383,6 +383,12 @@ document.querySelectorAll(".player").forEach((input, idx) => {
   };
 });
 
+window.GFGGameFriends?.attachPlayerSuggestions({
+  inputSelector: ".player",
+  helperId: "wolfFriendSuggestionHint",
+  listId: "wolfFriendSuggestions"
+});
+
 selfPlayerSelect?.addEventListener("change", () => {
   selectedSelfPlayerIndex = getSelectedSelfPlayerIndex();
 });
@@ -891,11 +897,11 @@ function showResultsSummary() {
       saveBtn.setAttribute("aria-disabled", "true");
       saveBtn.classList.add("disabled");
 
-      const docRef = await firebase.firestore()
-        .collection("users")
-        .doc(user.uid)
-        .collection("savedGames")
-        .add({
+        const docRef = await firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("savedGames")
+          .add({
           gameType: "wolf",
           sessionId: null,
           sessionMode: "game-only",
@@ -925,15 +931,21 @@ function showResultsSummary() {
           carryoverEnabled: isCarryoverEnabled(),
           birdieDoubleEnabled: isBirdieDoubleEnabled(),
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+        savedGameDocId = docRef.id;
+
+        await window.GFGLeaderboard?.syncCurrentUserProfile?.({
+          user,
+          db: firebase.firestore()
         });
 
-      savedGameDocId = docRef.id;
-      saveBtn.textContent = "Game Saved";
-      alert("Wolf game saved!");
-    } catch (err) {
-      console.error(err);
-      saveBtn.textContent = "Save Game Data";
+        saveBtn.textContent = "Game Saved";
+        alert("Wolf game saved!");
+      } catch (err) {
+        console.error(err);
+        saveBtn.textContent = "Save Game Data";
       saveBtn.removeAttribute("aria-disabled");
       saveBtn.classList.remove("disabled");
       alert("Error saving Wolf game.");

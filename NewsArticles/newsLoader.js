@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   const articles = [
     {
+      title: "How Far Does the Average Golfer Hit Their Clubs?",
+      link: "how-far-does-the-average-golfer-hit-their-clubs.html",
+      summary:
+        "A practical distance guide built from USGA measured checkpoints, plus a real-world club-by-club estimate for the average recreational golfer."
+    },
+    {
       title: "Next Up on the PGA TOUR: Zurich Classic 2026 Preview, Past Winners, Course Notes and Betting Watch",
       link: "zurich-classic-2026-preview-course-history-betting.html",
       summary:

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>How Far Does the Average Golfer Hit Their Clubs? | GoodFlightGolf News</title>
+  <link rel="icon" href="../photos/GFGlogo.png" type="image/png" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../main2.css" />
+
+  <meta name="description"
+    content="A practical guide to how far the average recreational golfer hits each club, built from USGA measured distance research and real-world bag gapping." />
+  <meta name="keywords"
+    content="average golfer club distances, how far average golfer hits clubs, golf distance chart, 7 iron average distance, driver average distance" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="GoodFlightGolf" />
+  <meta property="og:title" content="How Far Does the Average Golfer Hit Their Clubs?" />
+  <meta property="og:description"
+    content="Measured USGA checkpoints, practical bag estimates, and a simple way to benchmark your real golf distances." />
+  <meta property="og:image" content="https://goodflightgolf.com/photos/GFGlogo.png" />
+  <meta property="og:url"
+    content="https://goodflightgolf.com/NewsArticles/how-far-does-the-average-golfer-hit-their-clubs.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+</head>
+
+<body>
+  <button type="button" id="btn-back-to-top" aria-label="Back to top">
+    <p>Back to Top</p>
+  </button>
+
+  <nav class="navbar navbar-expand-lg gfg-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">GoodFlight<span>Golf</span>&#9971;</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1)"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav fs-5">
+          <li class="nav-item">
+            <a class="nav-link" href="../rounds/scorecard.html">The Score<span style="color:#fad02e;">card</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../games/goodflightgames.html">GoodFlight<span
+                style="color:#fad02e;">Games</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../playerlog.html">The Lab<span style="color:#fad02e;">Room</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../NewsArticles/social&news.html">The Club<span
+                style="color:#fad02e;">house</span></a>
+          </li>
+          <li class="nav-item">
+            <a id="loginLink" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal" role="button">
+              Login / <span style="color:#fad02e;">Signup</span>
+            </a>
+          </li>
+          <li class="nav-item d-flex align-items-center">
+            <span id="userEmail" class="btn bg-primary me-3 d-none" style="color:white;"></span>
+            <button id="logoutBtn" class="btn btn-danger me-3 d-none">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="parallax-section2">
+    <div class="parallax-content2">
+      <div id="welcomeMessage"></div>
+      <h1 class="gfg-hero-title">
+        <span class="gfg-green">The</span><span class="gfg-yellow">Clubhouse</span>&#9971;
+      </h1>
+      <p class="gfg-hero-sub">
+        Practical golf answers built for real players, not one perfect swing on the range.
+      </p>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="gfg-logo-wrapper">
+            <img src="../photos/GFGlogo.png" alt="GoodFlightGolf logo" class="gfg-logo-img" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container gfg-section">
+    <section class="card mb-4">
+      <div class="card-header">GoodFlightGolf News</div>
+      <div class="card-body">
+        <h2 class="mb-2">How Far Does the Average Golfer Hit Their Clubs?</h2>
+        <p class="text-muted mb-4">6 min read | Posted May 8, 2026</p>
+
+        <p>
+          Ask a golfer how far they hit driver and you will often get the best swing of the month instead of the
+          number they actually play with. That is not just a joke from the range. In the USGA's recreational distance
+          research, golfers on average <strong>overestimated their driver distance by 7%</strong>, while their 7-iron
+          estimates were much closer to reality. That makes this topic useful for more than curiosity. If you know your
+          real numbers, you pick smarter clubs, choose better tees, and stop short-siding yourself with wishful
+          thinking.
+        </p>
+
+        <p>
+          The cleanest way to answer the question is to separate <strong>measured checkpoints</strong> from
+          <strong>practical full-bag estimates</strong>. The USGA study measured driver, 7-iron, and pitching wedge
+          distances from 627 recreational golfers using TrackMan. From there, we can build a sensible picture of what
+          the rest of the bag usually looks like for average players.
+        </p>
+
+        <h4 class="mt-4">Measured Distance Checkpoints</h4>
+        <p>
+          These are the clearest hard numbers from the USGA sample. The study reported <strong>total distance</strong>,
+          not just carry, so these are the kinds of numbers golfers are more likely to use on the course.
+        </p>
+
+        <div class="table-responsive mt-3">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>Club</th>
+                <th>Average Female Recreational Golfer</th>
+                <th>Average Male Recreational Golfer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Driver</td>
+                <td>144 yards</td>
+                <td>226 yards</td>
+              </tr>
+              <tr>
+                <td>7-iron</td>
+                <td>98 yards</td>
+                <td>149 yards</td>
+              </tr>
+              <tr>
+                <td>Pitching wedge</td>
+                <td>80 yards</td>
+                <td>117 yards</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Those three clubs tell us a lot. The average male golfer in the USGA sample was basically a
+          <strong>220-plus driver, 150-yard 7-iron, and 115-yard pitching wedge</strong> player. The average female
+          golfer was closer to a <strong>145-yard driver, 100-yard 7-iron, and 80-yard pitching wedge</strong>
+          player. That also fits the USGA's separate tee-selection guidance, which pegs the average male golfer around
+          a 138-yard 7-iron and the average female golfer around a 100-yard 7-iron.
+        </p>
+
+        <h4 class="mt-4">What the Full Bag Usually Looks Like</h4>
+        <p>
+          No single chart covers every golfer, because lofts vary from set to set and ball striking varies a lot from
+          day to day. Still, most recreational bags gap in recognizable steps. Using the USGA checkpoints above plus
+          normal amateur gapping, here is a practical real-world estimate for the rest of the set:
+        </p>
+
+        <div class="table-responsive mt-3">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>Club</th>
+                <th>Average Female Recreational Golfer</th>
+                <th>Average Male Recreational Golfer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Driver</td>
+                <td>140 to 145 yards</td>
+                <td>220 to 230 yards</td>
+              </tr>
+              <tr>
+                <td>3-wood</td>
+                <td>125 to 135 yards</td>
+                <td>200 to 210 yards</td>
+              </tr>
+              <tr>
+                <td>5-wood</td>
+                <td>115 to 125 yards</td>
+                <td>185 to 195 yards</td>
+              </tr>
+              <tr>
+                <td>4-hybrid</td>
+                <td>110 to 120 yards</td>
+                <td>175 to 185 yards</td>
+              </tr>
+              <tr>
+                <td>5-iron</td>
+                <td>105 to 115 yards</td>
+                <td>165 to 175 yards</td>
+              </tr>
+              <tr>
+                <td>6-iron</td>
+                <td>100 to 110 yards</td>
+                <td>155 to 165 yards</td>
+              </tr>
+              <tr>
+                <td>7-iron</td>
+                <td>95 to 100 yards</td>
+                <td>145 to 150 yards</td>
+              </tr>
+              <tr>
+                <td>8-iron</td>
+                <td>85 to 90 yards</td>
+                <td>130 to 140 yards</td>
+              </tr>
+              <tr>
+                <td>9-iron</td>
+                <td>80 to 85 yards</td>
+                <td>120 to 130 yards</td>
+              </tr>
+              <tr>
+                <td>Pitching wedge</td>
+                <td>75 to 80 yards</td>
+                <td>110 to 120 yards</td>
+              </tr>
+              <tr>
+                <td>Sand wedge</td>
+                <td>55 to 70 yards</td>
+                <td>80 to 100 yards</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          That chart should be treated as a <strong>starting point</strong>, not a verdict. Some golfers launch
+          hybrids better than long irons and create larger jumps at the top of the bag. Others have stronger modern
+          iron lofts and see a hotter 7-iron than the label suggests. The better your strike quality, the more evenly
+          the bag tends to gap. The more inconsistent your contact, the more those numbers turn into a wide range.
+        </p>
+
+        <h4 class="mt-4">Why Your Yardages Might Not Match the Chart</h4>
+        <p>
+          Four things skew club-distance conversations more than anything else. First, golfers mix up
+          <strong>carry</strong> and <strong>total</strong>. Second, range balls and mats can change the picture.
+          Third, manufacturers do not all build the same loft into a 7-iron or pitching wedge. Fourth, most players
+          remember flushed shots more vividly than stock swings. None of that means your distances are wrong. It just
+          means you need to measure them honestly.
+        </p>
+
+        <p>
+          That is also why the 7-iron is such a useful anchor. The USGA found golfers are much more realistic about
+          how far they hit that club, and the organization now uses 7-iron distance as a quick way to recommend
+          suitable course length. In plain English: if your 7-iron number is real, a lot of the rest of your golf
+          decision-making gets cleaner too.
+        </p>
+
+        <h4 class="mt-4">The Best Way to Find Your Own Real Distances</h4>
+        <p>
+          The smartest move is to map your bag with six to ten solid shots per club and throw out the obvious mishits
+          and miracle shots. Build two numbers for every club: a stock <strong>carry</strong> number and a stock
+          <strong>total</strong> number. Then keep one more note beside them: your typical miss. A 150-yard 7-iron is
+          only useful if you also know whether the miss is usually short-right, long-left, or low out of the heel.
+        </p>
+
+        <p>
+          For most golfers, better scoring does not come from finding ten surprise yards. It comes from using the right
+          number, aiming for the fat side of the target, and choosing tees that fit the way you actually hit the ball.
+          If your honest 7-iron is 140 instead of the 155 you like telling your buddies, that is not bad news. That is
+          a more playable round waiting to happen.
+        </p>
+
+        <h4 class="mt-4">Sources</h4>
+        <ul class="list-group list-group-flush text-start">
+          <li class="list-group-item">
+            <a href="https://www.usga.org/content/dam/usga/images/course-care/GolferExperience/DI_Golfer_Performance_Measurement%202023%20Update.pdf"
+              target="_blank" rel="noopener">USGA: Quantitative Analysis of Recreational Golfer Club Hitting Distances</a>
+          </li>
+          <li class="list-group-item">
+            <a href="https://www.usga.org/content/usga/home-page/articles/2023/10/the-7-iron-solution.html"
+              target="_blank" rel="noopener">USGA: The 7-Iron Solution</a>
+          </li>
+          <li class="list-group-item">
+            <a href="https://www.usga.org/content/usga/home-page/course-care/green-section-record/61/issue-11/helping-golfers-choose-their--best-tees--.html"
+              target="_blank" rel="noopener">USGA: Helping Golfers Choose Their Best Tees</a>
+          </li>
+          <li class="list-group-item">
+            <a href="https://www.trackman.com/blog/golf/know-your-numbers-introducing-map-my-bag-in-tps-10-1"
+              target="_blank" rel="noopener">Trackman: Map My Bag and club-gapping workflow</a>
+          </li>
+        </ul>
+
+        <div class="mt-4 p-3 rounded"
+          style="background: rgba(53, 148, 71, 0.06); border: 1px solid rgba(53, 148, 71, 0.12);">
+          <strong>Editorial note:</strong> The driver, 7-iron, and pitching-wedge checkpoints above come directly from
+          USGA measured data. The full-bag chart is a practical estimate inferred from those benchmarks and typical
+          recreational gapping, so it should be used as a planning guide rather than a custom fitting sheet.
+        </div>
+      </div>
+    </section>
+
+    <section class="card mb-4">
+      <div class="card-header">More from The Clubhouse</div>
+      <div class="card-body">
+        <ul class="list-group list-group-flush text-start" id="articleList"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="gfg-footer" id="foot">
+    <div class="gfg-footer-container">
+      <div class="gfg-footer-logo">
+        <a href="https://www.TrueBitForgeNorth.com/"><img src="../photos/TBFN2.png"
+            alt="TrueBit Forge North LLC Logo"></a>
+      </div>
+
+      <div class="gfg-footer-content">
+        <p class="gfg-footer-copy">&copy; 2026 GoodFlightGolf. All rights reserved.</p>
+        <p class="gfg-footer-ownership">
+          GoodFlightGolf is owned and operated by
+          <a href="https://www.TrueBitForgeNorth.com/"><strong>TrueBit Forge North LLC</strong></a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <h6>Login</h6>
+          <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="loginPassword" class="form-control mb-2" placeholder="Password" />
+          <button id="loginBtn" class="btn btn-primary mb-3">Login</button>
+          <div id="loginMessage" style="min-height: 1.5em;"></div>
+
+          <hr class="my-4" />
+
+          <h6>Sign Up</h6>
+          <input type="text" id="signupUsername" class="form-control mb-2" placeholder="Username" />
+          <input type="email" id="signupEmail" class="form-control mb-2" placeholder="Email" />
+          <input type="password" id="signupPassword" class="form-control mb-3" placeholder="Password" />
+
+          <div class="signup-legal-box mb-3">
+            <h6 class="mb-2">Terms of Service, Privacy Policy, and Disclaimer</h6>
+            <div class="signup-legal-scroll">
+              <p><strong>Effective Date:</strong> March 15, 2026</p>
+              <p>By creating an account on GoodFlightGolf, you agree to these Terms of Service, Privacy Policy, and
+                Disclaimer.</p>
+              <p>GoodFlightGolf provides golf-related games, tools, calculators, scorekeeping features, and
+                account-based services for entertainment and informational purposes only.</p>
+              <p>You are responsible for the accuracy of the information you provide, maintaining the confidentiality
+                of your login credentials, and all activity that occurs under your account.</p>
+              <p>You agree not to misuse the website, attempt unauthorized access, disrupt services, exploit bugs,
+                interfere with other users, or use the platform for unlawful purposes.</p>
+              <p>We may collect account details, submitted scores, settings, and limited technical usage information in
+                order to operate, secure, and improve the website.</p>
+              <p>We do not sell your personal information. We may use trusted third-party providers for authentication,
+                hosting, databases, email, analytics, maps, and related services needed to run GoodFlightGolf.</p>
+              <p>GoodFlightGolf is provided on an "as is" and "as available" basis without guarantees of uninterrupted
+                service, perfect accuracy, or error-free operation.</p>
+              <p>Golf tools, scoring systems, calculators, and other features may rely on user input and simplified
+                assumptions, so results may vary in real-world use.</p>
+              <p>To the fullest extent permitted by law, GoodFlightGolf and TrueBit Forge North LLC are not liable for
+                damages, losses, or disruptions arising from use of the website or reliance on its content, tools, or
+                outputs.</p>
+              <p>We may update these Terms, Privacy Policy, or Disclaimer from time to time. Continued use of
+                GoodFlightGolf after updates become effective constitutes acceptance of the revised terms.</p>
+              <p>By checking the box below and creating your account, you acknowledge that you have reviewed and
+                accepted these legal terms.</p>
+            </div>
+          </div>
+
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" id="signupTosCheckbox">
+            <label class="form-check-label" for="signupTosCheckbox">
+              I have read and agree to the Terms of Service, Privacy Policy, and Disclaimer.
+            </label>
+          </div>
+
+          <div id="signupMessage" class="mt-3" style="min-height: 1.5em;"></div>
+          <button id="signupBtn" class="btn btn-primary mt-3">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("CJRVHaDVYa2VCU89T");
+    })();
+  </script>
+
+  <script src="../myscripts.js"></script>
+  <script src="newsLoader.js"></script>
+</body>
+
+</html>
